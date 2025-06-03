@@ -1,9 +1,9 @@
-README-LakeMonitoR
+README-CAST_Shiny
 ================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-06-03 11:53:35.305914
+    #> Last Update: 2025-06-03 12:06:15.729345
 
 # CAST_Shiny
 
@@ -19,12 +19,12 @@ Shiny app for CASTool
 MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://cran.r-project.org/web/licenses/MIT)
 
 [![GitHub
-issues](https://img.shields.io/github/issues/leppott/LakeMonitoR.svg)](https://GitHub.com/leppott/CAST_Shiny/issues/)
+issues](https://img.shields.io/github/issues/leppott/CAST_Shiny.svg)](https://GitHub.com/leppott/CAST_Shiny/issues/)
 
 [![GitHub
-release](https://img.shields.io/github/release/leppott/LakeMonitoR.svg)](https://GitHub.com/leppott/CAST_Shiny/releases/)
+release](https://img.shields.io/github/release/leppott/CAST_Shiny.svg)](https://GitHub.com/leppott/CAST_Shiny/releases/)
 [![Github all
-releases](https://img.shields.io/github/downloads/leppott/LakeMonitoR/total.svg)](https://GitHub.com/leppott/CAST_Shiny/releases/)
+releases](https://img.shields.io/github/downloads/leppott/CAST_Shiny/total.svg)](https://GitHub.com/leppott/CAST_Shiny/releases/)
 
 # Installation
 

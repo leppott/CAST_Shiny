@@ -20,6 +20,9 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 0.0.1.9003 (2025-06-03)
++ docs: Update README badges
+
 # CAST_Shiny 0.0.1.9002 (2025-06-03)
 + docs: Added and updated documentation to support GitHub repo
     - DESCRIPTION
