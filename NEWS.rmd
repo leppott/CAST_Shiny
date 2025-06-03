@@ -1,0 +1,30 @@
+---
+title: "NEWS"
+author: Erik.Leppo@tetratech.com
+output: github_document
+  #md_document:
+   # variant: markdown_github
+---
+
+<!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
+
+```{r Options, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "NEWS-"
+)
+```
+
+```{r LastUpdate, echo = FALSE}
+cat(paste0("Last Update: ",Sys.time()))
+```
+
+# CAST_Shiny 0.0.1.9002 (2025-06-03)
++ docs: Added and updated documentation to support GitHub repo
+    - DESCRIPTION
+    - NEWS
+    - README
+
+# CAST_Shiny 0.0.1.9001 (2025-06-03)
++ Initialized repo on GitHub
