@@ -5,15 +5,15 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "0.0.0.9004"
+pkg_version <- "0.0.0.9005"
 
 # Packages ----
 library(shiny)
 library(shinyjs) # hide buttons
+library(shinyBS) # nice buttons
 
 # library(shinydashboard)
 # library(shinydashboardPlus) # only using for footer
-# library(shinyBS) # nice buttons
 # library(ggplot2)
 # library(shinycssloaders)
 # library(bslib)

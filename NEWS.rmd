@@ -20,6 +20,10 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 0.0.1.9005 (2025-07-29)
+
+* fix: Add shinyBS library to global
+
 # CAST_Shiny 0.0.1.9004 (2025-07-29)
 
 + refactor: Create wireframe with placeholders from 2025-06-02 Storyboard
