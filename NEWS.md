@@ -4,7 +4,12 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-06-03 12:04:31.007573
+    #> Last Update: 2025-07-29 10:43:04.551531
+
+# CAST_Shiny 0.0.1.9004 (2025-07-29)
+
+- refactor: Create wireframe with placeholders from 2025-06-02
+  Storyboard
 
 # CAST_Shiny 0.0.1.9003 (2025-06-03)
 
