@@ -5,22 +5,22 @@ function() {
 				mainPanel(
 					p("File set up"),
 					checkboxGroupInput("check_check_comm",
-									 "Biotic Communities Available",
+									 "Biotic communities available",
 									 choices = c("Algae", "Macroinvertebrates", "Fish"),
 									 selected = NULL
 									 ),
 					checkboxGroupInput("rad_check_tol",
-									 "Stressor Specific Tolerance Values Available",
+									 "Stressor specific tolerance values available",
 									 choices = c("Algae", "Macroinvertebrates", "Fish"),
 									 selected = NULL
 					),
 					radioButtons("rad_check_stress",
-									 "Stressor Types",
+									 "Stressor types",
 									 choices = c("Measured", "Modeled"),
 									 selected = "Measured"
 					),
 					radioButtons("rad_check_outliers",
-									 "Exclude Outliers",
+									 "Exclude outliers",
 									 choices = c("Yes", "No"),
 									 selected = "Yes"
 					),

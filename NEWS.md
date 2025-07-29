@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-07-29 10:56:59.539528
+    #> Last Update: 2025-07-29 15:21:35.118686
+
+# CAST_Shiny 0.0.1.9006 (2025-07-29)
+
+- refactor: Change case of text to be consistent for buttons and titles
 
 # CAST_Shiny 0.0.1.9005 (2025-07-29)
 
