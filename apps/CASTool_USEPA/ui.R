@@ -9,6 +9,8 @@
 
 # Define UI for application
 navbarPage("Causal Assessment Tool",
+			  id = "navbar",
+			  useShinyjs(),
 			  # theme = shinytheme("spacelab"),
 			  tab_code_about(),
 			  tab_code_checkfiles(),

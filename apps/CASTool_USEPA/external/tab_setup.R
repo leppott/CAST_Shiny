@@ -4,66 +4,68 @@ function() {
 	tabPanel("Set Up",
 				mainPanel(
 					fileInput('fn_input_setup_checked_uload', 
-								 'Upload checked files',
+								 'Upload checked zip file',
+								 multiple = FALSE,
 								 accept = c(
-								 	'text/csv',
-								 	'text/comma-separated-values',
-								 	'text/tab-separated-values',
-								 	'text/plain',
-								 	'.csv',
-								 	'.tab',
-								 	'.tsv',
-								 	'.txt')
+								 	'zip',
+								 	'.zip')
 					), ##fileInput
-					shinyBS::bsTooltip(id = "fn_input_setup_checked_uload",
-											 title = paste0("Add some info here."),
-											 placement = "right"),
+					# shinyBS::bsTooltip(id = "fn_input_setup_checked_uload",
+					# 						 title = paste0("Add all files to a single zip file"),
+					# 						 placement = "right"),
+					# doesn't work on fileinput
 					br(),
-					selectInput("report_format",
-									"Select target site",
-									choices = c("A", 
-													"B"),
-									selected = ""),
-					br(),
-					radioButtons("rad_setup_explore",
-					             "Explore watershed stressor data",
-									 choices = c("Yes", "No"),
-									 selected = "Yes"),
-					br(),
-					radioButtons("rad_setup_assign",
-									 "Comparator assignment method",
-									 choices = c("Abiotic clustering", "Custom"),
-									 selected = "Abiotic clustering"),
-					br(),
-					p("appears with abiotic"),
-					selectInput("report_nclusters",
-									"Number of clusters",
-									choices = c("Default", 
-													"1",
-													"2", 
-													"3"),
-									selected = "Default"),
-					br(),
-					fileInput('fn_input_setup_custom', 
-								 'Upload custom clusters',
-								 accept = c(
-								 	'text/csv',
-									'text/comma-separated-values',
-									'text/tab-separated-values',
-									'text/plain',
-									'.csv',
-									'.tab',
-									'.tsv',
-									'.txt')
+					fluidRow(
+						# width = 12
+						column(4,
+								 selectInput("report_format",
+								 				"Select target site",
+								 				choices = c("A", 
+								 								"B"),
+								 				selected = ""),
+								 radioButtons("rad_setup_explore",
+								 				 "Explore watershed stressor data",
+								 				 choices = c("Yes", "No"),
+								 				 selected = "No")
+								 ),
+						column(4,
+								 radioButtons("rad_setup_assign",
+								 				 "Comparator assignment method",
+								 				 choices = c("Abiotic clustering", "Custom"),
+								 				 selected = "Abiotic clustering"),
+								 p("appears with abiotic"),
+								 selectInput("report_nclusters",
+								 				"Number of clusters",
+								 				choices = c("Default", 
+								 								"1",
+								 								"2", 
+								 								"3"),
+								 				selected = "Default"),
+								 fileInput('fn_input_setup_custom', 
+								 			 'Upload custom clusters',
+								 			 accept = c(
+								 			 	'text/csv',
+								 			 	'text/comma-separated-values',
+								 			 	'text/tab-separated-values',
+								 			 	'text/plain',
+								 			 	'.csv',
+								 			 	'.tab',
+								 			 	'.tsv',
+								 			 	'.txt')
 								 ), ##fileInput
-					br(),
-					bsButton("but_setup_comp",
-								"Get comparators"),
-					p("text showing cluster method and number."),
-					br(),
-					p("if choose abiotic method get some plots"),
-					br(),
-					p("map")
+								 bsButton("but_setup_comp",
+								 			"Get comparators")
+								 ),
+						column(4,
+								 p("text showing cluster method and number."),
+								 br(),
+								 p("if choose abiotic method get some plots"),
+								 br(),
+								 p("map")
+								 )
+						)## fluidRow
+					
+					
 							)## mainPanel
 				)## tabPanel
 }## FUNCTION

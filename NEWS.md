@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-07-29 15:21:35.118686
+    #> Last Update: 2025-08-07 16:03:11.225074
+
+# CAST_Shiny 0.0.1.9007 (2025-08-07)
+
+- feat: Build out most of initial wireframe design
 
 # CAST_Shiny 0.0.1.9006 (2025-07-29)
 

@@ -15,7 +15,8 @@ knitr::opts_chunk$set(results='asis',
 							 fig.align="center")
 ```
 
-**Causal Assessment Tool**
+# Causal Assessment Tool
 
-# Disclaimer?
+## Disclaimer
 
+The Causal Assessment Screening Tool (CASTool) is designed to assess causes of biological impairment. CASTool is a data-driven tool that relies on the quality and completeness of the biological response and candidate stressor data provided by the user. It is most appropriately used to identify candidate causes which merit additional evaluation. The conceptual framework for the CASTool is the U.S. Environmental Protection Agency’s Causal Analysis/Diagnosis Decision Information System (CADDIS), which can be consulted for additional information on causal assessment.

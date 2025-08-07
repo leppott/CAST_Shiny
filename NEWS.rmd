@@ -20,6 +20,10 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 0.0.1.9007 (2025-08-07)
+
+* feat: Build out most of initial wireframe design
+
 # CAST_Shiny 0.0.1.9006 (2025-07-29)
 
 * refactor: Change case of text to be consistent for buttons and titles
