@@ -13,7 +13,7 @@ function() {
 								"Generate report"),
 					br(),
 					radioButtons("rad_report_tabs",
-									 "Show Report Summary Tabs",
+									 "Show report summary tabs",
 									 choices = c("Yes", "No"),
 									 selected = "No"),
 					br(),

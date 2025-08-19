@@ -20,6 +20,14 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 0.0.1.9009 (2025-08-19)
+
+* refactor: Address comments 2025-08-18 on 2025-08-07 version of app
+
+# CAST_Shiny 0.0.1.9008 (2025-08-07)
+
+* refactor: Change utils::unzip to zip::unzip for use on ShinyApps.io
+
 # CAST_Shiny 0.0.1.9007 (2025-08-07)
 
 * feat: Build out most of initial wireframe design

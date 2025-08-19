@@ -7,19 +7,20 @@ function() {
 					# Load Files ----
 					h2("Load Files"),
 					fileInput("fn_input_check_uload", 
-								 'Upload files',
+								 'Upload zipped folder',
 								 multiple = FALSE,
 								 accept = c(
 								 	'zip',
 								 	'.zip')
-					), ##fileInput
+								) |>
+						bs_embed_tooltip(title = "Maximum 300 MB"), ##fileInput
 					
 					# Define Scenario ----
-					h2("Define File Contents"),
+					h2("Define Contents of Uploaded Files"),
 					fluidRow(
 						# width = 12
 						column(3,
-								 checkboxGroupInput("check_check_comm",
+								 checkboxGroupInput("chk_check_comm",
 								 						 "Biotic communities available",
 								 						 choices = c("Algae", "Macroinvertebrates", "Fish"),
 								 						 selected = NULL
@@ -29,17 +30,23 @@ function() {
 								 		  icon = icon("info-circle", class = "clickable-icon"),
 								 		  color = "light-blue",
 								 		  fill = TRUE),),
+						# column(3,
+						# 		 radioButtons("rad_check_stress",
+						# 		 				 "Stressor data available",
+						# 		 				 choices = c("Measured", "Modeled"),
+						# 		 				 selected = "Measured",
+						# 		 )),
 						column(3,
-								 checkboxGroupInput("rad_check_tol",
-								 						 "Stressor specific tolerance values available",
-								 						 choices = c("Algae", "Macroinvertebrates", "Fish"),
+								 checkboxGroupInput("chk_check_stress",
+								 						 "Stressor data available",
+								 						 choices = c("Measured", "Modeled"),
 								 						 selected = NULL
 								 )),
 						column(3,
-								 radioButtons("rad_check_stress",
-								 				 "Stressor types",
-								 				 choices = c("Measured", "Modeled"),
-								 				 selected = "Measured"
+								 checkboxGroupInput("chk_check_tol",
+								 						 "Stressor-specific tolerance values available",
+								 						 choices = c("Algae", "Macroinvertebrates", "Fish"),
+								 						 selected = NULL
 								 )),
 						column(3,
 								 radioButtons("rad_check_outliers",
@@ -58,8 +65,8 @@ function() {
 					# doesn't work on fileinput
 					
 					# Define Files----
-					h2("Define Filenames"),
-					p("Select below the input files to be checked for each data type."),
+					h2("Identify Files"),
+					p("Select the input file to be checked for each data type."),
 					fluidRow(
 						# width = 12
 						column(4,
@@ -72,28 +79,28 @@ function() {
 								 				choices = NULL,
 								 				multiple = FALSE),
 								 selectInput("si_fn_input_check_mstress_d",
-								 				"Measured stress data",
+								 				"Measured/Modeled stressor data",
 								 				choices = NULL,
 								 				multiple = FALSE),
 								 selectInput("si_fn_input_check_mstress_md",
-								 				"Measured stress metadata",
+								 				"Measured/Modeled stressor metadata",
 								 				choices = NULL,
 								 				multiple = FALSE)),
 						column(4,
 								 selectInput("si_fn_input_check_bmi_met_d",
-								 				"Benthicmacroinvertebrate metrics data",
+								 				"Macroinvertebrate/Algae/Fish metrics data",
 								 				choices = NULL,
 								 				multiple = FALSE),
 								 selectInput("si_fn_input_check_bmi_met_md",
-								 				"Benthicmacroinvertebrate metrics metadata",
+								 				"Macroinvertebrate/Algae/Fish metrics metadata",
 								 				choices = NULL,
 								 				multiple = FALSE),
 								 selectInput("si_fn_input_check_bmi_cnt",
-								 				"Benthicmacroinvertebrate counts",
+								 				"Macroinvertebrate/Algae/Fish count data",
 								 				choices = NULL,
 								 				multiple = FALSE),
 								 selectInput("si_fn_input_check_bmi_tax",
-								 				"Benthicmacroinvertebrate taxa list",
+								 				"Macroinvertebrate/Algae/Fish taxa list",
 								 				choices = NULL,
 								 				multiple = FALSE))
 					), ## fluidRow
@@ -101,10 +108,10 @@ function() {
 					h2("Check Files"),
 					bsButton("but_check_check",
 								"Check input files"),
-					
-					h2("File QC"),
+		
 					h3("Input File Check"),
 					p("table of inputs and some checking"),
+					
 					h3("Input Files Matchups"),
 					p("table of matches"),
 					bsButton("but_check_mismatch",

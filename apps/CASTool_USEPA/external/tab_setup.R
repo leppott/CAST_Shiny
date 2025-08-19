@@ -1,8 +1,9 @@
 # Set Up
 
 function() {
-	tabPanel("Set Up",
+	tabPanel("Set Up Tool",
 				mainPanel(
+					h2("Select target site and analysis parameters"),
 					fileInput('fn_input_setup_checked_uload', 
 								 'Upload checked zip file',
 								 multiple = FALSE,
@@ -33,7 +34,7 @@ function() {
 								 				 "Comparator assignment method",
 								 				 choices = c("Abiotic clustering", "Custom"),
 								 				 selected = "Abiotic clustering"),
-								 p("appears with abiotic"),
+								 
 								 selectInput("report_nclusters",
 								 				"Number of clusters",
 								 				choices = c("Default", 

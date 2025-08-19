@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "0.0.0.9007"
+pkg_version <- "0.0.1.9009"
 
 # Packages ----
 library(shiny)
@@ -14,6 +14,14 @@ library(shinyBS) # nice buttons
 library(shinydashboard)
 library(knitr)
 library(DT)      # nice tables
+library(zip)	  # zip files
+library(bsplus)  # tooltips
+
+
+# from renv::dependencies()
+# library(httr)
+# library(rmarkdown)
+# library(rsconnect)
 
 # library(shinydashboardPlus) # only using for footer
 # library(ggplot2)

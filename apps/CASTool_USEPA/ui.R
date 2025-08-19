@@ -8,9 +8,10 @@
 #
 
 # Define UI for application
-navbarPage("Causal Assessment Tool",
+navbarPage("CASTool",
 			  id = "navbar",
-			  useShinyjs(),
+			  useShinyjs(),     # activate Shinyjs commands
+			  use_bs_tooltip(), # activate bsplus tooltips
 			  # theme = shinytheme("spacelab"),
 			  tab_code_about(),
 			  tab_code_checkfiles(),

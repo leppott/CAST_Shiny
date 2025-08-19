@@ -45,7 +45,7 @@ function(input, output, session) {
 		clean_dir(file.path(dn_data, dn_import))
 		
 		# Unzip (remove any zip file directories)
-		utils::unzip(fn_inFile,
+		zip::unzip(fn_inFile,
 						 overwrite = TRUE,
 						 exdir = file.path(dn_data, dn_import),
 						 junkpaths = TRUE)
@@ -144,6 +144,11 @@ function(input, output, session) {
 		# Ensure a file is uploaded
 		# req(input$file_upload)  
 		
+		
+		# shinyBS::bsTooltip("fn_input_check_uload", 
+		# 						 "Maximum 300 MB", 
+		# 						 "right"),
+		
 		inFile <- input$fn_input_setup_checked_uload
 		
 		if (is.null(inFile)) {
@@ -157,7 +162,7 @@ function(input, output, session) {
 		clean_dir(file.path(dn_data, dn_checked))
 		
 		# Unzip (remove any zip file directories)
-		utils::unzip(fn_inFile,
+		zip::unzip(fn_inFile,
 						 overwrite = TRUE,
 						 exdir = file.path(dn_data, dn_checked),
 						 junkpaths = TRUE)
@@ -198,7 +203,7 @@ function(input, output, session) {
 		clean_dir(file.path(dn_data, dn_clusters))
 		
 		# # Unzip (remove any zip file directories)
-		# utils::unzip(fn_inFile,
+		# zip::unzip(fn_inFile,
 		# 				 overwrite = TRUE,
 		# 				 exdir = file.path(dn_data, dn_clusters),
 		# 				 junkpaths = TRUE)
@@ -311,7 +316,7 @@ function(input, output, session) {
 			Sys.sleep(prog_sleep)
 			
 			# zip
-			utils::unzip(temp_ws_stress_zip,
+			zip::unzip(temp_ws_stress_zip,
 							 exdir = file.path(dn_data, dn_ws_stress),
 							 junkpaths = TRUE,
 							 overwrite = TRUE)
