@@ -237,6 +237,35 @@ function(input, output, session) {
 		}## IF
 	})## oE ~ rad_setup_explore
 	
+	## UI, clusters ----
+	output$ui_setup_clust <- renderUI({
+		if(input$rad_setup_assign == "Abiotic clustering") {
+			selectInput("report_nclusters",
+							"Number of clusters",
+							choices = c("Default", 
+											"1",
+											"2", 
+											"3"),
+							selected = "Default")
+		} else if(input$rad_setup_assign == "Custom") {
+			fileInput('fn_input_setup_custom', 
+						 'Upload custom clusters',
+						 accept = c(
+						 	'text/csv',
+						 	'text/comma-separated-values',
+						 	'text/tab-separated-values',
+						 	'text/plain',
+						 	'.csv',
+						 	'.tab',
+						 	'.tsv',
+						 	'.txt')
+						 ) ##fileInput
+		} else {
+			NULL
+		}## IF
+	})## ui_setup
+	
+	
 	# REPORT----
 	
 	## button, report ----

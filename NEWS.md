@@ -4,7 +4,16 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-08-19 13:59:06.592868
+    #> Last Update: 2025-08-19 15:17:10.077055
+
+# CAST_Shiny 0.0.1.9011 (2025-08-19)
+
+- refactor: Address comments 2025-08-18 on 2025-08-07 version of app
+
+# CAST_Shiny 0.0.1.9010 (2025-08-19)
+
+- feature: Update Shiny Apps prep routine + Add blank file before upload
+  to ShinyApps.io - Upload does not transfer empty folders
 
 # CAST_Shiny 0.0.1.9009 (2025-08-19)
 

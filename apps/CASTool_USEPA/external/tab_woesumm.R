@@ -8,17 +8,13 @@ function() {
 					imageOutput("img_bio_index",
 									width = "50%",
 									height = "auto"),
-					fluidRow(
-						# width = 12
-						column(6,
-								 h2("Lines of Evidence Summary"),
-								 DT::dataTableOutput("tbl_woe_summ")
-								 ),
-						column(6,
-								 h2("Weight of Evidence Table"),
+					h2("Lines of Evidence Summary"),
+								 DT::dataTableOutput("tbl_woe_summ"),
+					br(),
+					br(),
+					br(),
+					h2("Weight of Evidence Table"),
 								 DT::dataTableOutput("tbl_woe")
-								 )
-					)## fluidRow
-							)## mainPanel
+					)## mainPanel
 				)## tabPanel
 }## FUNCTION

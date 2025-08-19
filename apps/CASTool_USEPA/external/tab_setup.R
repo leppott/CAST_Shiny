@@ -34,26 +34,10 @@ function() {
 								 				 "Comparator assignment method",
 								 				 choices = c("Abiotic clustering", "Custom"),
 								 				 selected = "Abiotic clustering"),
+								 # reactive to radio
+								 # n_cluster or upload
+								 uiOutput("ui_setup_clust"),
 								 
-								 selectInput("report_nclusters",
-								 				"Number of clusters",
-								 				choices = c("Default", 
-								 								"1",
-								 								"2", 
-								 								"3"),
-								 				selected = "Default"),
-								 fileInput('fn_input_setup_custom', 
-								 			 'Upload custom clusters',
-								 			 accept = c(
-								 			 	'text/csv',
-								 			 	'text/comma-separated-values',
-								 			 	'text/tab-separated-values',
-								 			 	'text/plain',
-								 			 	'.csv',
-								 			 	'.tab',
-								 			 	'.tsv',
-								 			 	'.txt')
-								 ), ##fileInput
 								 bsButton("but_setup_comp",
 								 			"Get comparators")
 								 ),
