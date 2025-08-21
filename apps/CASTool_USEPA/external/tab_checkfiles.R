@@ -76,7 +76,7 @@ function() {
 					p("Any files listed in metadata but not present in the loaded files are displayed below."),
 					pre(textOutput("txt_import_files_missing")),
 					h4("Extra Files"),
-					p("Any files in the load files but not listed in the metadata are displayed below."),
+					p("Any files in the loaded files but not listed in the metadata are displayed below."),
 					pre(textOutput("txt_import_files_extra")),
 					  
 					 # old select boxes for each file 

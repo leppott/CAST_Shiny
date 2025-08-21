@@ -20,6 +20,10 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 0.0.1.9013 (2025-08-21)
+
+* refactor: Update select input of target sites based on checked files
+
 # CAST_Shiny 0.0.1.9012 (2025-08-21)
 
 * refactor: Rework how uploaded files are checked for inclusion in metadata

@@ -30,7 +30,7 @@ function(input, output, session) {
 
 		shiny::withProgress({
 			### 00, Initialize----
-			prog_detail <- "Calculation, Taxa Translator..."
+			prog_detail <- "Import New Files..."
 			message(paste0("\n", prog_detail))
 			# Number of increments
 			prog_n <- 4
@@ -79,7 +79,7 @@ function(input, output, session) {
 							 exdir = file.path(dn_data, dn_import),
 							 junkpaths = TRUE)
 			
-			### 04, Unzip ----
+			### 04, Catalog ----
 			prog_detail <- "Catalog Files"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
@@ -369,43 +369,114 @@ function(input, output, session) {
 	zip_contents_checked <- reactiveVal(NULL)
 	
 	observeEvent(input$fn_input_setup_checked_uload, {
+		shiny::withProgress({
+			
+			### 00, Initialize----
+			prog_detail <- "Import Checked Files..."
+			message(paste0("\n", prog_detail))
+			# Number of increments
+			prog_n <- 5
+			prog_sleep <- 0.25
 
-		# Ensure a file is uploaded
-		# req(input$file_upload)  
-		
-		
-		# shinyBS::bsTooltip("fn_input_check_uload", 
-		# 						 "Maximum 300 MB", 
-		# 						 "right"),
-		
-		inFile <- input$fn_input_setup_checked_uload
-		
-		if (is.null(inFile)) {
-			return(NULL)
-		}
-		
-		# Define file
-		fn_inFile <- inFile$datapath
-		
-		# Clean Directory
-		clean_dir(file.path(dn_data, dn_checked))
-		
-		# Unzip (remove any zip file directories)
-		zip::unzip(fn_inFile,
-						 overwrite = TRUE,
-						 exdir = file.path(dn_data, dn_checked),
-						 junkpaths = TRUE)
-		
-		# List Files
-		fn_checked <- sort(list.files(file.path(dn_data, dn_checked),
-												recursive = TRUE,
-												full.names = FALSE))
-		# add blank so 1st file isn't auto-selected
-		checked_filenames <- c("", fn_checked)
-		
-		# return list of files
-		zip_contents_checked <- checked_filenames
-		
+			### 01, Import ----
+			prog_detail <- "Import Data, Checked"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			# Ensure a file is uploaded
+			# req(input$file_upload)  
+			
+			inFile <- input$fn_input_setup_checked_uload
+			
+			if (is.null(inFile)) {
+				return(NULL)
+			}
+			
+			# Define file
+			fn_inFile <- inFile$datapath
+			
+			### 02, Clean Directory ----
+			prog_detail <- "Remove Old Files"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			# Clean Directory
+			clean_dir(file.path(dn_data, dn_checked))
+			
+			### 03, Unzip ----
+			prog_detail <- "Unzip Files"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			# Unzip (remove any zip file directories)
+			zip::unzip(fn_inFile,
+							 overwrite = TRUE,
+							 exdir = file.path(dn_data, dn_checked),
+							 junkpaths = TRUE)
+			
+			### 04, Catalog ----
+			prog_detail <- "Catalog Files"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			# List Files
+			fn_checked <- sort(list.files(file.path(dn_data, dn_checked),
+													recursive = TRUE,
+													full.names = FALSE))
+			# add blank so 1st file isn't auto-selected
+			checked_filenames <- c("", fn_checked)
+			
+			# updateSelectInput(session,
+			# 						"si_fn_input_check_sites",
+			# 						choices = import_filenames,
+			# 						selected = NULL)
+			
+			
+			# return list of files
+			zip_contents_checked <- checked_filenames
+			
+			### 04, Update SelectInputs ----
+			prog_detail <- "Update SelectInputs"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			# User, CASTool MetaData
+			df_user_metadata <- readxl::read_excel(
+				file.path(dn_data, 
+							 dn_checked, 
+							 fn_default_check_input_cast_metadata))
+			# "_CASTool_Metadata.xlsx"
+			
+			fn_targets <- df_user_metadata |>
+				# filter for filename
+				dplyr::filter(Variable == "fn.targets") |>
+				dplyr::pull(Value)
+			
+			# Targeted Sites File
+			df_targets <- read.csv(
+				file.path(dn_data, dn_checked, fn_targets))
+			
+			target_sites <- df_targets |>
+				dplyr::pull(TargetSiteID) |>
+				sort()
+			
+			# SelectInput - target sites
+			updateSelectInput(session,
+									"si_checked_sites_targ",
+									choices = target_sites,
+									selected = NULL)
+			
+		})## withProgress
 	})## import, checked files
 	
 	# SET UP ----

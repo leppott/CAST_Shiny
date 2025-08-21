@@ -19,11 +19,10 @@ function() {
 					fluidRow(
 						# width = 12
 						column(4,
-								 selectInput("report_format",
+								 selectInput("si_checked_sites_targ",
 								 				"Select target site",
-								 				choices = c("A", 
-								 								"B"),
-								 				selected = ""),
+								 				choices = NULL,
+								 				multiple = FALSE),
 								 radioButtons("rad_setup_explore",
 								 				 "Explore watershed stressor data",
 								 				 choices = c("Yes", "No"),

@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-08-21 13:52:05.750456
+    #> Last Update: 2025-08-21 14:53:50.98229
+
+# CAST_Shiny 0.0.1.9013 (2025-08-21)
+
+- refactor: Update select input of target sites based on checked files
 
 # CAST_Shiny 0.0.1.9012 (2025-08-21)
 
