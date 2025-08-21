@@ -4,7 +4,12 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-08-19 15:17:10.077055
+    #> Last Update: 2025-08-21 13:52:05.750456
+
+# CAST_Shiny 0.0.1.9012 (2025-08-21)
+
+- refactor: Rework how uploaded files are checked for inclusion in
+  metadata
 
 # CAST_Shiny 0.0.1.9011 (2025-08-19)
 
