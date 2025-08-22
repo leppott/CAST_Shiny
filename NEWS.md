@@ -4,7 +4,12 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-08-22 11:17:37.202785
+    #> Last Update: 2025-08-22 13:20:50.576191
+
+# CAST_Shiny 0.0.1.9015 (2025-08-22)
+
+- refactor: Change from zip::zip to utils::zip
+  - zip::zip not working on ShinyApps.io
 
 # CAST_Shiny 0.0.1.9014 (2025-08-22)
 

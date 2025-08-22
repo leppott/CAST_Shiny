@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "0.0.1.9014"
+pkg_version <- "0.0.1.9015"
 
 # Packages ----
 library(shiny)
@@ -14,7 +14,7 @@ library(shinyBS) # nice buttons
 library(shinydashboard)
 library(knitr)
 library(DT)      # nice tables
-library(zip)	  # zip files
+# library(zip)	  # use `utils` as `zip` pkg doesn't work on ShinyApps.io
 library(bsplus)  # tooltips
 
 

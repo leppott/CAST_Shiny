@@ -73,10 +73,15 @@ function(input, output, session) {
 			incProgress(1/prog_n, detail = prog_detail)
 			Sys.sleep(prog_sleep)
 			
+			# Testing
+			# print(file.exists(fn_inFile))
+			# print(getwd())
+			# print(dir.exists(file.path(dn_data, dn_import)))
+			
 			# Unzip (remove any zip file directories)
-			zip::unzip(fn_inFile,
+			utils::unzip(fn_inFile,
 							 overwrite = TRUE,
-							 exdir = file.path(dn_data, dn_import),
+							 exdir = normalizePath(file.path(dn_data, dn_import)),
 							 junkpaths = TRUE)
 			
 			### 04, Catalog ----
@@ -413,9 +418,9 @@ function(input, output, session) {
 			# Increment the progress bar, and update the detail text.
 			incProgress(1/prog_n, detail = prog_detail)
 			Sys.sleep(prog_sleep)
-			
+		
 			# Unzip (remove any zip file directories)
-			zip::unzip(fn_inFile,
+			utils::unzip(fn_inFile,
 							 overwrite = TRUE,
 							 exdir = file.path(dn_data, dn_checked),
 							 junkpaths = TRUE)
@@ -503,7 +508,7 @@ function(input, output, session) {
 		clean_dir(file.path(dn_data, dn_clusters))
 		
 		# # Unzip (remove any zip file directories)
-		# zip::unzip(fn_inFile,
+		# utils::unzip(fn_inFile,
 		# 				 overwrite = TRUE,
 		# 				 exdir = file.path(dn_data, dn_clusters),
 		# 				 junkpaths = TRUE)
@@ -645,7 +650,7 @@ function(input, output, session) {
 			Sys.sleep(prog_sleep)
 			
 			# zip
-			zip::unzip(temp_ws_stress_zip,
+			untils::unzip(temp_ws_stress_zip,
 							 exdir = file.path(dn_data, dn_ws_stress),
 							 junkpaths = TRUE,
 							 overwrite = TRUE)
