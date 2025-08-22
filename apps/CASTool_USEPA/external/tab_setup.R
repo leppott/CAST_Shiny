@@ -10,7 +10,8 @@ function() {
 								 accept = c(
 								 	'zip',
 								 	'.zip')
-					), ##fileInput
+					) |>
+						bs_embed_tooltip(title = "Maximum 300 MB"), ##fileInput
 					# shinyBS::bsTooltip(id = "fn_input_setup_checked_uload",
 					# 						 title = paste0("Add all files to a single zip file"),
 					# 						 placement = "right"),

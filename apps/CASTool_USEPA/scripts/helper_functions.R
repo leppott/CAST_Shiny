@@ -135,4 +135,16 @@ get_github_files <- function(owner, repo, path) {
 	}, error = function(e) {
 		return(NULL)
 	})
-}
+}## FUNCTION ~ get_github_files
+
+create_dir <- function(dir_path) {
+	# ShinyApps.io does not upload empty directories
+	# Ensure directories exist
+	
+	if (!dir.exists(dir_path)) {
+		dir.create(dir_path, recursive = TRUE)
+		message("Directory created: ", dir_path)
+	} else {
+		message("Directory already exists: ", dir_path)
+	}## IF ~ exists
+}## FUNCTION ~ create_dir

@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-08-21 14:53:50.98229
+    #> Last Update: 2025-08-22 11:17:37.202785
+
+# CAST_Shiny 0.0.1.9014 (2025-08-22)
+
+- refactor: Ensure data and result folders exist on start up
 
 # CAST_Shiny 0.0.1.9013 (2025-08-21)
 
