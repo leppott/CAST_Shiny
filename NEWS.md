@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-08-22 13:20:50.576191
+    #> Last Update: 2025-08-22 13:35:43.625498
+
+# CAST_Shiny 0.0.1.9016 (2025-08-22)
+
+- fix: Correct typo in zip command for wshed stressors GitHub download
 
 # CAST_Shiny 0.0.1.9015 (2025-08-22)
 

@@ -650,7 +650,7 @@ function(input, output, session) {
 			Sys.sleep(prog_sleep)
 			
 			# zip
-			untils::unzip(temp_ws_stress_zip,
+			utils::unzip(temp_ws_stress_zip,
 							 exdir = file.path(dn_data, dn_ws_stress),
 							 junkpaths = TRUE,
 							 overwrite = TRUE)

@@ -5,9 +5,9 @@ function() {
 				mainPanel(
 					selectInput("report_format",
 									"Report delivery format",
-									choices = c("PDF", 
-													"HTML"),
-									selected = "PDF"),
+									choices = c("HTML", 
+													"PDF"),
+									selected = "HTML"),
 					br(),
 					bsButton("but_report_run",
 								"Generate report"),
