@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "0.0.1.9016"
+pkg_version <- "0.0.1.9017"
 
 # Packages ----
 library(shiny)
@@ -14,9 +14,10 @@ library(shinyBS) # nice buttons
 library(shinydashboard)
 library(knitr)
 library(DT)      # nice tables
-# library(zip)	  # use `utils` as `zip` pkg doesn't work on ShinyApps.io
 library(bsplus)  # tooltips
+library(CASToolClusterPckg) # CASTool cluster data
 
+# library(zip)	  # use `utils` as `zip` pkg doesn't work on ShinyApps.io
 
 # from renv::dependencies()
 # library(httr)
