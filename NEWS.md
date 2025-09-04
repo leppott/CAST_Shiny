@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-08-25 13:33:49.369327
+    #> Last Update: 2025-09-04 12:38:27.014234
+
+# CAST_Shiny 0.0.2.9001 (2025-09-04)
+
+- refactor: Move Shiny apps from `CASTfxn` repo to this repo
 
 # CAST_Shiny 0.0.1.9017 (2025-08-25)
 

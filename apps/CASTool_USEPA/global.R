@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "0.0.1.9017"
+pkg_version <- "0.0.2.9001"
 
 # Packages ----
 library(shiny)
@@ -15,7 +15,10 @@ library(shinydashboard)
 library(knitr)
 library(DT)      # nice tables
 library(bsplus)  # tooltips
-library(CASToolClusterPckg) # CASTool cluster data
+# CASTool pkgs
+# library(CASTfxn)
+library(CASToolClusterPckg) 
+library(CASToolWSStressorPckg)
 
 # library(zip)	  # use `utils` as `zip` pkg doesn't work on ShinyApps.io
 
