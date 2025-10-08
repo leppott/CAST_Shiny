@@ -48,8 +48,14 @@ function() {
 								 br(),
 								 p("map")
 								 )
-						)## fluidRow
-					
+						),## fluidRow
+					br(),
+					h2("testing"),
+					p("state of target site"),
+					p(textOutput("txt_target_site_state")),
+					br(),
+					bsButton("but_setup_cluster_laura",
+								"Get Clusters (Laura)")
 					
 							)## mainPanel
 				)## tabPanel

@@ -16,7 +16,8 @@ function() {
 						bs_embed_tooltip(title = "Maximum 300 MB"), ##fileInput
 					
 					# Define Scenario ----
-					h2("Define Contents of Uploaded Files"),
+					h2("Define Contents of Uploaded Files "),
+					p("**REMOVE**? metadata file has the files wanted/needed"),
 					fluidRow(
 						# width = 12
 						column(3,
@@ -120,16 +121,19 @@ function() {
 					# ), ## fluidRow
 					
 					h2("Check Files"),
+					p("**Need function**"),
 					bsButton("but_check_check",
 								"Check input files"),
 		
 					h3("Input File Check"),
 					p("table of inputs and some checking"),
+					p("**happends after 'click' check inputs above"),
 					
 					h3("Input Files Matchups"),
 					p("table of matches"),
 					bsButton("but_check_mismatch",
 								"Download mismatches"),
+					p("** move mismatches to Identify Files section"),
 					bsButton("but_check_dload",
 								"Download checked files"),
 					bsTooltip(id = "but_check_dload",

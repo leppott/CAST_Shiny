@@ -16,7 +16,7 @@ library(knitr)
 library(DT)      # nice tables
 library(bsplus)  # tooltips
 # CASTool pkgs
-# library(CASTfxn)
+library(CASTfxn)
 library(CASToolClusterPckg) 
 library(CASToolWSStressorPckg)
 
@@ -35,6 +35,17 @@ library(CASToolWSStressorPckg)
 # library(shinyalert)  # alerts
 
 # Source ----
+## Skeleton Code
+boo_Shiny <- TRUE
+# boo.debug <- TRUE
+# debug.person <- "Erik"
+path_skelcode <- file.path(system.file(package = "CASTfxn"),
+									"shiny-examples", 
+									"CASTool",
+									"CASTool.r")
+
+
+
 
 ## Helper Functions ----
 source(file.path("scripts", "helper_functions.R"))
@@ -60,6 +71,7 @@ options(shiny.maxRequestSize = 300 * 1024^2)
 #   }"
 
 # Functions ----
+not_all_na <- function(x) {!all(is.na(x))}
 
 # Tabs ----
 tab_code_about       <- source("external/tab_about.R", local = TRUE)$value

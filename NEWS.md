@@ -4,7 +4,17 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-09-04 12:38:27.014234
+    #> Last Update: 2025-10-08 11:34:50.835732
+
+# CAST_Shiny 0.0.2.9003 (2025-10-08)
+
+- refactor: Add placeholder for running skeleton code
+- refactor: Disable and enable buttons
+  - Report
+
+# CAST_Shiny 0.0.2.9002 (2025-09-24)
+
+- refactor: Change names of folder in app to match skeleton code
 
 # CAST_Shiny 0.0.2.9001 (2025-09-04)
 

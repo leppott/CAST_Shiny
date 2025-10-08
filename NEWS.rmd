@@ -20,6 +20,16 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 0.0.2.9003 (2025-10-08)
+
+* refactor: Add placeholder for running skeleton code
+* refactor: Disable and enable buttons
+    + Report
+
+# CAST_Shiny 0.0.2.9002 (2025-09-24)
+
+* refactor: Change names of folder in app to match skeleton code
+
 # CAST_Shiny 0.0.2.9001 (2025-09-04)
 
 * refactor: Move Shiny apps from `CASTfxn` repo to this repo

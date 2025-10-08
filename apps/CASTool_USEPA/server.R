@@ -380,10 +380,10 @@ function(input, output, session) {
 			prog_detail <- "Import Checked Files..."
 			message(paste0("\n", prog_detail))
 			# Number of increments
-			prog_n <- 5
+			prog_n <- 6
 			prog_sleep <- 0.25
 
-			### 01, Import ----
+			## 01, Import ----
 			prog_detail <- "Import Data, Checked"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
@@ -402,7 +402,7 @@ function(input, output, session) {
 			# Define file
 			fn_inFile <- inFile$datapath
 			
-			### 02, Clean Directory ----
+			## 02, Clean Directory ----
 			prog_detail <- "Remove Old Files"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
@@ -412,7 +412,7 @@ function(input, output, session) {
 			# Clean Directory
 			clean_dir(file.path(dn_data, dn_checked))
 			
-			### 03, Unzip ----
+			## 03, Unzip ----
 			prog_detail <- "Unzip Files"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
@@ -425,7 +425,7 @@ function(input, output, session) {
 							 exdir = file.path(dn_data, dn_checked),
 							 junkpaths = TRUE)
 			
-			### 04, Catalog ----
+			## 04, Catalog ----
 			prog_detail <- "Catalog Files"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
@@ -448,7 +448,7 @@ function(input, output, session) {
 			# return list of files
 			zip_contents_checked <- checked_filenames
 			
-			### 04, Update SelectInputs ----
+			## 05, Update UI ----
 			prog_detail <- "Update SelectInputs"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
@@ -480,6 +480,9 @@ function(input, output, session) {
 									"si_checked_sites_targ",
 									choices = target_sites,
 									selected = NULL)
+			
+			# Enable Buttons
+			shinyjs::enable("but_report_run")
 			
 		})## withProgress
 	})## import, checked files
@@ -570,14 +573,80 @@ function(input, output, session) {
 		}## IF
 	})## ui_setup
 	
+	## State, Selected Site ----
+	output$txt_target_site_state <- renderText({
+
+		str_site <- input$si_checked_sites_targ
+		
+		if (str_site == "") {
+			return("..No file uploaded or site selected...")
+		} else {
+			
+			# example
+			# Sample data
+			my_points <- data.frame(
+				id = 1,
+				longitude = c(-117.13055),
+				latitude = c(47.88913)
+			)
+			
+			# Real 
+			## Read Metadata to get sites file
+			# Read Sites File
+			# Filter for selected site
+			# Lat and long
+			
+			# Get US state boundaries
+			US_states <- sf::st_as_sf(maps::map("state",
+															plot = FALSE, 
+															fill = TRUE))
+			
+			# Create spatial points
+			my_points_sf <- sf::st_as_sf(my_points, 
+												  coords = c("longitude", "latitude"), 
+												  crs = sf::st_crs(US_states))
+			
+			# Spatial join
+			sf::sf_use_s2(FALSE)
+			points_with_states <- sf::st_join(my_points_sf, 
+														 US_states, 
+														 join = sf::st_intersects)
+			
+			# Extract state names
+			print(points_with_states$ID)
+			
+			return(paste0("'", points_with_states[1, "ID"], "'"))
+		}##IF~is.null~END
+		
+		
+	})## fn_input_display_indexclass
+	
+	## Clusters, Laura ----
+	observeEvent(input$but_setup_cluster_laura, {
+		
+		
+		
+	})## oE ~ Report
+	
 	
 	# REPORT----
 	
 	## button, report ----
 	observeEvent(input$but_report_run, {
-		
-		
-		
+		# browser()
+		# launch skeleton code
+		browser()
+		### Global Variables ----
+		# add inside sourced file
+		## Skeleton Code ----
+		# code (wrap with progress pop up)
+		shiny::withProgress({
+			source(path_skelcode, local = FALSE)
+		}, message = "Skeleton Code"
+		)## withProgress
+		# Enabled buttons disabled at startup
+		shinyjs::enable("rad_report_tabs")
+		shinyjs::enable("but_report_dload")
 	})## oE ~ Report
 	
 	## unhide report tabs ----
