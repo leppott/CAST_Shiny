@@ -3,9 +3,28 @@
 # Erik.Leppo@tetratech.com
 # 2023-11-06
 # 2025-08-06, rewrite clean_dir() to be generic
+# 2025-11-13, update clean_dir with options and roxygen styling
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-clean_dir <- function(dir_path, ...) {
+#' @title Clean Directory
+#' 
+#' @description Remove files and directories from specified path.
+#' 
+#' @details Function is recursive.  
+#' Has parameter to include directories.
+#' Outputs to console number of objects (files and directories) before and after
+#' 'cleaning'.
+#' 
+#' @param dir_path Path to root directory to remove objects
+#' @param boo_dirs Include directories, include.dirs in list.files
+#' Default is FALSE
+#' 
+#' @return Nothing is returned
+#'
+#' @export
+clean_dir <- function(dir_path, 
+							 boo_dir = FALSE, 
+							 ...) {
 	
 	# Check if the directory exists
 	if (!dir.exists(dir_path)) {
@@ -18,21 +37,33 @@ clean_dir <- function(dir_path, ...) {
 	# Files in dir
 	fn_dir <- list.files(dir_path
 								, full.names = TRUE
-								, include.dirs = TRUE
+								, include.dirs = boo_dir
 								, recursive = TRUE)
-	message(paste0("Files and folders (n) in directory; before removal = "
-						, length(fn_dir)))
 	
-	# file.remove(fn_dir) # ok if no files and only files
+	if (boo_dir) {
+		message(paste0("Objects (files and folders) (n) in directory; before removal = "
+							, length(fn_dir)))	
+	} else {
+		message(paste0("Objects (files only) (n) in directory; before removal = "
+							, length(fn_dir)))
+	}## IF ~ boo_dir
+	
+	
+	# file.remove(fn_dir) # ok if no dir and only files
 	unlink(fn_dir, recursive = TRUE) # includes directories
 	
 	# QC, repeat
 	fn_dir2 <- list.files(dir_path
 								 , full.names = TRUE
-								 , include.dirs = TRUE
+								 , include.dirs = boo_dir
 								 , recursive = TRUE)
-	message(paste0("Files and folders (n) in directory; after removal [should be 0] = "
-						, length(fn_dir2)))
+	if (boo_dir) {
+		message(paste0("Objects (files and folders) (n) in directory; after removal [should be 0] = "
+							, length(fn_dir2)))
+	} else {
+		message(paste0("Objects (files only) (n) in directory; after removal [should be 0] = "
+							, length(fn_dir2)))
+	}## IF ~ boo_dir
 	
 }## clean_dir
 

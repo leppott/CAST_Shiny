@@ -45,8 +45,6 @@ path_skelcode <- file.path(system.file(package = "CASTfxn"),
 									"CASTool.r")
 
 
-
-
 ## Helper Functions ----
 source(file.path("scripts", "helper_functions.R"))
 
@@ -88,8 +86,8 @@ tab_code_gaps        <- source("external/tab_gaps.R", local = TRUE)$value
 # Global ----
 ## Directories ----
 ### root
-dn_data      <- "data"
-dn_results   <- "results"
+dn_data      <- "Data"
+dn_results   <- "Results"
 #### data
 dn_checked   <- "checked"
 dn_clusters  <- "clusters"

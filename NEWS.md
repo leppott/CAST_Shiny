@@ -4,7 +4,21 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-10-08 11:34:50.835732
+    #> Last Update: 2025-11-13 16:11:11.516644
+
+# CAST_Shiny 0.0.2.9005 (2025-11-13)
+
+- refactor: Update clean_dir helper function
+  - Option for include directories
+- style: Add roxygen styling to clean_dir function
+
+# CAST_Shiny 0.0.2.9004 (2025-10-10)
+
+- refactor: Add check files to Shiny
+- refactor: Update server code for check files to pull targets from
+  metadata
+- refactor: Add shinyalerts package for pop up notifications
+- docs: Update DESCRIPTION Imports
 
 # CAST_Shiny 0.0.2.9003 (2025-10-08)
 

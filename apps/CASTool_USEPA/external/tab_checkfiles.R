@@ -3,7 +3,7 @@
 function() {
 	tabPanel("Check File Inputs",
 				mainPanel(
-					
+					useShinyjs(),
 					# Load Files ----
 					h2("Load Files"),
 					fileInput("fn_input_check_uload", 
@@ -13,11 +13,33 @@ function() {
 								 	'zip',
 								 	'.zip')
 								) |>
-						bs_embed_tooltip(title = "Maximum 300 MB"), ##fileInput
+						bs_embed_tooltip(title = "Maximum 300 MB",
+											  placement = "right"), ##fileInput
 					
+					# shinyBS::bsTooltip(id = "fn_input_check_uload",
+					# 						 title = paste0("Add all files to a single zip file"),
+					# 						 placement = "right"),
+					# doesn't work on fileinput
+					
+					# Define Files----
+					h2("Identify Files"),
+					p(paste0("Files for each data type are specified in the metadata file '",
+								fn_default_check_input_cast_metadata,
+								"'")),
+					# table for imported files
+					h4("Matching Files"),
+					DT::dataTableOutput("df_import_files_DT"),
+					h4("Missing Files"),
+					p("Any files listed in metadata but not present in the loaded files are displayed below."),
+					pre(textOutput("txt_import_files_missing")),
+					h4("Extra Files"),
+					p("Any files in the loaded files but not listed in the metadata are displayed below."),
+					pre(textOutput("txt_import_files_extra")),
+					  
 					# Define Scenario ----
-					h2("Define Contents of Uploaded Files "),
-					p("**REMOVE**? metadata file has the files wanted/needed"),
+					h2("Show Contents of Uploaded Files"),
+					p("**variables from metadata file**"),
+					p("**not selectable, skeleton code runs on all available data**"),
 					fluidRow(
 						# width = 12
 						column(3,
@@ -57,87 +79,34 @@ function() {
 								 ))
 					),## fluidRow
 					
-					
-		
-					
-					# shinyBS::bsTooltip(id = "fn_input_check_uload",
-					# 						 title = paste0("Add all files to a single zip file"),
-					# 						 placement = "right"),
-					# doesn't work on fileinput
-					
-					# Define Files----
-					h2("Identify Files"),
-					p(paste0("Files for each data type are specified in the metadata file '",
-								fn_default_check_input_cast_metadata,
-								"'")),
-					# table for imported files
-					h4("Matching Files"),
-					DT::dataTableOutput("df_import_files_DT"),
-					h4("Missing Files"),
-					p("Any files listed in metadata but not present in the loaded files are displayed below."),
-					pre(textOutput("txt_import_files_missing")),
-					h4("Extra Files"),
-					p("Any files in the loaded files but not listed in the metadata are displayed below."),
-					pre(textOutput("txt_import_files_extra")),
-					  
-					 # old select boxes for each file 
-					# p("Select the input file to be checked for each data type."),
-					# fluidRow(
-					# 	# width = 12
-					# 	column(4,
-					# 			 selectInput("si_fn_input_check_cast_metadata",
-					# 			 				"CAST metadata",
-					# 			 				choices = NULL,
-					# 			 				multiple = FALSE),
-					# 			 selectInput("si_fn_input_check_sites",
-					# 			 				"Sites",
-					# 			 				choices = NULL,
-					# 			 				multiple = FALSE),
-					# 			 selectInput("si_fn_input_check_mstress_d",
-					# 			 				"Measured/Modeled stressor data",
-					# 			 				choices = NULL,
-					# 			 				multiple = FALSE),
-					# 			 selectInput("si_fn_input_check_mstress_md",
-					# 			 				"Measured/Modeled stressor metadata",
-					# 			 				choices = NULL,
-					# 			 				multiple = FALSE)),
-					# 	column(4,
-					# 			 selectInput("si_fn_input_check_bmi_met_d",
-					# 			 				"Macroinvertebrate/Algae/Fish metrics data",
-					# 			 				choices = NULL,
-					# 			 				multiple = FALSE),
-					# 			 selectInput("si_fn_input_check_bmi_met_md",
-					# 			 				"Macroinvertebrate/Algae/Fish metrics metadata",
-					# 			 				choices = NULL,
-					# 			 				multiple = FALSE),
-					# 			 selectInput("si_fn_input_check_bmi_cnt",
-					# 			 				"Macroinvertebrate/Algae/Fish count data",
-					# 			 				choices = NULL,
-					# 			 				multiple = FALSE),
-					# 			 selectInput("si_fn_input_check_bmi_tax",
-					# 			 				"Macroinvertebrate/Algae/Fish taxa list",
-					# 			 				choices = NULL,
-					# 			 				multiple = FALSE))
-					# ), ## fluidRow
-					
 					h2("Check Files"),
-					p("**Need function**"),
-					bsButton("but_check_check",
-								"Check input files"),
+					shinyjs::disabled(bsButton("but_check_check",
+														"Check input files")),
+					bsTooltip(id = "but_check_check",
+								 title = paste0("Enabled after files uploaded"),
+								 placement = "right"),
 		
 					h3("Input File Check"),
-					p("table of inputs and some checking"),
-					p("**happends after 'click' check inputs above"),
+					#
+					h4("Summary of file inputs"),
+					DT::dataTableOutput("df_check_table1_DT"),
+					#
+					h4("Relational integrity"),
+					DT::dataTableOutput("df_check_table2_DT"),
 					
 					h3("Input Files Matchups"),
-					p("table of matches"),
-					bsButton("but_check_mismatch",
-								"Download mismatches"),
-					p("** move mismatches to Identify Files section"),
-					bsButton("but_check_dload",
-								"Download checked files"),
+					p("Download file evaluation tables"),
+					shinyjs::disabled(bsButton("but_check_mismatch",
+														"Download file check tables")),
+					bsTooltip(id = "but_check_mismatch",
+								 title = paste0("Only enabled after files checked."),
+								 placement = "right"),
+					
+					h3("Checked Data"),
+					shinyjs::disabled(bsButton("but_check_dload",
+														"Download checked files")),
 					bsTooltip(id = "but_check_dload",
-								 title = paste0("Only visible after files pass check"),
+								 title = paste0("Only enabled after files checked"),
 								 placement = "right")
 
 							)## mainPanel
