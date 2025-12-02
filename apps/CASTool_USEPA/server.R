@@ -12,7 +12,7 @@ function(input, output, session) {
 
 	# Sections headers by tab
 	
-	# CHECK ----
+# CHECK ----
 	
 	# file_watch <- reactive({
 	# 	# trigger for df_import()
@@ -386,85 +386,141 @@ function(input, output, session) {
 	zip_contents_checked <- reactiveVal(NULL)
 	
 	observeEvent(input$but_check_check, {
+		shiny::withProgress({
+			### 00, Intialize ----
+			prog_detail <- "Check Files..."
+			message(paste0("\n", prog_detail))
+			# Number of increments
+			prog_n <- 5
+			prog_sleep <- 0.25
+			
+			# define checkInputs parameters
+			in.dir <- file.path(getwd(), dn_data, dn_import)
+			out.dir <- file.path(getwd(), dn_data, dn_checked)
+			fn.inputcheck <- system.file("extdata", 
+												  "CASTool_InputCheck.xlsx",
+												  package = "CASTfxn")
+			# get from metadata file
+			# df_targets <- data.frame(TargetSiteID = input$si_checked_sites_targ)
+			path_meta <- file.path(in.dir, fn_default_check_input_cast_metadata)
+			df_meta <- readxl::read_excel(path_meta,
+													sheet = "Sheet1",
+													skip = 0)
+			fn_targets <- df_meta |>
+				dplyr::filter(Variable == "fn.targets") |>
+				dplyr::pull(Value)
+			df_targets <- read.csv(file.path(in.dir, fn_targets))
+			# region
+			region <- df_meta |>
+				dplyr::filter(Variable == "region") |>
+				dplyr::pull(Value)
+			
+			### 01, Check, Tables ----
+			prog_detail <- "Create Tables One and Two"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			list.Tables <- checkInputs(dir.uploaded = in.dir,
+												dir.out = out.dir,
+												fn.inputcheck = fn.inputcheck,
+												df_targets = df_targets)
+			
+			###02, Save, Tables----
+			prog_detail <- "Create Tables One and Two"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			TableOne    <- list.Tables$TableOne
+			write.table(TableOne, 
+							file.path(out.dir, 
+										 region, 
+										 dn_results,
+										 dn_checked_sk, 
+										 "TableOne.tab"),
+							sep = "\t", 
+							col.names = TRUE, 
+							row.names = FALSE, 
+							append = FALSE)
+			
+			TableTwo    <- list.Tables$TableTwo
+			write.table(TableTwo, 
+							file.path(out.dir, 
+										 region, 
+										 dn_results,
+										 dn_checked_sk,
+										 "TableTwo.tab"),
+							sep = "\t", 
+							col.names = TRUE, 
+							row.names = FALSE, 
+							append = FALSE)
+			
+			rm(list.Tables, TableOne, TableTwo)
 		
-		### 00, Intialize ----
-		# define checkInputs parameters
-		in.dir <- file.path(getwd(), dn_data, dn_import)
-		out.dir <- file.path(getwd(), dn_data, dn_checked)
-		fn.inputcheck <- system.file("extdata", 
-											  "CASTool_InputCheck.xlsx",
-											  package = "CASTfxn")
-		# get from metadata file
-		# df_targets <- data.frame(TargetSiteID = input$si_checked_sites_targ)
-		path_meta <- file.path(in.dir, fn_default_check_input_cast_metadata)
-		df_meta <- readxl::read_excel(path_meta,
-												sheet = "Sheet1",
-												skip = 0)
-		fn_targets <- df_meta |>
-			dplyr::filter(Variable == "fn.targets") |>
-			dplyr::pull(Value)
-		df_targets <- read.csv(file.path(in.dir, fn_targets))
-		# region
-		region <- df_meta |>
-			dplyr::filter(Variable == "region") |>
-			dplyr::pull(Value)
-		
-		### 01, Run Check ----
-		# skeleton code
-		list.Tables <- checkInputs(dir.uploaded = in.dir,
-											dir.out = out.dir,
-											fn.inputcheck = fn.inputcheck,
-											df_targets = df_targets)
-		TableOne    <- list.Tables$TableOne
-		write.table(TableOne, 
-						file.path(out.dir, region, dn_results, "TableOne.tab"),
-						sep = "\t", 
-						col.names = TRUE, 
-						row.names = FALSE, 
-						append = FALSE)
-		TableTwo    <- list.Tables$TableTwo
-		write.table(TableTwo, 
-						file.path(out.dir, region, dn_results, "TableTwo.tab"),
-						sep = "\t", 
-						col.names = TRUE, 
-						row.names = FALSE, 
-						append = FALSE)
-		rm(list.Tables, TableOne, TableTwo)
-		
-		### 02, Create Zip ----
-
-		### Tables
-		path_4zip <- file.path(out.dir, region, dn_results)
-		fn_4zip <- list.files(path = path_4zip,
-									 full.names = TRUE,
-									 pattern = "\\.tab$")
-		zip::zip(file.path(getwd(), dn_data, "check_tables.zip"), 
-					files = fn_4zip,
-					mode = "cherry-pick")
-		### RDS
-		path_4zip <- file.path(out.dir, region, dn_results, "_CheckedInputs")
-		fn_4zip <- list.files(path = path_4zip,
-									 full.names = TRUE,
-									 pattern = "\\.rds$")
-		zip::zip(file.path(getwd(), dn_data, "check_rds.zip"), 
-					fn_4zip,
-					mode = "cherry-pick")
-		
-		### 03, Info Pop Up ----
-		msg <- paste("Checking of files is complete.",
-						 "Download QC tables 1 and 2 (if needed).",
-						 "Then download checked files (RDS) for use in 'Set Up'.",
-						 sep = "\n")
-		shinyalert::shinyalert(title = "Check Files",
-									  text = msg,
-									  type = "info",
-									  closeOnEsc = TRUE,
-									  closeOnClickOutside = TRUE)
-		
-		### 04, Update UI----
-		# enable download
-		shinyjs::enable("but_check_mismatch")
-		shinyjs::enable("but_check_dload")
+			### 03, Create Zip ----
+			prog_detail <- "Create ZIP"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			### Tables
+			path_4zip <- file.path(out.dir, 
+										  region, 
+										  dn_results,
+										  dn_checked_sk)
+			fn_4zip <- list.files(path = path_4zip,
+										 full.names = TRUE,
+										 pattern = "\\.tab$")
+			zip::zip(file.path(getwd(), dn_data, "check_qctables.zip"), 
+						files = fn_4zip,
+						mode = "cherry-pick")
+			### RDS
+			path_4zip <- file.path(out.dir, 
+										  region, 
+										  dn_results, 
+										  dn_checked_sk)
+			fn_4zip <- list.files(path = path_4zip,
+										 full.names = TRUE)
+										 # pattern = "\\.rds$") # use all files
+			zip::zip(file.path(getwd(), dn_data, "check_rds.zip"), 
+						fn_4zip,
+						mode = "cherry-pick")
+			
+			### 04, Update UI----
+			prog_detail <- "Update UI"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			# enable download
+			shinyjs::enable("but_check_dload_qctables")
+			shinyjs::enable("but_check_dload_rds")
+			
+			### 05, Info Pop Up ----
+			prog_detail <- "Inform User"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			msg <- paste("Checking of files is complete.",
+							 "Download QC tables 1 and 2 (if needed).",
+							 "Then download checked files (RDS) for use in 'Set Up'.",
+							 sep = "\n")
+			shinyalert::shinyalert(title = "Check Files",
+										  text = msg,
+										  type = "info",
+										  closeOnEsc = TRUE,
+										  closeOnClickOutside = TRUE)
+	
+			
+		},
+		message = "Check Files")## withProgress
 		
 	})## oE ~ but_check_check
 	
@@ -596,21 +652,21 @@ function(input, output, session) {
 	
 	
 	## b_dload_check_Tables ----
-	output$but_check_mismatch <- downloadHandler(
+	output$but_check_dload_qctables <- shiny::downloadHandler(
 		filename = function() {
-			paste0("CASTool_check_tables_",
+			paste0("CASTool_check_qctables_",
 					 format(Sys.time(), "%Y%m%d_%H%M%S"),
 					 ".zip")
 		} ,
 		content = function(fname) {
-			file.copy(file.path(dn_data, "check_qc.zip"), fname)
+			file.copy(file.path(dn_data, "check_qctables.zip"), fname)
 		}##content~END
 		#, contentType = "application/zip"
 	)##download ~ check files
 	
 	
 	## b_dload_check_RDS ----
-	output$but_check_dload <- downloadHandler(
+	output$but_check_dload_rds <- shiny::downloadHandler(
 		filename = function() {
 			paste0("CASTool_check_files_",
 					 format(Sys.time(), "%Y%m%d_%H%M%S"),
@@ -624,7 +680,7 @@ function(input, output, session) {
 	
 	
 	
-	# SET UP ----
+# SET UP ----
 	
 	## Import, Files, Checked ----
 	observeEvent(input$fn_input_setup_checked_uload, {
@@ -673,11 +729,14 @@ function(input, output, session) {
 			incProgress(1/prog_n, detail = prog_detail)
 			Sys.sleep(prog_sleep)
 			
+			fn_metadata <- "CASTmetadata.rds"
+			
 			# Unzip (remove any zip file directories)
+			## only the one file so is faster
 			utils::unzip(fn_inFile,
 							 overwrite = TRUE,
-							 exdir = file.path(tempdir(), dn_checked),
-							 # exdir = file.path(dn_data, dn_checked),
+							 exdir = file.path(tempdir(), dn_checked_sk),
+							 files = fn_metadata, 
 							 junkpaths = TRUE)
 			
 			## 04, Catalog ----
@@ -687,14 +746,42 @@ function(input, output, session) {
 			incProgress(1/prog_n, detail = prog_detail)
 			Sys.sleep(prog_sleep)
 			
-			#**FIX**----
-			# open metadata and filter for Region (need for final folder structure)
-			# Copy files from tempdir to final location
+			# open metadata
+			data_CASTmeta_temp <- readRDS(file.path(tempdir(),
+																 dn_checked_sk, 
+																 "CASTmetadata.rds"))
+			
+			# get region
+			data_region <- data_CASTmeta_temp |>
+				dplyr::filter(Variable == "region") |>
+				dplyr::pull(Value)
+			
+			# ensure directory exists
+			path_check_sk <- file.path(dn_results,
+												data_region,
+												dn_results,
+												dn_checked_sk)
+			if(!dir.exists(path_check_sk)) {
+				dir.create(path_check_sk, recursive = TRUE)
+			}## IF ~ !dir.exists
+			
+			# copy files from temp to app directory
+			## Copy should be faster than unzip
+			# but only extracted one file
+			# file.copy(from = file.path(tempdir(), dn_checked),
+			# 			 to = file.path(dn_data, dn_checked, data_region),
+			# 			 overwrite = TRUE)
 			
 			
+			# Unzip all files to app dir
+			# (remove any zip file directories)
+			utils::unzip(fn_inFile,
+							 overwrite = TRUE,
+							 exdir = file.path(path_check_sk),
+							 junkpaths = TRUE)
 			
 			# List Files
-			fn_checked <- sort(list.files(file.path(dn_data, dn_checked),
+			fn_checked <- sort(list.files(file.path(path_check_sk),
 													recursive = TRUE,
 													full.names = FALSE))
 			# add blank so 1st file isn't auto-selected
@@ -709,39 +796,27 @@ function(input, output, session) {
 			# return list of files
 			zip_contents_checked <- checked_filenames
 			
-			## 05, Info Pop Up ----
-			msg <- paste("Checked files uploaded.",
-							 "Select a target site before running the report.",
-							 sep = "\n")
-			shinyalert::shinyalert(title = "Set Up",
-										  text = msg,
-										  type = "info",
-										  closeOnEsc = TRUE,
-										  closeOnClickOutside = TRUE)
-			
-			## 06, Update UI ----
+			## 05, Update UI ----
 			prog_detail <- "Update SelectInputs"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
 			incProgress(1/prog_n, detail = prog_detail)
 			Sys.sleep(prog_sleep)
 			
-			
-			#**FIX**----
 			# loaded RDS files so import them
-			# Load CASTool_Metadata ####
-			data_CASTmeta <- readRDS(file.path(out.dir, "_CheckedInputs", "CASTmetadata.rds"))
+			# Load CASTool_Metadata 
+			data_CASTmeta <- readRDS(file.path(path_check_sk,
+														  "CASTmetadata.rds"))
 			data_CASTmeta <- data_CASTmeta %>%
 				tidyr::pivot_wider(names_from = Variable, values_from = Value)
-			
-
-			
+		
 			# User, CASTool MetaData
-			df_user_metadata <- readxl::read_excel(
-				file.path(dn_data, 
-							 dn_checked, 
-							 fn_default_check_input_cast_metadata))
-			# "_CASTool_Metadata.xlsx"
+			# df_user_metadata <- readxl::read_excel(
+			# 	file.path(path_check_sk, 
+			# 				 fn_default_check_input_cast_metadata))
+			# # "_CASTool_Metadata.xlsx"
+			df_user_metadata <- readRDS(file.path(path_check_sk,
+															  "CASTmetadata.rds"))
 			
 			fn_targets <- df_user_metadata |>
 				# filter for filename
@@ -749,8 +824,8 @@ function(input, output, session) {
 				dplyr::pull(Value)
 			
 			# Targeted Sites File
-			df_targets <- read.csv(
-				file.path(dn_data, dn_checked, fn_targets))
+			df_targets <- readRDS(
+				file.path(path_check_sk, "df_targets.rds"))
 			
 			target_sites <- df_targets |>
 				dplyr::pull(TargetSiteID) |>
@@ -764,6 +839,16 @@ function(input, output, session) {
 			
 			# Enable Buttons
 			shinyjs::enable("but_report_run")
+			
+			## 06, Info Pop Up ----
+			msg <- paste("Checked files uploaded.",
+							 "Select a target site before running the report.",
+							 sep = "\n")
+			shinyalert::shinyalert(title = "Set Up",
+										  text = msg,
+										  type = "info",
+										  closeOnEsc = TRUE,
+										  closeOnClickOutside = TRUE)
 			
 		})## withProgress
 	})## import, checked files
@@ -907,19 +992,63 @@ function(input, output, session) {
 	})## oE ~ Report
 	
 	
-	# REPORT----
+# REPORT----
 	
 	## button, report ----
 	observeEvent(input$but_report_run, {
-		# browser()
 		# launch skeleton code
-		browser()
+
 		### Global Variables ----
-		# add inside sourced file
+		# define for sourced Skeleton Code file
+		
+		# borrow from SetUp (04, Catalog)
+		# open metadata
+		data_CASTmeta_temp <- readRDS(file.path(tempdir(), 
+															 dn_checked_sk, 
+															 "CASTmetadata.rds"))
+		# get region
+		data_region <- data_CASTmeta_temp |>
+			dplyr::filter(Variable == "region") |>
+			dplyr::pull(Value)
+		# path
+		path_check_sk <- file.path(dn_results, 
+											data_region,
+											dn_checked_sk)
+		
+		# Set variables used in Skeleton code
+		boo_Shiny <- TRUE
+		boo.debug <- FALSE
+		debug.person <- "Shiny" # Ann, Erik, Laura
+		
+		#  
+		region <- data_region
+		#
+		in.dir   <- file.path(path_check_sk)
+		out.dir  <- file.path(dn_results)
+		boo.plot.user <- TRUE
+		
+		wd <- getwd()
+		gitpath <- NULL # Not needed for Shiny
+		dir_rmd <- system.file("rmd", 
+									  package = "CASTfxn")
+
+		
 		## Skeleton Code ----
 		# code (wrap with progress pop up)
 		shiny::withProgress({
-			source(path_skelcode, local = FALSE)
+			
+			
+		browser()
+			cat("debug here")
+			
+		# debugging
+		source("C:/Users/Erik.Leppo/Documents/GitHub/CASTfxn/inst/shiny-examples/CASTool/CASTool.r",
+				 local = TRUE)
+			
+			
+			
+			# Skeleton Code
+			# source(path_skelcode, local = FALSE)
 		}, message = "Skeleton Code"
 		)## withProgress
 		# Enabled buttons disabled at startup
@@ -950,7 +1079,7 @@ function(input, output, session) {
 		}## IF
 	})## oE ~ rad_report_tabs
 	
-	# WSHED STRESS ----
+# WSHED STRESS ----
 
 	## button, get GitHub files ----
 	observeEvent(input$but_github_wshedstress_data, {
@@ -1050,9 +1179,9 @@ function(input, output, session) {
 	## button, download ----
 	# but_dload_wshed_app_fig
 	
-	# CAND CAUSE ----
+# CAND CAUSE ----
 	
-	# WOE SUMM ----
+# WOE SUMM ----
 	
 	## woe loe summary table ----
 	df_woe_summ <- reactive({
@@ -1141,7 +1270,7 @@ function(input, output, session) {
 	
 
 	
-	# STRESS SUMM ----
+# STRESS SUMM ----
 	
 	output$img_stressors <- renderImage({
 		# return path
@@ -1152,6 +1281,6 @@ function(input, output, session) {
 		)
 	}, deleteFile = FALSE)
 	
-	# GAPS ----
+# GAPS ----
 
 }## main

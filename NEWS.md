@@ -4,7 +4,15 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-11-13 16:11:11.516644
+    #> Last Update: 2025-12-02 12:58:32.642233
+
+# CAST_Shiny 0.0.2.9006 (2025-12-02)
+
+- refactor: Updates for run report
+- refactor: Change directory structure for check files and run report
+- fix: Download buttons for check files
+- refactor: Update check files zip to include RDS and check tables
+  - Tables needed for run report
 
 # CAST_Shiny 0.0.2.9005 (2025-11-13)
 

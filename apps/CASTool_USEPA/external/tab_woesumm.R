@@ -12,6 +12,7 @@ function() {
 								 DT::dataTableOutput("tbl_woe_summ"),
 					br(),
 					br(),
+					p("New LOE summary fig, results/biocommunity _WOE folder, 20251120"),
 					br(),
 					h2("Weight of Evidence Table"),
 								 DT::dataTableOutput("tbl_woe")

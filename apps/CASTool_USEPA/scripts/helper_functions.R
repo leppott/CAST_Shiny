@@ -179,3 +179,44 @@ create_dir <- function(dir_path) {
 		message("Directory already exists: ", dir_path)
 	}## IF ~ exists
 }## FUNCTION ~ create_dir
+
+# 2025-12-02, assist from Bing Copilot
+# prompt for directory only when interactive
+#
+#' @title Get User Input
+#' 
+#' @description Define user input or prompt user
+#' 
+#' @details Define user input (e.g., a directory) in a script or in interactive 
+#' session.  Prompt user of information and include a default. 
+#' When non-interactive the default as defined in the function call will be 
+#' used.  When interactive the user will be prompted for input.  The input is 
+#' text only.  The function will #' pause for user input even if run interactive
+#' with copy and paste.
+#' 
+#' The prompt can be customized.
+#' 
+#' @param dir_default Default directory for use in non-interactive session.
+#' Default = tempdir()
+#' @param msg_prompt Custom prompt message.  
+#' Default = "Enter directory [%s]: "
+#' 
+#' @return A directory name and path
+#' 
+#' @export
+get_user_input <- function(input_default = tempdir(), 
+									msg_prompt = "Enter directory : ") {
+	if (interactive()) {
+		flush.console()
+		# ans <- readline(sprintf(msg_prompt, dir_default))
+		ans <- readline(msg_prompt)
+		ans <- trimws(ans)
+		if (!nzchar(ans)) ans <- input_default
+		ans
+	} else {
+		# Non-interactive: fall back to default or a command-line arg
+		input_default
+	}## IF ~ interactive
+}## FUNCTION ~ get_dir
+
+

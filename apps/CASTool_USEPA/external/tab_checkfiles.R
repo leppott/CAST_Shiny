@@ -95,17 +95,19 @@ function() {
 					DT::dataTableOutput("df_check_table2_DT"),
 					
 					h3("Input Files Matchups"),
-					p("Download file evaluation tables"),
-					shinyjs::disabled(bsButton("but_check_mismatch",
-														"Download file check tables")),
-					bsTooltip(id = "but_check_mismatch",
+					p("Download file evaluation qc tables"),
+					shinyjs::disabled(shiny::downloadButton(
+						"but_check_dload_qctables",
+						"Download file check tables")),
+					bsTooltip(id = "but_check_dload_qctables",
 								 title = paste0("Only enabled after files checked."),
 								 placement = "right"),
 					
 					h3("Checked Data"),
-					shinyjs::disabled(bsButton("but_check_dload",
-														"Download checked files")),
-					bsTooltip(id = "but_check_dload",
+					shinyjs::disabled(shiny::downloadButton(
+						"but_check_dload_rds",
+						"Download checked files")),
+					bsTooltip(id = "but_check_dload_rds",
 								 title = paste0("Only enabled after files checked"),
 								 placement = "right")
 

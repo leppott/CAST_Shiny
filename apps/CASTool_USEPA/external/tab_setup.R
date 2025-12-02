@@ -46,7 +46,7 @@ function() {
 								 br(),
 								 p("if choose abiotic method get some plots"),
 								 br(),
-								 p("map")
+								 p("map - removed 11/25")
 								 )
 						),## fluidRow
 					br(),

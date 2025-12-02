@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "0.0.2.9001"
+pkg_version <- "0.0.2.9006"
 
 # Packages ----
 library(shiny)
@@ -72,16 +72,25 @@ options(shiny.maxRequestSize = 300 * 1024^2)
 not_all_na <- function(x) {!all(is.na(x))}
 
 # Tabs ----
-tab_code_about       <- source("external/tab_about.R", local = TRUE)$value
-tab_code_checkfiles  <- source("external/tab_checkfiles.R", local = TRUE)$value
-tab_code_setup       <- source("external/tab_setup.R", local = TRUE)$value
-tab_code_report      <- source("external/tab_report.R", local = TRUE)$value
+tab_code_about       <- source("external/tab_about.R",
+										 local = TRUE)$value
+tab_code_checkfiles  <- source("external/tab_checkfiles.R", 
+										 local = TRUE)$value
+tab_code_setup       <- source("external/tab_setup.R", 
+										 local = TRUE)$value
+tab_code_report      <- source("external/tab_report.R", 
+										 local = TRUE)$value
 # # not always visible
-tab_code_wshedstress <- source("external/tab_wshedstress.R", local = TRUE)$value
-tab_code_candcause   <- source("external/tab_candcause.R", local = TRUE)$value
-tab_code_woesumm     <- source("external/tab_woesumm.R", local = TRUE)$value
-tab_code_stresssumm  <- source("external/tab_stresssumm.R", local = TRUE)$value
-tab_code_gaps        <- source("external/tab_gaps.R", local = TRUE)$value
+tab_code_wshedstress <- source("external/tab_wshedstress.R",
+										 local = TRUE)$value
+tab_code_candcause   <- source("external/tab_candcause.R", 
+										 local = TRUE)$value
+tab_code_woesumm     <- source("external/tab_woesumm.R",
+										 local = TRUE)$value
+tab_code_stresssumm  <- source("external/tab_stresssumm.R", 
+										 local = TRUE)$value
+tab_code_gaps        <- source("external/tab_gaps.R", 
+										 local = TRUE)$value
 
 # Global ----
 ## Directories ----
@@ -97,6 +106,12 @@ dn_ws_stress <- "ws_stress"
 #### results
 dn_bmi       <- "BMI"
 dn_woe       <- "_WoE"
+#### skeleton
+dn_checked_sk <- "_CheckedInputs"
+
+## Clean Dirs ----
+clean_dir(file.path(dn_data), boo_dir = TRUE)
+clean_dir(file.path(dn_results), boo_dir = TRUE)
 
 ## Create Dirs ----
 create_dir(file.path(dn_data))

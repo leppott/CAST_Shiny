@@ -20,6 +20,14 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 0.0.2.9006 (2025-12-02)
+
+* refactor: Updates for run report
+* refactor: Change directory structure for check files and run report
+* fix: Download buttons for check files
+* refactor: Update check files zip to include RDS and check tables
+    + Tables needed for run report
+
 # CAST_Shiny 0.0.2.9005 (2025-11-13)
 
 * refactor: Update clean_dir helper function
