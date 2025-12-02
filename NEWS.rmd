@@ -20,6 +20,10 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 0.0.2.9007 (2025-12-02)
+
+* fix: Update check files qc table displays
+
 # CAST_Shiny 0.0.2.9006 (2025-12-02)
 
 * refactor: Updates for run report

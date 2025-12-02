@@ -89,10 +89,10 @@ function() {
 					h3("Input File Check"),
 					#
 					h4("Summary of file inputs"),
-					DT::dataTableOutput("df_check_table1_DT"),
+					DT::dataTableOutput("df_check_qctable1_DT"),
 					#
 					h4("Relational integrity"),
-					DT::dataTableOutput("df_check_table2_DT"),
+					DT::dataTableOutput("df_check_qctable2_DT"),
 					
 					h3("Input Files Matchups"),
 					p("Download file evaluation qc tables"),

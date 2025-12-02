@@ -382,8 +382,12 @@ function(input, output, session) {
 	})
 	
 	## Check Files ----
-	# Reactive value to store zip file contents
+	# Reactive values / flags
+	## zip file contents
 	zip_contents_checked <- reactiveVal(NULL)
+	## boo to indicate check qctables files saved
+	check_qctable_1_save <- reactiveVal(FALSE)
+	check_qctable_2_save <- reactiveVal(FALSE)
 	
 	observeEvent(input$but_check_check, {
 		shiny::withProgress({
@@ -446,6 +450,8 @@ function(input, output, session) {
 							row.names = FALSE, 
 							append = FALSE)
 			
+			check_qctable_1_save(TRUE) # trigger for table
+			
 			TableTwo    <- list.Tables$TableTwo
 			write.table(TableTwo, 
 							file.path(out.dir, 
@@ -457,6 +463,8 @@ function(input, output, session) {
 							col.names = TRUE, 
 							row.names = FALSE, 
 							append = FALSE)
+			
+			check_qctable_2_save(TRUE) # trigger for table
 			
 			rm(list.Tables, TableOne, TableTwo)
 		
@@ -525,20 +533,18 @@ function(input, output, session) {
 	})## oE ~ but_check_check
 	
 	## Check, Files, Table1 ----
-	output$df_check_table1_DT <- DT::renderDT({
+	output$df_check_qctable1_DT <- DT::renderDT({
 
+		# trigger created when save table
+		req(check_qctable_1_save())
+ 
 		# region
 		dn_data <- "Data"
 		dn_results <- "Results"
 		in.dir <- file.path(getwd(), dn_data, "input")
 		out.dir <- file.path(getwd(), dn_data, "checked")
 		path_meta <- file.path(in.dir, fn_default_check_input_cast_metadata)
-		
-		# Blank if no files yet
-		if (!dir.exists(in.dir)) {
-			return(NULL)
-		} ## IF ~ !dir.exists(in.dir)
-		
+
 		# Blank no metadata file
 		if (!file.exists(path_meta)) {
 			return(NULL)
@@ -551,7 +557,10 @@ function(input, output, session) {
 			dplyr::filter(Variable == "region") |>
 			dplyr::pull(Value)
 
-		path_table <- file.path(out.dir, region, dn_results)
+		path_table <- file.path(out.dir, 
+										region,
+										dn_results,
+										dn_checked_sk)
 
 		inFile <- file.path(path_table, "TableOne.tab")
 
@@ -588,19 +597,16 @@ function(input, output, session) {
 	)## df_check_table1_DT
 	
 	## Check, Files, Table2 ----
-	output$df_check_table2_DT <- DT::renderDT({
-
+	output$df_check_qctable2_DT <- DT::renderDT({
+		# trigger created when save table
+		req(check_qctable_2_save())
+		
 		# region
 		dn_data <- "Data"
 		dn_results <- "Results"
 		in.dir <- file.path(getwd(), dn_data, "input")
 		out.dir <- file.path(getwd(), dn_data, "checked")
 		path_meta <- file.path(in.dir, fn_default_check_input_cast_metadata)
-		
-		# Blank if no files yet
-		if (!dir.exists(in.dir)) {
-			return(NULL)
-		} ## IF ~ !dir.exists(in.dir)
 		
 		# Blank no metadata file
 		if (!file.exists(path_meta)) {
@@ -614,7 +620,10 @@ function(input, output, session) {
 			dplyr::filter(Variable == "region") |>
 			dplyr::pull(Value)
 		
-		path_table <- file.path(out.dir, region, dn_results)
+		path_table <- file.path(out.dir, 
+										region,
+										dn_results,
+										dn_checked_sk)
 		
 		inFile <- file.path(path_table, "TableTwo.tab")
 		

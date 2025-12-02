@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-12-02 12:58:32.642233
+    #> Last Update: 2025-12-02 13:35:17.981869
+
+# CAST_Shiny 0.0.2.9007 (2025-12-02)
+
+- fix: Update check files qc table displays
 
 # CAST_Shiny 0.0.2.9006 (2025-12-02)
 
