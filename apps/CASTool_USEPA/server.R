@@ -444,7 +444,6 @@ function(input, output, session) {
 			prog_n <- 5
 			prog_sleep <- 0.25
 			
-			browser()
 			# QC, missing files
 			# trigger created when save table
 			# req(check_files_fails())
@@ -550,6 +549,42 @@ function(input, output, session) {
 			incProgress(1/prog_n, detail = prog_detail)
 			Sys.sleep(prog_sleep)
 			
+			### Find "extra" files not used in Check Files
+			# List Files
+			fn_import <- sort(list.files(file.path(dn_data, dn_import),
+												  recursive = TRUE,
+												  full.names = FALSE))
+			# User, Files
+			df_user_files <- df_meta |>
+				# filter for filename
+				dplyr::filter(Domain == "filename") |>
+				# select only some columns
+				dplyr::select(Variable,
+								  Definition,
+								  Required,
+								  Value) |>
+				# Populate if file present
+				dplyr::mutate(Present = 
+								  	dplyr::case_when(is.na(Value) ~ NA,
+								  						  Value %in% fn_import ~ TRUE,
+								  						  .default = FALSE)) 
+			
+			df_user_files_present <- df_user_files |>
+				# only TRUE
+				dplyr::filter(Present == TRUE) |> 
+				dplyr::pull(Value)
+			
+			# user files not listed in MetaData
+			fn_import_full <- normalizePath(list.files(file.path(dn_data, dn_import),
+														 recursive = TRUE,
+														 full.names = TRUE))
+			fn_user_files_extra <- fn_import[!fn_import %in% 
+															c(fn_default_check_input_cast_metadata,
+															  df_user_files_present)]
+			path_4zip_extra <- file.path(dn_data, dn_import)
+			fn_4zip_extra <- fn_import_full[basename(fn_import_full) %in% 
+													  	fn_user_files_extra]
+			
 			### Tables
 			path_4zip <- file.path(out.dir, 
 										  region, 
@@ -562,13 +597,16 @@ function(input, output, session) {
 						files = fn_4zip,
 						mode = "cherry-pick")
 			### RDS
-			path_4zip <- file.path(out.dir, 
+			path_4zip_rds <- file.path(out.dir, 
 										  region, 
 										  dn_results, 
 										  dn_checked_sk)
-			fn_4zip <- list.files(path = path_4zip,
+			fn_4zip_rds <- list.files(path = path_4zip_rds,
 										 full.names = TRUE)
 										 # pattern = "\\.rds$") # use all files
+			
+			fn_4zip <- c(fn_4zip_rds, fn_4zip_extra)
+			
 			zip::zip(file.path(getwd(), dn_data, "check_rds.zip"), 
 						fn_4zip,
 						mode = "cherry-pick")
@@ -799,6 +837,7 @@ function(input, output, session) {
 	
 	
 # SET UP ----
+	sel_targsite <- reactive(input$si_checked_sites_targ)
 	
 	## Import, Files, Checked ----
 	observeEvent(input$fn_input_setup_checked_uload, {
@@ -952,7 +991,7 @@ function(input, output, session) {
 			# SelectInput - target sites
 			updateSelectInput(session,
 									"si_checked_sites_targ",
-									choices = target_sites,
+									choices = c("", target_sites),
 									selected = NULL)
 			
 			# Enable Buttons
@@ -1115,6 +1154,23 @@ function(input, output, session) {
 	## button, report ----
 	observeEvent(input$but_report_run, {
 		# launch skeleton code
+		
+		
+		# QC, site not null or ""
+	browser()	
+		if(is.null(sel_targsite()) | sel_targsite() == "") {
+			msg <- paste("No target site selected!",
+							 "\n",
+							 "Return to 'Set Up Tool' and 'Select target site' to make selection.",
+							 sep = "\n")
+			shinyalert::shinyalert(title = "Run Report",
+										  text = msg,
+										  type = "error",
+										  closeOnEsc = TRUE,
+										  closeOnClickOutside = TRUE)
+			validate(msg)
+		}## IF ~ check_files_fails
+		
 
 		### Global Variables ----
 		# define for sourced Skeleton Code file

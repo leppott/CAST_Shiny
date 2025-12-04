@@ -4,7 +4,15 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-12-04 10:01:21.402032
+    #> Last Update: 2025-12-04 14:33:42.072345
+
+# CAST_Shiny 0.0.2.9010 (2025-12-04)
+
+- refactor: Update set up select target site to not auto select the firs
+  site
+- refactor: Add shiny alert for no site selected for run report
+- refactor: Include any extra user files in RDS check files download zip
+  file
 
 # CAST_Shiny 0.0.2.9009 (2025-12-04)
 
