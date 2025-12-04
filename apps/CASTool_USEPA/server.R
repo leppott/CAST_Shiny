@@ -24,6 +24,7 @@ function(input, output, session) {
 	
 	# Reactive value to store zip file contents
 	zip_contents_input <- reactiveVal(NULL)
+	check_files_fails <- reactiveVal(NULL)
 	
 	observeEvent(input$fn_input_check_uload, {
 	# fn_input_check <- eventReactive(file_watch(), {
@@ -234,6 +235,7 @@ function(input, output, session) {
 		df_user_files_extra <- fn_import[!fn_import %in% 
 														c(fn_default_check_input_cast_metadata,
 														  df_user_files_present)]
+
 		
 		# Show table
 		# Show text if any "missing"files
@@ -251,9 +253,16 @@ function(input, output, session) {
 								 target = "row",
 								 backgroundColor = DT::styleEqual(
 								 	c(TRUE, FALSE),
-								 	c("cyan", "magenta")
+								 	c(color_good, color_bad)
 								 	)
-								 )
+								 ) |>
+			# bold cells
+			DT::formatStyle("Present",
+								 target = "cell",
+								 fontWeight = DT::styleEqual(
+								 	c(TRUE, FALSE),
+								 	c("normal", "bold")))
+		
 		
 		# return(df_user_files)
 
@@ -320,6 +329,13 @@ function(input, output, session) {
 			dplyr::filter(Present == FALSE) |> 
 			dplyr::pull(Value) |>
 			paste(collapse = "\n")
+		
+		# QC trigger
+		if (df_user_files_missing == "") {
+			check_files_fails(FALSE)
+		} else {
+			check_files_fails(TRUE)
+		}# IF ~ df_user_files_missing
 		
 		return(df_user_files_missing)
 	})
@@ -391,12 +407,41 @@ function(input, output, session) {
 	
 	observeEvent(input$but_check_check, {
 		shiny::withProgress({
-			### 00, Intialize ----
+			### 00, Intialize, QC ----
 			prog_detail <- "Check Files..."
 			message(paste0("\n", prog_detail))
 			# Number of increments
 			prog_n <- 5
 			prog_sleep <- 0.25
+			
+			browser()
+			# QC, missing files
+			# trigger created when save table
+			# req(check_files_fails())
+			
+			if(check_files_fails()) {
+				msg <- paste("Some files set as required in metadata are missing.",
+								 "\n",
+								 "Review 'Matching Files' table for rows marked as FALSE and",
+								 " the 'Missing Files' box.  Both are in the 'Identify Files' section on this page.",
+								 "\n",
+								 "Add the files to your zip file or modify the metadata file.",
+								 sep = "\n")
+				shinyalert::shinyalert(title = "Check Files",
+											  text = msg,
+											  type = "error",
+											  closeOnEsc = TRUE,
+											  closeOnClickOutside = TRUE)
+				validate(msg)
+			}## IF ~ check_files_fails
+			
+			
+			### 01, Setup ----
+			prog_detail <- "Create QC Tables One and Two"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
 			
 			# define checkInputs parameters
 			in.dir <- file.path(getwd(), dn_data, dn_import)
@@ -419,8 +464,8 @@ function(input, output, session) {
 				dplyr::filter(Variable == "region") |>
 				dplyr::pull(Value)
 			
-			### 01, Check, Tables ----
-			prog_detail <- "Create Tables One and Two"
+			### 02, Check, Tables ----
+			prog_detail <- "Create QC Tables One and Two"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
 			incProgress(1/prog_n, detail = prog_detail)
@@ -431,7 +476,7 @@ function(input, output, session) {
 												fn.inputcheck = fn.inputcheck,
 												df_targets = df_targets)
 			
-			###02, Save, Tables----
+			###03, Save, Tables----
 			prog_detail <- "Create Tables One and Two"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
@@ -468,7 +513,7 @@ function(input, output, session) {
 			
 			rm(list.Tables, TableOne, TableTwo)
 		
-			### 03, Create Zip ----
+			### 04, Create Zip ----
 			prog_detail <- "Create ZIP"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
@@ -498,7 +543,7 @@ function(input, output, session) {
 						fn_4zip,
 						mode = "cherry-pick")
 			
-			### 04, Update UI----
+			### 05, Update UI----
 			prog_detail <- "Update UI"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
@@ -509,7 +554,7 @@ function(input, output, session) {
 			shinyjs::enable("but_check_dload_qctables")
 			shinyjs::enable("but_check_dload_rds")
 			
-			### 05, Info Pop Up ----
+			### 06, Info Pop Up ----
 			prog_detail <- "Inform User"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
@@ -588,11 +633,28 @@ function(input, output, session) {
 						  	scrollX=TRUE,
 						  	lengthMenu = c(5, 10, 25, 50, 100),
 						  	autoWidth = TRUE)) |>
+			# color rows
 			DT::formatStyle("QC_Passed",
 								 target = "row",
 								 backgroundColor = DT::styleEqual(
 								 	c(TRUE, FALSE),
-								 	c("cyan", "magenta")))
+								 	c(color_good, color_bad))) |>
+			# bold cells
+			DT::formatStyle("QC_EC",
+								 target = "cell",
+								 fontWeight = DT::styleEqual(
+								 	c(TRUE, FALSE),
+								 	c("normal", "bold"))) |>
+			DT::formatStyle("QC_ED",
+								 target = "cell",
+								 fontWeight = DT::styleEqual(
+								 	c(TRUE, FALSE),
+								 	c("normal", "bold"))) |>
+			DT::formatStyle("QC_Passed",
+								 target = "cell",
+								 fontWeight = DT::styleEqual(
+								 	c(TRUE, FALSE),
+								 	c("normal", "bold")))
 	}##expression
 	)## df_check_table1_DT
 	
@@ -651,11 +713,28 @@ function(input, output, session) {
 						  	scrollX=TRUE,
 						  	lengthMenu = c(5, 10, 25, 50, 100),
 						  	autoWidth = TRUE)) |>
+			# color rows
 			DT::formatStyle("QC_Passed",
 								 target = "row",
 								 backgroundColor = DT::styleEqual(
 								 	c(TRUE, FALSE),
-								 	c("cyan", "magenta")))
+								 	c(color_good, color_bad))) |>
+			# bold cells
+			DT::formatStyle("QC_II",
+								 target = "cell",
+								 fontWeight = DT::styleEqual(
+								 	c(TRUE, FALSE),
+								 	c("normal", "bold"))) |>
+			DT::formatStyle("QC_OC",
+								 target = "cell",
+								 fontWeight = DT::styleEqual(
+								 	c(TRUE, FALSE),
+								 	c("normal", "bold"))) |>
+			DT::formatStyle("QC_Passed",
+								 target = "cell",
+								 fontWeight = DT::styleEqual(
+								 	c(TRUE, FALSE),
+								 	c("normal", "bold")))
 	}##expression
 	)## df_check_table2_DT
 	

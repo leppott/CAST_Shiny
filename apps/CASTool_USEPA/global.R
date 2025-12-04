@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "0.0.2.9007"
+pkg_version <- "0.0.2.9008"
 
 # Packages ----
 library(shiny)
@@ -125,6 +125,8 @@ create_dir(file.path(dn_results, dn_bmi))
 create_dir(file.path(dn_results, dn_woe))
 
 ## Colors ----
+color_good <- "lightblue"
+color_bad  <- "orange"
 
 ## GitHub, Wshed ----
 url_ws_stress_base <- "https://github.com/leppott/CAST_SupportFiles/raw/main/data"

@@ -4,7 +4,14 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-12-02 13:35:17.981869
+    #> Last Update: 2025-12-04 08:28:05.220433
+
+# CAST_Shiny 0.0.2.9008 (2025-12-04)
+
+- refactor: Add variable for check files qc tables row colors to global
+- refactor: Add bold font for false results to check files qc tables
+- refactor: Trigger to stop process when check files if any missing
+  - Add Shiny alert
 
 # CAST_Shiny 0.0.2.9007 (2025-12-02)
 
