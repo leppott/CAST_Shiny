@@ -39,20 +39,20 @@ function() {
 					# Define Scenario ----
 					h2("Show Contents of Uploaded Files"),
 					p("**variables from metadata file**"),
-					p("**not selectable, skeleton code runs on all available data**"),
 					fluidRow(
 						# width = 12
 						column(3,
 								 checkboxGroupInput("chk_check_comm",
 								 						 "Biotic communities available",
-								 						 choices = c("Algae", "Macroinvertebrates", "Fish"),
+								 						 choices = choices_chk_check_comm,
 								 						 selected = NULL
 								 ),
-								 infoBox(title = "More info",
-								 		  value = "",
-								 		  icon = icon("info-circle", class = "clickable-icon"),
-								 		  color = "light-blue",
-								 		  fill = TRUE),),
+								 # infoBox(title = "More info",
+								 # 		  value = "",
+								 # 		  icon = icon("info-circle", class = "clickable-icon"),
+								 # 		  color = "light-blue",
+								 # 		  fill = TRUE),
+								 ),
 						# column(3,
 						# 		 radioButtons("rad_check_stress",
 						# 		 				 "Stressor data available",
@@ -62,13 +62,13 @@ function() {
 						column(3,
 								 checkboxGroupInput("chk_check_stress",
 								 						 "Stressor data available",
-								 						 choices = c("Measured", "Modeled"),
+								 						 choices = choices_chk_check_stress,
 								 						 selected = NULL
 								 )),
 						column(3,
 								 checkboxGroupInput("chk_check_tol",
 								 						 "Stressor-specific tolerance values available",
-								 						 choices = c("Algae", "Macroinvertebrates", "Fish"),
+								 						 choices = choices_chk_check_tol,
 								 						 selected = NULL
 								 )),
 						column(3,

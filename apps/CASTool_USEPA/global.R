@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "0.0.2.9008"
+pkg_version <- "0.0.2.9009"
 
 # Packages ----
 library(shiny)
@@ -134,6 +134,11 @@ url_ws_stress_zip <- file.path(url_ws_stress_base,
 										 "StreamCat_data_WA_test.zip")
 url_ws_stress_info <- file.path(url_ws_stress_base,
 										  "StreamCat_stressor-info_WA.csv")
+
+# Choices, Check Boxes ----
+choices_chk_check_comm <- c("Algae", "Macroinvertebrates", "Fish")
+choices_chk_check_stress <- c("Measured", "Modeled")
+choices_chk_check_tol <- c("Algae", "Macroinvertebrates", "Fish")
 
 # InfoBox Text ----
 ib_check_metadata   <- "InfoBox (Check Files) Metadata"

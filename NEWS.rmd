@@ -20,6 +20,10 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 0.0.2.9009 (2025-12-04)
+
+* refactor: Update check files uploaded files check boxes based on files present in user files
+
 # CAST_Shiny 0.0.2.9008 (2025-12-04)
 
 * refactor: Add variable for check files qc tables row colors to global

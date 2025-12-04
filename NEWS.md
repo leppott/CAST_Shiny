@@ -4,7 +4,12 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-12-04 08:28:05.220433
+    #> Last Update: 2025-12-04 10:01:21.402032
+
+# CAST_Shiny 0.0.2.9009 (2025-12-04)
+
+- refactor: Update check files uploaded files check boxes based on files
+  present in user files
 
 # CAST_Shiny 0.0.2.9008 (2025-12-04)
 

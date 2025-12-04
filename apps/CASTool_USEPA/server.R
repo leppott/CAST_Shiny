@@ -236,6 +236,36 @@ function(input, output, session) {
 														c(fn_default_check_input_cast_metadata,
 														  df_user_files_present)]
 
+		# Populate check boxes for data files present
+		df_user_files_present_fn <- df_user_files |>
+			# only TRUE
+			dplyr::filter(Present == TRUE) |> 
+			dplyr::pull(Variable)
+
+		user_files_alg <- "fn.alg.metrics" %in% df_user_files_present_fn
+		user_files_bmi <- "fn.bmi.metrics" %in% df_user_files_present_fn
+		user_files_fish <- "fn.fish.metrics" %in% df_user_files_present_fn
+		user_files_meas <- "fn.meas.info" %in% df_user_files_present_fn
+		user_files_model <- "fn.model.info" %in% df_user_files_present_fn
+		
+		choices_chk_check_comm_sel <- choices_chk_check_comm[c(user_files_alg,
+																				 user_files_bmi,
+																				 user_files_fish)]
+		choices_chk_check_stress_sel <- choices_chk_check_stress[c(user_files_meas,
+																					  user_files_model)]
+		choices_chk_check_tol_sel <- choices_chk_check_comm_sel
+		
+		# update boxes
+		shiny::updateCheckboxGroupInput(session,
+												  "chk_check_comm",
+												  selected = choices_chk_check_comm_sel)
+		shiny::updateCheckboxGroupInput(session,
+												  "chk_check_stress",
+												  selected = choices_chk_check_stress_sel)
+		shiny::updateCheckboxGroupInput(session,
+												  "chk_check_tol",
+												  selected = choices_chk_check_tol_sel)
+		
 		
 		# Show table
 		# Show text if any "missing"files
