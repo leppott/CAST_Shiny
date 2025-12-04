@@ -907,7 +907,6 @@ function(input, output, session) {
 			data_CASTmeta_temp <- readRDS(file.path(tempdir(),
 																 dn_checked_sk, 
 																 "CASTmetadata.rds"))
-			
 			# get region
 			data_region <- data_CASTmeta_temp |>
 				dplyr::filter(Variable == "region") |>
@@ -989,10 +988,22 @@ function(input, output, session) {
 				sort()
 			
 			# SelectInput - target sites
-			updateSelectInput(session,
-									"si_checked_sites_targ",
-									choices = c("", target_sites),
-									selected = NULL)
+			shiny::updateSelectInput(session,
+											 "si_checked_sites_targ",
+											 choices = c("", target_sites),
+											 selected = NULL)
+	
+			# get explore_wsstressor_val
+			meta_explore_wsstressor_val <- df_user_metadata |>
+				dplyr::filter(Variable == "exploreWSStressor") |>
+				dplyr::pull(Value)
+			if(meta_explore_wsstressor_val %in% c("Yes", "No")) {
+				shiny::updateRadioButtons(session,
+										 "rad_setup_explore",
+										 selected = meta_explore_wsstressor_val)
+			} else {
+				# Shiny alert - bad input
+			}## IF ~ explore_wsstressor_val
 			
 			# Enable Buttons
 			shinyjs::enable("but_report_run")
@@ -1157,7 +1168,7 @@ function(input, output, session) {
 		
 		
 		# QC, site not null or ""
-	browser()	
+	
 		if(is.null(sel_targsite()) | sel_targsite() == "") {
 			msg <- paste("No target site selected!",
 							 "\n",

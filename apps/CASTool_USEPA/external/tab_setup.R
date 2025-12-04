@@ -28,25 +28,26 @@ function() {
 								 				 "Explore watershed stressor data",
 								 				 choices = c("Yes", "No"),
 								 				 selected = "No")
+												 # reactive update
 								 ),
 						column(4,
-								 radioButtons("rad_setup_assign",
-								 				 "Comparator assignment method",
-								 				 choices = c("Abiotic clustering", "Custom"),
-								 				 selected = "Abiotic clustering"),
-								 # reactive to radio
-								 # n_cluster or upload
-								 uiOutput("ui_setup_clust"),
-								 
-								 bsButton("but_setup_comp",
-								 			"Get comparators")
+								 # radioButtons("rad_setup_assign",
+								 # 				 "Comparator assignment method",
+								 # 				 choices = c("Abiotic clustering", "Custom"),
+								 # 				 selected = "Abiotic clustering"),
+								 # # reactive to radio
+								 # # n_cluster or upload
+								 # uiOutput("ui_setup_clust"),
+								 # 
+								 # bsButton("but_setup_comp",
+								 # 			"Get comparators")
 								 ),
 						column(4,
-								 p("text showing cluster method and number."),
+								 # p("text showing cluster method and number."),
+								 # br(),
+								 # p("if choose abiotic method get some plots"),
 								 br(),
-								 p("if choose abiotic method get some plots"),
-								 br(),
-								 p("map - removed 11/25")
+								 p("map - removed 11/25, add back 12/04")
 								 )
 						),## fluidRow
 					br(),

@@ -4,7 +4,13 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-12-04 14:33:42.072345
+    #> Last Update: 2025-12-04 17:13:27.782801
+
+# CAST_Shiny 0.0.2.9011 (2025-12-04)
+
+- refactor: Remove comparator info from Set Up Tool tab
+- refactor: Update explore watershed stressor radio button based on
+  metadata
 
 # CAST_Shiny 0.0.2.9010 (2025-12-04)
 
