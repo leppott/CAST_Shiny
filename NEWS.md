@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-12-04 17:13:27.782801
+    #> Last Update: 2025-12-05 12:26:10.701569
+
+# CAST_Shiny 0.0.2.9012 (2025-12-05)
+
+- refactor: Add user defined map to Set Up Tool tab
 
 # CAST_Shiny 0.0.2.9011 (2025-12-04)
 

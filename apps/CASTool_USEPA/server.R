@@ -1159,6 +1159,45 @@ function(input, output, session) {
 		
 	})## oE ~ Report
 	
+	## Map, Sites ----
+	output$map_sites <- renderImage({
+		# ensure files uploaded
+		req(input$fn_input_setup_checked_uload)
+
+		# map file name
+		# don't have dir so use temp version
+		data_CASTmeta_temp <- readRDS(file.path(tempdir(),
+															 dn_checked_sk, 
+															 "CASTmetadata.rds"))
+		# get region
+		data_region <- data_CASTmeta_temp |>
+			dplyr::filter(Variable == "region") |>
+			dplyr::pull(Value)
+
+		# dir of 'checked' files
+		path_check_sk <- file.path(dn_results,
+											data_region,
+											dn_results,
+											dn_checked_sk)
+
+		## Get map file	
+		fn_map <- data_CASTmeta_temp |>
+			# filter for filename
+			dplyr::filter(Variable == "fn.map") |>
+			dplyr::pull(Value)
+		path_map <- file.path(path_check_sk, fn_map)
+		
+		# QC
+		ext <- tools::file_ext(path_map)
+		validate(need(tolower(ext) %in% 
+						  	c("png", "jpg", "jpeg"),
+						  "Please use PNG or JPG site map."))
+		
+		# Display
+		list(src = path_map,
+			  contentType = if (tolower(ext) == "png") "image/png" else "image/jpeg",
+			  alt = fn_map)
+	}, deleteFile = FALSE)## map_sites
 	
 # REPORT----
 	

@@ -46,8 +46,11 @@ function() {
 								 # p("text showing cluster method and number."),
 								 # br(),
 								 # p("if choose abiotic method get some plots"),
-								 br(),
-								 p("map - removed 11/25, add back 12/04")
+								 # br(),
+								 h2("map"),
+								 imageOutput("map_sites", 
+								 				height = "auto", 
+								 				width = "auto")
 								 )
 						),## fluidRow
 					br(),
