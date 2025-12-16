@@ -19,6 +19,7 @@ library(bsplus)  # tooltips
 library(CASTfxn)
 library(CASToolClusterPckg) 
 library(CASToolWSStressorPckg)
+library(CASToolBaseDataPckg)
 
 # library(zip)	  # use `utils` as `zip` pkg doesn't work on ShinyApps.io
 

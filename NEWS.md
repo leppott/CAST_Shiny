@@ -4,7 +4,14 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-12-05 12:26:10.701569
+    #> Last Update: 2025-12-16 11:01:21.914382
+
+# CAST_Shiny 0.0.2.9013 (2025-12-16)
+
+- refactor: Update for changes in checkInputs
+  - Add package CASToolBaseDataPckg to DESCRIPTION
+  - Drop df_targets as input for checkInputs
+- refactor: Remove ‘results’ directory from table 1 and 2 file creation
 
 # CAST_Shiny 0.0.2.9012 (2025-12-05)
 

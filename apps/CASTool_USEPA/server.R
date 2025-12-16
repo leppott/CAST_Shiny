@@ -437,6 +437,7 @@ function(input, output, session) {
 	
 	observeEvent(input$but_check_check, {
 		shiny::withProgress({
+
 			### 00, Intialize, QC ----
 			prog_detail <- "Check Files..."
 			message(paste0("\n", prog_detail))
@@ -487,7 +488,26 @@ function(input, output, session) {
 			fn_targets <- df_meta |>
 				dplyr::filter(Variable == "fn.targets") |>
 				dplyr::pull(Value)
-			df_targets <- read.csv(file.path(in.dir, fn_targets))
+
+			ext_fn_targets <- tolower(tools::file_ext(fn_targets))
+			if (ext_fn_targets == "csv") {
+				df_targets <- read.csv(file.path(in.dir, fn_targets))
+			} else if (ext_fn_targets == "xlsx") {
+				df_targets <- as.data.frame(
+					readxl::read_excel(file.path(in.dir, fn_targets),
+															sheet = 1, #first sheet
+															skip = 0))
+			} else {
+				msg <- paste("Targets file should be '.csv' or '.xlsx'.",
+								 "If '.xlsx' the data should be on the first worksheet.",
+								 sep = "\n")
+				shinyalert::shinyalert(title = "Check Files",
+											  text = msg,
+											  type = "error",
+											  closeOnEsc = TRUE,
+											  closeOnClickOutside = TRUE)
+				validate(msg)
+			}## IF ~ ext_fn_targets
 			# region
 			region <- df_meta |>
 				dplyr::filter(Variable == "region") |>
@@ -499,11 +519,12 @@ function(input, output, session) {
 			# Increment the progress bar, and update the detail text.
 			incProgress(1/prog_n, detail = prog_detail)
 			Sys.sleep(prog_sleep)
-			
+		
 			list.Tables <- checkInputs(dir.uploaded = in.dir,
 												dir.out = out.dir,
-												fn.inputcheck = fn.inputcheck,
-												df_targets = df_targets)
+												fn.inputcheck = fn.inputcheck)
+			# 20251216, no longer have df_targets as input
+												# df_targets = df_targets)
 			
 			###03, Save, Tables----
 			prog_detail <- "Create Tables One and Two"
@@ -511,12 +532,11 @@ function(input, output, session) {
 			# Increment the progress bar, and update the detail text.
 			incProgress(1/prog_n, detail = prog_detail)
 			Sys.sleep(prog_sleep)
-			
+		
 			TableOne    <- list.Tables$TableOne
 			write.table(TableOne, 
 							file.path(out.dir, 
 										 region, 
-										 dn_results,
 										 dn_checked_sk, 
 										 "TableOne.tab"),
 							sep = "\t", 
@@ -530,7 +550,6 @@ function(input, output, session) {
 			write.table(TableTwo, 
 							file.path(out.dir, 
 										 region, 
-										 dn_results,
 										 dn_checked_sk,
 										 "TableTwo.tab"),
 							sep = "\t", 
@@ -915,7 +934,7 @@ function(input, output, session) {
 			# ensure directory exists
 			path_check_sk <- file.path(dn_results,
 												data_region,
-												dn_results,
+												# dn_results,
 												dn_checked_sk)
 			if(!dir.exists(path_check_sk)) {
 				dir.create(path_check_sk, recursive = TRUE)
