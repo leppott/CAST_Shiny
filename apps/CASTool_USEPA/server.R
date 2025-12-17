@@ -183,6 +183,28 @@ function(input, output, session) {
 		message = "Load Files")## withProgress
 	})## observeEvent
 	
+	## Import, Reactives, Data Types ----
+	react_chk_check_comm   <- reactiveVal("..No file uploaded..")
+	react_chk_check_stress <- reactiveVal("..No file uploaded..")
+	react_chk_check_tol    <- reactiveVal("..No file uploaded..")
+	react_check_outliers   <- reactiveVal("..No file uploaded..")
+	
+	output$txt_chk_check_comm  <- renderText({
+		react_chk_check_comm()
+	})
+	
+	output$txt_chk_check_stress <- renderText({
+		react_chk_check_stress()
+	})
+	
+	output$txt_chk_check_tol <- renderText({
+		react_chk_check_tol()
+	})
+	
+	output$txt_check_outliers <- renderText({
+		react_check_outliers()
+	})
+	
 	## Import, Files, present ----
 	output$df_import_files_DT <- DT::renderDT({
 
@@ -248,6 +270,10 @@ function(input, output, session) {
 		user_files_meas <- "fn.meas.info" %in% df_user_files_present_fn
 		user_files_model <- "fn.model.info" %in% df_user_files_present_fn
 		
+		df_user_outliers <- df_user_metadata |>
+			dplyr::filter(Variable == "removeOutliers") |>
+			dplyr::pull(Value) 
+
 		choices_chk_check_comm_sel <- choices_chk_check_comm[c(user_files_alg,
 																				 user_files_bmi,
 																				 user_files_fish)]
@@ -266,6 +292,14 @@ function(input, output, session) {
 												  "chk_check_tol",
 												  selected = choices_chk_check_tol_sel)
 		
+		### update Reactives----
+		react_chk_check_comm(choices_chk_check_comm[c(user_files_alg,
+																			user_files_bmi,
+																			user_files_fish)])
+		react_chk_check_stress(choices_chk_check_stress[c(user_files_meas,
+																			  user_files_model)])
+		react_chk_check_tol(choices_chk_check_comm_sel)
+		react_check_outliers(df_user_outliers)
 		
 		# Show table
 		# Show text if any "missing"files
@@ -607,7 +641,6 @@ function(input, output, session) {
 			### Tables
 			path_4zip <- file.path(out.dir, 
 										  region, 
-										  dn_results,
 										  dn_checked_sk)
 			fn_4zip <- list.files(path = path_4zip,
 										 full.names = TRUE,
@@ -617,8 +650,7 @@ function(input, output, session) {
 						mode = "cherry-pick")
 			### RDS
 			path_4zip_rds <- file.path(out.dir, 
-										  region, 
-										  dn_results, 
+										  region,  
 										  dn_checked_sk)
 			fn_4zip_rds <- list.files(path = path_4zip_rds,
 										 full.names = TRUE)
@@ -858,10 +890,17 @@ function(input, output, session) {
 # SET UP ----
 	sel_targsite <- reactive(input$si_checked_sites_targ)
 	
-	## Import, Files, Checked ----
+	## Set Up, Reactives, Data Types ----
+	react_setup_explore <- reactiveVal("..No file uploaded..")
+	
+	output$txt_setup_explore <- renderText({
+		react_setup_explore()
+	})
+	
+	## Set Up, Files, Checked ----
 	observeEvent(input$fn_input_setup_checked_uload, {
 		shiny::withProgress({
-			
+
 			### 00, Initialize----
 			prog_detail <- "Import Checked Files..."
 			message(paste0("\n", prog_detail))
@@ -1012,17 +1051,19 @@ function(input, output, session) {
 											 choices = c("", target_sites),
 											 selected = NULL)
 	
+			### update Reactives----
 			# get explore_wsstressor_val
 			meta_explore_wsstressor_val <- df_user_metadata |>
 				dplyr::filter(Variable == "exploreWSStressor") |>
 				dplyr::pull(Value)
-			if(meta_explore_wsstressor_val %in% c("Yes", "No")) {
-				shiny::updateRadioButtons(session,
-										 "rad_setup_explore",
-										 selected = meta_explore_wsstressor_val)
-			} else {
-				# Shiny alert - bad input
-			}## IF ~ explore_wsstressor_val
+			# if(meta_explore_wsstressor_val %in% c(TRUE, FALSE)) {
+			# 	# shiny::updateRadioButtons(session,
+			# 	# 						 "rad_setup_explore",
+			# 	# 						 selected = meta_explore_wsstressor_val)
+				react_setup_explore(meta_explore_wsstressor_val)
+			# } else {
+			# 	# Shiny alert - bad input
+			# }## IF ~ explore_wsstressor_val
 			
 			# Enable Buttons
 			shinyjs::enable("but_report_run")
@@ -1196,14 +1237,14 @@ function(input, output, session) {
 		# dir of 'checked' files
 		path_check_sk <- file.path(dn_results,
 											data_region,
-											dn_results,
 											dn_checked_sk)
 
 		## Get map file	
-		fn_map <- data_CASTmeta_temp |>
-			# filter for filename
-			dplyr::filter(Variable == "fn.map") |>
-			dplyr::pull(Value)
+		# fn_map <- data_CASTmeta_temp |>
+		# 	# filter for filename
+		# 	dplyr::filter(Variable == "fn.map") |>
+		# 	dplyr::pull(Value)
+		fn_map <- "cluster_graphic.png"
 		path_map <- file.path(path_check_sk, fn_map)
 		
 		# QC
@@ -1215,7 +1256,9 @@ function(input, output, session) {
 		# Display
 		list(src = path_map,
 			  contentType = if (tolower(ext) == "png") "image/png" else "image/jpeg",
-			  alt = fn_map)
+			  alt = fn_map,
+			  width = 7200 / 10, #orig size /  scale value
+			  height = 4800 / 10)
 	}, deleteFile = FALSE)## map_sites
 	
 # REPORT----
@@ -1224,10 +1267,8 @@ function(input, output, session) {
 	observeEvent(input$but_report_run, {
 		# launch skeleton code
 		
-		
 		# QC, site not null or ""
-	
-		if(is.null(sel_targsite()) | sel_targsite() == "") {
+			if(is.null(sel_targsite()) | sel_targsite() == "") {
 			msg <- paste("No target site selected!",
 							 "\n",
 							 "Return to 'Set Up Tool' and 'Select target site' to make selection.",
@@ -1240,7 +1281,6 @@ function(input, output, session) {
 			validate(msg)
 		}## IF ~ check_files_fails
 		
-
 		### Global Variables ----
 		# define for sourced Skeleton Code file
 		

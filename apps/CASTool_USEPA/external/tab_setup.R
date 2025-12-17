@@ -24,11 +24,12 @@ function() {
 								 				"Select target site",
 								 				choices = NULL,
 								 				multiple = FALSE),
-								 radioButtons("rad_setup_explore",
-								 				 "Explore watershed stressor data",
-								 				 choices = c("Yes", "No"),
-								 				 selected = "No")
-												 # reactive update
+								 p(strong("Explore watershed stressor data: ")),
+								 textOutput("txt_setup_explore")
+								#  radioButtons("rad_setup_explore",
+								#  				 "Explore watershed stressor data",
+								#  				 choices = c("Yes", "No"),
+								#  				 selected = "No")
 								 ),
 						column(4,
 								 # radioButtons("rad_setup_assign",
@@ -48,9 +49,9 @@ function() {
 								 # p("if choose abiotic method get some plots"),
 								 # br(),
 								 h2("map"),
-								 imageOutput("map_sites", 
-								 				height = "auto", 
-								 				width = "auto")
+								 imageOutput("map_sites", # size set in map_sites
+								 				width = "100%",
+								 				height = "100%")
 								 )
 						),## fluidRow
 					br(),

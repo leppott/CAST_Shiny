@@ -4,6 +4,13 @@ function() {
 	tabPanel("Check File Inputs",
 				mainPanel(
 					useShinyjs(),
+					h2("Template"),
+					p("download template as a zip file."),
+					a(href = url_github_castfxn,
+					  class = "btn bnh-primary",
+					  target = "_blank",
+					  download = "901SJSJC9_CoOccurrence_20180802_123825.pdf",
+					  "Download Template Files"),
 					# Load Files ----
 					h2("Load Files"),
 					fileInput("fn_input_check_uload", 
@@ -38,15 +45,17 @@ function() {
 					  
 					# Define Scenario ----
 					h2("Show Contents of Uploaded Files"),
-					p("**variables from metadata file**"),
+					# p("**variables from metadata file**"),
 					fluidRow(
 						# width = 12
 						column(3,
-								 checkboxGroupInput("chk_check_comm",
-								 						 "Biotic communities available",
-								 						 choices = choices_chk_check_comm,
-								 						 selected = NULL
-								 ),
+								 p(strong("Biotic communities available: ")),
+								 textOutput("txt_chk_check_comm"),
+								 # checkboxGroupInput("chk_check_comm",
+								 # 						 "Biotic communities available",
+								 # 						 choices = choices_chk_check_comm,
+								 # 						 selected = NULL
+								 # ),
 								 # infoBox(title = "More info",
 								 # 		  value = "",
 								 # 		  icon = icon("info-circle", class = "clickable-icon"),
@@ -60,25 +69,35 @@ function() {
 						# 		 				 selected = "Measured",
 						# 		 )),
 						column(3,
-								 checkboxGroupInput("chk_check_stress",
-								 						 "Stressor data available",
-								 						 choices = choices_chk_check_stress,
-								 						 selected = NULL
-								 )),
+								 p(strong("Stressor data available: ")),
+								 textOutput("txt_chk_check_stress"),
+								 # checkboxGroupInput("chk_check_stress",
+								 # 						 "Stressor data available",
+								 # 						 choices = choices_chk_check_stress,
+								 # 						 selected = NULL
+								 # )
+								 ),
 						column(3,
-								 checkboxGroupInput("chk_check_tol",
-								 						 "Stressor-specific tolerance values available",
-								 						 choices = choices_chk_check_tol,
-								 						 selected = NULL
-								 )),
+								 p(strong("Stressor-specific tolerance values available: ")),
+								 textOutput("txt_chk_check_tol"),
+								 # checkboxGroupInput("chk_check_tol",
+								 # 						 "Stressor-specific tolerance values available",
+								 # 						 choices = choices_chk_check_tol,
+								 # 						 selected = NULL
+								 # )
+								 ),
 						column(3,
-								 radioButtons("rad_check_outliers",
-								 				 "Exclude outliers",
-								 				 choices = c("Yes", "No"),
-								 				 selected = "Yes"
-								 ))
+								 p(strong("Exclude outliers: ")),
+								 textOutput("txt_check_outliers"),
+								 # radioButtons("rad_check_outliers",
+								 # 				 "Exclude outliers",
+								 # 				 choices = c("Yes", "No"),
+								 # 				 selected = "Yes"
+								 # )
+								 )
 					),## fluidRow
 					
+					# 
 					h2("Check Files"),
 					shinyjs::disabled(bsButton("but_check_check",
 														"Check input files")),

@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "0.0.2.9012"
+pkg_version <- "0.0.2.9014"
 
 # Packages ----
 library(shiny)
@@ -157,3 +157,7 @@ fn_default_check_input_cast_metadata <- "_CASTool_Metadata.xlsx"
 
 # Report Hide Tabs ----
 int_report <- 0
+
+# GitHub Files ----
+url_github_castfxn <- "https://raw.githubusercontent.com/leppott/CASTfxn/main/inst/extdata"
+
