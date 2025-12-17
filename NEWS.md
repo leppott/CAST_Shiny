@@ -4,7 +4,17 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-12-17 09:21:25.345777
+    #> Last Update: 2025-12-17 17:08:58.621139
+
+# CAST_Shiny 0.0.2.9015 (2025-12-17)
+
+- refactor: Add download button for report results
+- refactor: Unhide Explore Watershed Stressors tab based on metadata
+  file
+- refactor: Set up tab ‘map’ to ‘abiotic clustering’
+- refactor: Add data gaps file to data gaps tab
+- refactor: Add items to candidate causes tab
+- refactor: Add items to weight of evidence causes tab
 
 # CAST_Shiny 0.0.2.9014 (2025-12-17)
 

@@ -4,13 +4,16 @@ function() {
 	tabPanel("Candidate Causes",
 				value = "tab_candcause",
 				mainPanel(
-					p("User-specified thresholds"),
-					p("WHAT FILE?"),
-					p("Stressor(s) initially evaluated"),
-					p("WHAT FILE?"),
-					p(paste0("Stressor(s) eliminated by comparison of ",
-					         "\ntarget and comparator sample values")),
-					p("WHAT FILE?")
+					p(strong("User-specified thresholds")),
+					textOutput("txt_candcause_thresh_ph"),
+					textOutput("txt_candcause_thresh_do"),
+					br(),
+					p(strong("Stressor(s) initially evaluated")),
+					p("No current output."),
+					br(),
+					p(strong(paste0("Stressor(s) eliminated by comparison of ",
+										 "\ntarget and comparator sample values"))),
+					DT::dataTableOutput("df_candcause_DT")
 					
 					)## mainPanel
 				)## tabPanel

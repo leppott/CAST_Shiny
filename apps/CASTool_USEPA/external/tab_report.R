@@ -5,11 +5,13 @@ function() {
 				mainPanel(
 					# doesn't work unless in include this line (even though it is in UI.R)
 					useShinyjs(), 
-					selectInput("report_format",
-									"Report delivery format",
-									choices = c("HTML", 
-													"PDF"),
-									selected = "HTML"),
+					p(strong("Report delivery format:")),
+					textOutput("txt_setup_format"),
+					# selectInput("report_format",
+					# 				"Report delivery format",
+					# 				choices = c("HTML", 
+					# 								"PDF"),
+					# 				selected = "HTML"),
 					br(),
 					shinyjs::disabled(bsButton("but_report_run",
 														"Generate report")),
@@ -17,6 +19,8 @@ function() {
 											 title = paste0("Disabled until checked files uploaded."),
 											 placement = "right"),
 					br(),
+					br(),
+					hr(),
 					shinyjs::disabled(radioButtons("rad_report_tabs",
 															 "Show report summary tabs",
 															 choices = c("Yes", "No"),
@@ -27,8 +31,10 @@ function() {
 					
 					br(),
 					br(),
-					shinyjs::disabled(bsButton("but_report_dload",
-												"Download report and supplemental files")),
+					shinyjs::disabled(
+						shiny::downloadButton("but_report_dload",
+												"Download report and supplemental files")
+						),
 					shinyBS::bsTooltip(id = "but_report_dload",
 											 title = paste0("Disabled until report is created."),
 											 placement = "right"),

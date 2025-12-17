@@ -888,13 +888,18 @@ function(input, output, session) {
 	
 	
 # SET UP ----
+	## Set Up, Reactives ----
 	sel_targsite <- reactive(input$si_checked_sites_targ)
-	
-	## Set Up, Reactives, Data Types ----
 	react_setup_explore <- reactiveVal("..No file uploaded..")
+	react_setup_region <- reactiveVal(NULL) # triggers once
+	react_setup_format <- reactiveVal("..No file uploaded..")
 	
 	output$txt_setup_explore <- renderText({
 		react_setup_explore()
+	})
+	
+	output$txt_setup_format <- renderText({
+		react_setup_format()
 	})
 	
 	## Set Up, Files, Checked ----
@@ -1052,7 +1057,8 @@ function(input, output, session) {
 											 selected = NULL)
 	
 			### update Reactives----
-			# get explore_wsstressor_val
+			
+			#### explore_wsstressor_val
 			meta_explore_wsstressor_val <- df_user_metadata |>
 				dplyr::filter(Variable == "exploreWSStressor") |>
 				dplyr::pull(Value)
@@ -1064,6 +1070,42 @@ function(input, output, session) {
 			# } else {
 			# 	# Shiny alert - bad input
 			# }## IF ~ explore_wsstressor_val
+				
+				if (react_setup_explore() == "TRUE") {
+					showTab(inputId = "navbar",
+							  target = "tab_wshedstress")
+				} else {
+					hideTab(inputId = "navbar",
+							  target = "tab_wshedstress")
+				}## IF
+				
+				#### region, reactive
+				react_setup_region(data_region)
+		
+				#### report format
+				meta_setup_format <- df_user_metadata |>
+					dplyr::filter(Variable == "report_format") |>
+					dplyr::pull(Value) |>
+					toupper()
+				react_setup_format(meta_setup_format)
+				
+				#### cand cause
+				#### ph lo
+				meta_lim_ph_lo <- df_user_metadata |>
+					dplyr::filter(Variable == "pHlimLow") |>
+					dplyr::pull(Value)
+				react_candcause_thresh_ph_lo(meta_lim_ph_lo)
+				#### ph hi
+				meta_lim_ph_hi <- df_user_metadata |>
+					dplyr::filter(Variable == "pHlimHigh") |>
+					dplyr::pull(Value)
+				react_candcause_thresh_ph_hi(meta_lim_ph_hi)
+				#### do
+				meta_lim_do <- df_user_metadata |>
+					dplyr::filter(Variable == "DOlim") |>
+					dplyr::pull(Value)
+				react_candcause_thresh_do(meta_lim_do)
+				
 			
 			# Enable Buttons
 			shinyjs::enable("but_report_run")
@@ -1126,8 +1168,8 @@ function(input, output, session) {
 	})## import, checked files
 	
 	## unhide wshed summ ----
-	observeEvent(input$rad_setup_explore, {
-		if (input$rad_setup_explore == "Yes") {
+	observeEvent(react_setup_explore, {
+		if (react_setup_explore() == "TRUE") {
 			showTab(inputId = "navbar",
 					  target = "tab_wshedstress")
 		} else {
@@ -1219,7 +1261,7 @@ function(input, output, session) {
 		
 	})## oE ~ Report
 	
-	## Map, Sites ----
+	## fig, clust ----
 	output$map_sites <- renderImage({
 		# ensure files uploaded
 		req(input$fn_input_setup_checked_uload)
@@ -1251,7 +1293,7 @@ function(input, output, session) {
 		ext <- tools::file_ext(path_map)
 		validate(need(tolower(ext) %in% 
 						  	c("png", "jpg", "jpeg"),
-						  "Please use PNG or JPG site map."))
+						  "Please use PNG or JPG cluster graphic."))
 		
 		# Display
 		list(src = path_map,
@@ -1262,6 +1304,9 @@ function(input, output, session) {
 	}, deleteFile = FALSE)## map_sites
 	
 # REPORT----
+	
+	## reactives----
+	react_report_run <- reactiveVal(FALSE)
 	
 	## button, report ----
 	observeEvent(input$but_report_run, {
@@ -1337,9 +1382,44 @@ function(input, output, session) {
 		# Enabled buttons disabled at startup
 		shinyjs::enable("rad_report_tabs")
 		shinyjs::enable("but_report_dload")
+		
+		## create zip ----
+
+		# get files 4 zip
+		stat_id <- sel_targsite() # reactive value
+		dn_zip_stat <- file.path(dn_results,
+										 react_setup_region(),
+										 stat_id)
+		dn_zip_hist <- file.path(dn_results,
+										 react_setup_region(),
+										 "_Histograms")
+		fn_zip_stat <- list.files(path = dn_zip_stat,
+										  recursive = TRUE,
+										  full.names = TRUE)
+		fn_zip_hist <- list.files(path = dn_zip_hist,
+										  recursive = TRUE,
+										  full.names = TRUE)
+		# combined files
+		fn_zip <- c(fn_zip_stat, fn_zip_hist)
+		# create zip
+		tic <- Sys.time()
+		zip::zip(file.path(dn_results, "report_results.zip"),
+					files = fn_zip)
+		toc <- Sys.time()
+		msg <- paste0("zip time (sec): ",
+						  round(difftime(toc, tic, units = "secs"), 2))
+		message(msg)
+
+		## reactiveval updates ----
+		# used to indicate report run
+		react_report_run(TRUE) # gaps
+		
+		
 	})## oE ~ Report
 	
-	## unhide report tabs ----
+	
+	
+	# unhide report tabs ----
 	observeEvent(input$rad_report_tabs, {
 		if (input$rad_report_tabs == "Yes") {
 			showTab(inputId = "navbar",
@@ -1360,9 +1440,29 @@ function(input, output, session) {
 			hideTab(inputId = "navbar",
 					  target = "tab_gaps")
 		}## IF
+		
+		
 	})## oE ~ rad_report_tabs
 	
-# WSHED STRESS ----
+	# button, report, download ----
+	
+	output$but_report_dload <- shiny::downloadHandler(
+		filename = function() {
+			paste0("CASTool_report_results_",
+					 format(Sys.time(), "%Y%m%d_%H%M%S"),
+					 ".zip")
+		} ,
+		content = function(fname) {
+			# zip file created when report run
+			#
+			# file for download
+			file.copy(file.path(dn_results, "report_results.zip"), fname)
+		}##content~END
+		#, contentType = "application/zip"
+	)##download ~ check files
+	
+	
+	# WSHED STRESS ----
 
 	## button, get GitHub files ----
 	observeEvent(input$but_github_wshedstress_data, {
@@ -1464,18 +1564,80 @@ function(input, output, session) {
 	
 # CAND CAUSE ----
 	
+	## reactives ----
+	react_candcause_thresh_ph_lo <- reactiveVal(NULL)
+	react_candcause_thresh_ph_hi <- reactiveVal(NULL)
+	react_candcause_thresh_do <- reactiveVal(NULL)
+	
+	## text ----
+	output$txt_candcause_thresh_ph <- renderText({
+		paste0("pH: < ", 
+				 react_candcause_thresh_ph_lo(),
+				 ", > ",
+				 react_candcause_thresh_ph_hi())
+	})
+	
+	output$txt_candcause_thresh_do <- renderText({
+		paste0("DO: < ", react_candcause_thresh_do())
+	})
+	
+	## Cand Cause, Table ----
+	output$df_candcause_DT <- DT::renderDT({
+
+		# trigger created when save table
+		req(react_report_run())
+		
+		stat_id <- sel_targsite()
+		fn_gaps <- paste0(stat_id, "_BMI_DetectsNotEvalFurther.tab")
+		
+		path_table <- file.path(dn_results, 
+										react_setup_region(),
+										stat_id,
+										"BMI",
+										"_WoE")
+		
+		inFile <- file.path(path_table, fn_gaps)
+		
+		# Blank if no data
+		if (!file.exists(inFile)) {
+			return(NULL)
+		} ## IF ~ is.null(inFile)
+		
+		# import file
+		df_table <- read.delim(inFile,
+									  header = TRUE,
+									  sep = "\t")
+		
+		# # keep certain columns
+		# df_table <- df_table 
+		
+		dt_cap <- paste0("Data gap (Site ID = ",
+							  stat_id,
+							  ").")
+		
+		DT::datatable(df_table,
+						  filter = "top",
+						  caption = dt_cap,
+						  options = list(
+						  	scrollX = TRUE,
+						  	lengthMenu = c(5, 10, 25, 50, 100),
+						  	autoWidth = TRUE))
+		
+	}##expression
+	)## df_gaps_DT
+	
 # WOE SUMM ----
 	
 	## woe loe summary table ----
 	df_woe_summ <- reactive({
 		# check if data exists
-		dn_site <- basename(list.dirs(file.path(dn_results), 
-												recursive = FALSE))
+		
 		fn_data <- file.path(dn_results, 
-									dn_site, 
+									react_setup_region(),
+									sel_targsite(), 
 									dn_bmi, 
 									dn_woe,
-									paste0(dn_site, "_LoESummary.tab"))
+									paste0(sel_targsite(), "_LoESummary.tab"))
 		if (file.exists(fn_data)) {
 			df <- read.table(fn_data, 
 								  header = TRUE, 
@@ -1507,13 +1669,14 @@ function(input, output, session) {
 	## woe table ----
 	df_woe <- reactive({
 		# check if data exists
-		dn_site <- basename(list.dirs(file.path(dn_results), 
-												recursive = FALSE))
-		fn_data <- file.path(dn_results, 
-									dn_site, 
+		# dn_site <- basename(list.dirs(file.path(dn_results), 
+		# 										recursive = FALSE))
+		fn_data <- file.path(dn_results,
+									react_setup_region(),
+									sel_targsite(),
 									dn_bmi, 
 									dn_woe,
-									paste0(dn_site, "_LoEs.tab"))
+									paste0(sel_targsite(), "_LoEs.tab"))
 		if (file.exists(fn_data)) {
 			df <- read.table(fn_data, 
 								  header = TRUE, 
@@ -1529,6 +1692,7 @@ function(input, output, session) {
 	
 	# render WoE table
 	output$tbl_woe <- DT::renderDataTable({
+		
 		DT::datatable(
 			df_woe(),
 			options = list(
@@ -1542,28 +1706,99 @@ function(input, output, session) {
 		)
 	})## table
 	
+	## woe fig, bio index----
 	output$img_bio_index <- renderImage({
 		# return path
 		list(
-			src = file.path(dn_data, dn_temp, "bio_index.png"),
+			src = file.path(dn_results,
+								 react_setup_region(),
+								 sel_targsite(), 
+								 "SiteInfo", 
+								 paste0(sel_targsite(),
+								 		 "_BMI_IndexBoxPlotsByCase.png")
+								 ),
 			contentType = "image/png",
-			alt = "Stressors Visualization"
+			alt = "Biological Index Distributions",
+			width = 7200 / 8, #orig size /  scale value
+			height = 4800 / 8
 		)
 	}, deleteFile = FALSE)
 	
-
+	## woe fig, loe----
+	output$img_loe_summ <- renderImage({
+		# return path
+		list(
+			src = file.path(dn_results, 
+								 react_setup_region(),
+								 sel_targsite(),
+								 "BMI",
+								 "_WoE",
+								 paste0(sel_targsite(),
+								 		 "_BMI_LoESummaryFig.png")),
+			contentType = "image/png",
+			alt = "Lines of Evidence Summary",
+			width = 4800 / 5, #orig size /  scale value
+			height = 3600 / 5
+		)
+	}, deleteFile = FALSE)
 	
 # STRESS SUMM ----
 	
 	output$img_stressors <- renderImage({
 		# return path
 		list(
-			src = file.path(dn_data, dn_temp, "stressors.png"),
+			src = file.path(dn_data, 
+								 dn_temp, 
+								 "stressors.png"),
 			contentType = "image/png",
 			alt = "Stressors Visualization"
 		)
 	}, deleteFile = FALSE)
 	
 # GAPS ----
-
+	
+	## Gaps, Table ----
+	output$df_gaps_DT <- DT::renderDT({
+	
+		# trigger created when save table
+		req(react_report_run())
+		
+		stat_id <- sel_targsite()
+		fn_gaps <- paste0(stat_id, "_datagaps.tab")
+		
+		path_table <- file.path(dn_results, 
+										react_setup_region(),
+										stat_id)
+		
+		inFile <- file.path(path_table, fn_gaps)
+		
+		# Blank if no data
+		if (!file.exists(inFile)) {
+			return(NULL)
+		} ## IF ~ is.null(inFile)
+		
+		# import file
+		df_table <- read.delim(inFile,
+									  header = TRUE,
+									  sep = "\t")
+		
+		# # keep certain columns
+		# df_table <- df_table 
+		
+		dt_cap <- paste0("Data gap (Site ID = ",
+							  stat_id,
+							  ").")
+		
+		DT::datatable(df_table,
+						  filter = "top",
+						  caption = dt_cap,
+						  options = list(
+						  	scrollX = TRUE,
+						  	lengthMenu = c(5, 10, 25, 50, 100),
+						  	autoWidth = TRUE))
+			
+	}##expression
+	)## df_gaps_DT
+	
+	
 }## main

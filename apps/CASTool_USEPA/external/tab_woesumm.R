@@ -6,16 +6,16 @@ function() {
 				mainPanel(
 					h2("Biological Index Distributions"),
 					imageOutput("img_bio_index",
-									width = "50%",
-									height = "auto"),
+									width = "100%",
+									height = "100%"),
 					h2("Lines of Evidence Summary"),
-								 DT::dataTableOutput("tbl_woe_summ"),
+					DT::dataTableOutput("tbl_woe_summ"),
 					br(),
-					br(),
-					p("New LOE summary fig, results/biocommunity _WOE folder, 20251120"),
-					br(),
+					imageOutput("img_loe_summ",
+									width = "100%",
+									height = "100%"),
 					h2("Weight of Evidence Table"),
-								 DT::dataTableOutput("tbl_woe")
+					DT::dataTableOutput("tbl_woe")
 					)## mainPanel
 				)## tabPanel
 }## FUNCTION
