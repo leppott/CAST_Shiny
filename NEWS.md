@@ -4,9 +4,15 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-12-19 14:46:13.590124
+    #> Last Update: 2025-12-19 16:11:06.1688
 
-# CAST_Shiny 0.0.2.9016 (2025-12-18)
+# CAST_Shiny 0.0.2.9017 (2025-12-19)
+
+- refactor: getReport report render
+  - Add RMD files from package to shiny app directory at run time
+- refactor: Prep code for test hosting on ShinyApps.io
+
+# CAST_Shiny 0.0.2.9016 (2025-12-19)
 
 - refactor: Create RMD fragment for Stressor Summaries
   - Add to WWW folder

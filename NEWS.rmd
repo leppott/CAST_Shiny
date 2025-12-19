@@ -20,7 +20,13 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
-# CAST_Shiny 0.0.2.9016 (2025-12-18)
+# CAST_Shiny 0.0.2.9017 (2025-12-19)
+
+* refactor: getReport report render
+    + Add RMD files from package to shiny app directory at run time
+* refactor: Prep code for test hosting on ShinyApps.io
+
+# CAST_Shiny 0.0.2.9016 (2025-12-19)
 
 * refactor: Create RMD fragment for Stressor Summaries
     + Add to WWW folder

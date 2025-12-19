@@ -1114,8 +1114,6 @@ function(input, output, session) {
 				react_wshed_reach(meta_wshed_reach)
 				##### variables
 				
-		browser()		
-				
 				# 
 				# fn_targets <- df_user_metadata |>
 				# 	# filter for filename
@@ -1407,17 +1405,17 @@ function(input, output, session) {
 		shiny::withProgress({
 			
 			
-		browser()
-			cat("debug here")
-			
-		# debugging
-		source("C:/Users/Erik.Leppo/Documents/GitHub/CASTfxn/inst/shiny-examples/CASTool/CASTool.r",
-				 local = TRUE)
-			
-			
+		# browser()
+		# 	cat("debug here")
+		# 	
+		# # debugging
+		# source("C:/Users/Erik.Leppo/Documents/GitHub/CASTfxn/inst/shiny-examples/CASTool/CASTool.r",
+		# 		 local = TRUE)
+		# 	
+		# 	
 			
 			# Skeleton Code
-			# source(path_skelcode, local = FALSE)
+			source(path_skelcode, local = FALSE)
 		}, message = "Skeleton Code"
 		)## withProgress
 		
