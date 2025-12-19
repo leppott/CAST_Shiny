@@ -20,6 +20,29 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 0.0.2.9016 (2025-12-18)
+
+* refactor: Create RMD fragment for Stressor Summaries
+    + Add to WWW folder
+    + Add render to end of get report button
+    + Overwrite RMD output at start up in global
+    + Add reactive to update Shiny when file changes
+* refactor: Remove get clusters button from Setup tab
+* refactor: Add selected site id to report tab
+* refactor: Update watershed stressors
+    + Change to match Powerpoint mock up
+    + Remove existing content
+    + Add text box for reaches to display
+    + Add select box for variables
+    + Update button to display figure
+    + Update download button
+    + Add zip code to end of Report
+* fix: Add sf package to DESCRIPTION and global.R
+* refactor: Update Watershed Stressors tab
+    + Pull down for watershed variable label
+    + Display of figure
+    
+    
 # CAST_Shiny 0.0.2.9015 (2025-12-17)
 
 * refactor: Add download button for report results

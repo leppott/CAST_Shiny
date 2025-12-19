@@ -1,0 +1,63 @@
+---
+title: "Stressor Summary Plots"
+output:
+  html_fragment
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(results = 'asis', 
+							 echo = FALSE, 
+							 # warning = FALSE, 
+							 # message = FALSE, 
+							 fig.align = "center",
+							 # dev = "png",
+							 # out.height="80%",
+							 out.width="80%" 
+							 )
+```
+
+```{r, fig.cap=caps}
+
+# This notebook lists every `.png` from the folder **foo**,
+# sorts so should be in relatively the same order each time.  
+
+# includes caption below each figure using basename
+
+# images 50% (set in opts_chunk)
+
+# Set the image directory — adjust if needed
+# adjust directory based on location of RMD file
+## go up 2 directories with dirname()
+
+img_dir <- file.path(dirname(dirname(getwd())),
+							dn_results,
+							react_setup_region(),
+							sel_targsite(),
+							# "Washington",
+							# "BIO06600_DEER04",
+							dn_bmi)
+
+# Find PNG files (non-recursive). 
+# Use pattern = "\\.png$" for case-sensitive,
+# or ignore.case = TRUE to allow .PNG
+png_all <- list.files(
+  path = img_dir,
+  pattern = "\\.png$",
+  full.names = TRUE,
+  recursive = TRUE,
+  ignore.case = TRUE
+)
+
+# Exclude those in "_WoE" directory
+pat_woe <- paste0("(^|[\\/])_WoE([\\/]|$)")
+png_no_woe <- png_all[!grepl(pat_woe, png_all)]
+
+# Sort for stable order
+png_files <- sort(normalizePath(png_no_woe))
+
+# output images as vector
+knitr::include_graphics(png_files)
+caps <- basename(png_files)		
+
+```
+

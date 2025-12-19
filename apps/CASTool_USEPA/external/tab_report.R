@@ -20,6 +20,8 @@ function() {
 											 placement = "right"),
 					br(),
 					br(),
+					textOutput("txt_rep_siteid"),
+					br(),
 					hr(),
 					shinyjs::disabled(radioButtons("rad_report_tabs",
 															 "Show report summary tabs",

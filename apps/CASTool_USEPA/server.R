@@ -1090,21 +1090,51 @@ function(input, output, session) {
 				react_setup_format(meta_setup_format)
 				
 				#### cand cause
-				#### ph lo
+				##### ph lo
 				meta_lim_ph_lo <- df_user_metadata |>
 					dplyr::filter(Variable == "pHlimLow") |>
 					dplyr::pull(Value)
 				react_candcause_thresh_ph_lo(meta_lim_ph_lo)
-				#### ph hi
+				##### ph hi
 				meta_lim_ph_hi <- df_user_metadata |>
 					dplyr::filter(Variable == "pHlimHigh") |>
 					dplyr::pull(Value)
 				react_candcause_thresh_ph_hi(meta_lim_ph_hi)
-				#### do
+				##### do
 				meta_lim_do <- df_user_metadata |>
 					dplyr::filter(Variable == "DOlim") |>
 					dplyr::pull(Value)
 				react_candcause_thresh_do(meta_lim_do)
+				
+				#### wshed stress
+				##### reach
+				meta_wshed_reach <- df_user_metadata |>
+					dplyr::filter(Variable == "useAllCompReaches") |>
+					dplyr::pull(Value)
+				react_wshed_reach(meta_wshed_reach)
+				##### variables
+				
+		browser()		
+				
+				# 
+				# fn_targets <- df_user_metadata |>
+				# 	# filter for filename
+				# 	dplyr::filter(Variable == "fn.targets") |>
+				# 	dplyr::pull(Value)
+				# 
+				# # Targeted Sites File
+				# df_streamcatvar <- readRDS(
+				# 	file.path(path_check_sk, "df_targets.rds"))
+				# 
+				# wshed_var <- df_streamcatvar |>
+				# 	dplyr::pull(TargetSiteID) |>
+				# 	sort()
+				# 
+				# # SelectInput - target sites
+				# shiny::updateSelectInput(session,
+				# 								 "si_checked_sites_targ",
+				# 								 choices = c("", wshed_var),
+				# 								 selected = NULL)
 				
 			
 			# Enable Buttons
@@ -1293,7 +1323,7 @@ function(input, output, session) {
 		ext <- tools::file_ext(path_map)
 		validate(need(tolower(ext) %in% 
 						  	c("png", "jpg", "jpeg"),
-						  "Please use PNG or JPG cluster graphic."))
+						  "Please use PNG or JPG graphic."))
 		
 		# Display
 		list(src = path_map,
@@ -1307,6 +1337,17 @@ function(input, output, session) {
 	
 	## reactives----
 	react_report_run <- reactiveVal(FALSE)
+	
+	## siteid ----
+	output$txt_rep_siteid <- renderText({
+		# The expression here is reactive; it updates when input$text_input_id changes
+		if (is.null(sel_targsite()) | sel_targsite() == "") {
+			txt_siteid <- "..No target site selected.."
+		} else {
+			txt_siteid <- sel_targsite()
+		}## IF
+		paste0("Target Site: ", txt_siteid)
+	})
 	
 	## button, report ----
 	observeEvent(input$but_report_run, {
@@ -1379,9 +1420,11 @@ function(input, output, session) {
 			# source(path_skelcode, local = FALSE)
 		}, message = "Skeleton Code"
 		)## withProgress
-		# Enabled buttons disabled at startup
+		
+		# Enabled buttons ----
 		shinyjs::enable("rad_report_tabs")
 		shinyjs::enable("but_report_dload")
+		shinyjs::enable("but_dload_wshed_figs")
 		
 		## create zip ----
 
@@ -1413,7 +1456,57 @@ function(input, output, session) {
 		## reactiveval updates ----
 		# used to indicate report run
 		react_report_run(TRUE) # gaps
+	
+		## Stress Summ RMD ----
+		rend_input <- file.path("external",
+										"RMD",
+										"display_images_StressSumm.RMD")
+		path_shiny_www <- file.path("www",
+											 "RMD_HTML")
+		rmarkdown::render(input = rend_input,
+								output_dir = path_shiny_www,
+								output_file = "ShinyHTML_StressSumm.html")
 		
+		## Wshed Stress Fig Zip ----
+
+		# get files 4 zip
+		stat_id <- sel_targsite() # reactive value
+		dn_zip_ws <- file.path(dn_results,
+									  "Washington", #react_setup_region(),
+									  stat_id,
+									  "SiteInfo")
+		fn_zip_ws <- list.files(path = dn_zip_ws,
+										pattern = "_WSstress_.*\\.png$",
+										full.names = TRUE,
+										recursive = FALSE)
+		# create zip
+		tic <- Sys.time()
+		zip::zip(file.path(dn_results, "WSstress_figs.zip"),
+					files = fn_zip_ws,
+					mode = "cherry-pick")
+		toc <- Sys.time()
+		msg <- paste0("zip time (sec): ",
+						  round(difftime(toc, tic, units = "secs"), 2))
+		message(msg)
+		
+
+		# get watershed variables
+		## fn_zip_ws above
+		# extract watershed variables
+		fn_zip_ws_var <- sub("^.*_WSstress_([^/]+)\\.png$", "\\1", 
+									basename(fn_zip_ws))
+		
+		
+		# have data_stressorinfoWS in env so use it
+		df_plots_data_stressorinfoWS <- data_stressorinfoWS %>%
+			# keep columns need
+			dplyr::select(StreamCatVar, Label) %>%
+			# remove duplicates
+			unique() %>%
+			# note if have plot
+			dplyr::mutate(plot_present = StreamCatVar %in% fn_zip_ws_var)
+		
+		react_wshed_var(df_plots_data_stressorinfoWS)
 		
 	})## oE ~ Report
 	
@@ -1464,103 +1557,102 @@ function(input, output, session) {
 	
 	# WSHED STRESS ----
 
-	## button, get GitHub files ----
-	observeEvent(input$but_github_wshedstress_data, {
-		shiny::withProgress({
-		
-			### 00, Initialize ----
-			prog_detail <- "GitHub Copy, Get Files..."
-			message(paste0("\n", prog_detail))
-			
-			# Number of increments
-			prog_n <- 4
-			prog_sleep <- 0.25
-			
-			### 01, Clean Dir----
-			prog_detail <- "Clean Directory"
-			message(paste0("\n", prog_detail))
-			# Increment the progress bar, and update the detail text.
-			incProgress(1/prog_n, detail = prog_detail)
-			Sys.sleep(prog_sleep)
-			
-			# remove existing files
-			clean_dir(file.path(dn_data, dn_ws_stress))
-			
-			### 01, Download ----
-			prog_detail <- "Download Files"
-			message(paste0("\n", prog_detail))
-			# Increment the progress bar, and update the detail text.
-			incProgress(1/prog_n, detail = prog_detail)
-			Sys.sleep(prog_sleep)
-			
-			# zip
-			httr::GET(url_ws_stress_zip
-						 , httr::write_disk(temp_ws_stress_zip <- tempfile(fileext = ".zip")))
-			# csv
-			httr::GET(url_ws_stress_info
-						 , httr::write_disk(temp_ws_stress_info <- tempfile(fileext = ".csv")))
-			
-			
-			### 02, Copy ----
-			prog_detail <- "Copy and Unzip Files"
-			message(paste0("\n", prog_detail))
-			# Increment the progress bar, and update the detail text.
-			incProgress(1/prog_n, detail = prog_detail)
-			Sys.sleep(prog_sleep)
-			
-			# zip
-			utils::unzip(temp_ws_stress_zip,
-							 exdir = file.path(dn_data, dn_ws_stress),
-							 junkpaths = TRUE,
-							 overwrite = TRUE)
-			
-			# csv
-			file.copy(temp_ws_stress_info,
-						 file.path(dn_data, dn_ws_stress, "stressor-info.csv"),
-						 overwrite = TRUE)
-			
-			### 03, Verify Files ----
-			prog_detail <- "Verify Files"
-			message(paste0("\n", prog_detail))
-			# Increment the progress bar, and update the detail text.
-			incProgress(1/prog_n, detail = prog_detail)
-			Sys.sleep(prog_sleep)
-			
-			n_files <- length(list.files(file.path(dn_data, dn_ws_stress)))
-			
-			msg <- paste0("Files copied from GitHub = ", n_files)
-			message(msg)
-			
-			# # Inform user about number of files
-			# ## calc number of mismatch
-			# df_mismatch <- data.frame(taxatrans_results$nonmatch)
-			# n_taxa_mismatch <- nrow(df_mismatch)
-			# msg <- paste0("Number of mismatch taxa = ", n_taxa_mismatch, "\n\n"
-			# 				  , "Any mismatched taxa in 'mismatch' file in results download.")
-			# shinyalert::shinyalert(title = "Taxa Translate, Non Matching Taxa"
-			# 							  , text = msg
-			# 							  , type = "info"
-			# 							  , closeOnEsc = TRUE
-			# 							  , closeOnClickOutside = TRUE)
-			# #validate(msg)
-			
-			
-			### 04, Finish ----
-			prog_detail <- "Finish"
-			message(paste0("\n", prog_detail))
-			# Increment the progress bar, and update the detail text.
-			incProgress(1/prog_n, detail = prog_detail)
-			Sys.sleep(prog_sleep)
-			
-			# button, enable, download
-			shinyjs::enable("but_dload_wshed_app_fig")
-
-			
-		}, message = "GitHub files")## progress
-	})## but_github_wshedstress_data
+	## reactives----
+	react_wshed_reach <- reactiveVal("..No file uploaded..")
+	react_wshed_var <- reactiveVal("..No file uploaded..")
 	
-	## button, download ----
-	# but_dload_wshed_app_fig
+	output$txt_wshed_reach <- renderText({
+		# updated from meta data in Set Up
+		if (react_wshed_reach() == "TRUE") {
+			react_wshed_reach("All reaches in cluster")
+		} else if (react_wshed_reach() == "FALSE") {
+			react_wshed_reach("All reaches in cluster with a sampled site")
+		} else {
+			react_wshed_reach()
+		}## IF		
+	})
+	
+	## select input ----
+	# update select input when value changes
+	observeEvent(react_wshed_var(), {
+		# updated in run report
+		req(react_report_run())
+		
+		# if (react_wshed_var() == "..No file uploaded..") {
+		# 	# do nothing
+		# } else {
+			# prep data
+			df <- as.data.frame(react_wshed_var())
+			# filter for true
+			df_filt <- df[df$plot_present == TRUE, "Label"]
+			# update
+			updateSelectInput(
+				session, 
+				"si_wshed_var",
+				choices = c("", df_filt),
+				selected = ""
+				)
+		# }## IF
+	}, ignoreInit = TRUE)## oE ~ react_wshed_var
+	
+	## plot, wshed ----
+	output$plot_wshed <- renderImage({
+		# report run
+		req(react_report_run())
+
+		stat_id <- sel_targsite()
+		dn_plots <- file.path(dn_results,
+										react_setup_region(),
+										stat_id,
+										"SiteInfo")
+		
+		wss_lab <- input$si_wshed_var
+		
+		df <- as.data.frame(react_wshed_var())
+		wss_scv <- df %>%
+			dplyr::filter(Label == wss_lab) %>%
+			dplyr::pull(StreamCatVar)
+			
+		fn_plot <- paste0(stat_id,
+								"_WSstress_",
+								wss_scv,
+								".png")
+		
+		path_plot <- file.path(dn_plots, fn_plot)
+
+		# QC
+		ext <- tools::file_ext(basename(path_plot))
+		validate(need(tolower(ext) %in% 
+						  	c("png", "jpg", "jpeg"),
+						  "Please use PNG or JPG graphic."))
+		
+		# Display
+		list(src = path_plot,
+			  contentType = if (tolower(ext) == "png") "image/png" else "image/jpeg",
+			  alt = fn_plot,
+			  width = "80%"#, #orig size /  scale value
+			  # height = "80%" / 10
+			  # width = 4800 / 10, #orig size /  scale value
+			  # height = 5400 / 10
+			  )
+	}, deleteFile = FALSE)## map_sites
+	
+	
+	## button, wshed, download ----
+	output$but_dload_wshed_figs <- shiny::downloadHandler(
+		filename = function() {
+			paste0("CASTool_WSstress_figs_",
+					 format(Sys.time(), "%Y%m%d_%H%M%S"),
+					 ".zip")
+		} ,
+		content = function(fname) {
+			# zip file created when report run
+			#
+			# file for download
+			file.copy(file.path(dn_results, "WSstress_figs.zip"), fname)
+		}##content~END
+		#, contentType = "application/zip"
+	)##download ~ check files
 	
 # CAND CAUSE ----
 	
@@ -1581,8 +1673,8 @@ function(input, output, session) {
 		paste0("DO: < ", react_candcause_thresh_do())
 	})
 	
-	## Cand Cause, Table ----
-	output$df_candcause_DT <- DT::renderDT({
+	## Table, Elim ----
+	output$df_candcause_elim_DT <- DT::renderDT({
 
 		# trigger created when save table
 		req(react_report_run())
@@ -1611,9 +1703,7 @@ function(input, output, session) {
 		# # keep certain columns
 		# df_table <- df_table 
 		
-		dt_cap <- paste0("Data gap (Site ID = ",
-							  stat_id,
-							  ").")
+		dt_cap <- paste0("Stressors, Eliminated")
 		
 		DT::datatable(df_table,
 						  filter = "top",
@@ -1624,7 +1714,49 @@ function(input, output, session) {
 						  	autoWidth = TRUE))
 		
 	}##expression
-	)## df_gaps_DT
+	)## df_cc_elim_DT
+	
+	## Table, All ----
+	output$df_candcause_all_DT <- DT::renderDT({
+		
+		# trigger created when save table
+		req(react_report_run())
+	
+		stat_id <- sel_targsite()
+		fn_detects <- paste0(stat_id, "_DetectsAll.tab")
+		
+		path_table <- file.path(dn_results, 
+										react_setup_region(),
+										stat_id
+										)
+		
+		inFile <- file.path(path_table, fn_detects)
+		
+		# Blank if no data
+		if (!file.exists(inFile)) {
+			return(NULL)
+		} ## IF ~ is.null(inFile)
+		
+		# import file
+		df_table <- read.delim(inFile,
+									  header = TRUE,
+									  sep = "\t")
+		
+		# # keep certain columns
+		# df_table <- df_table 
+		
+		dt_cap <- paste0("Stressors, All")
+		
+		DT::datatable(df_table,
+						  filter = "top",
+						  caption = dt_cap,
+						  options = list(
+						  	scrollX = TRUE,
+						  	lengthMenu = c(5, 10, 25, 50, 100),
+						  	autoWidth = TRUE))
+		
+	}##expression
+	)## df_cc_all_DT
 	
 # WOE SUMM ----
 	
@@ -1743,17 +1875,24 @@ function(input, output, session) {
 	}, deleteFile = FALSE)
 	
 # STRESS SUMM ----
+	# RMD created in Run Report section
 	
-	output$img_stressors <- renderImage({
-		# return path
-		list(
-			src = file.path(dn_data, 
-								 dn_temp, 
-								 "stressors.png"),
-			contentType = "image/png",
-			alt = "Stressors Visualization"
-		)
-	}, deleteFile = FALSE)
+	# Watch the file for changes. intervalMillis defines check frequency.
+	ss_html_content <- reactiveFileReader(
+		intervalMillis = 1000,  # check every 1 second (adjust as needed)
+		session = session,
+		filePath = file.path("www", "RMD_HTML", "ShinyHTML_StressSumm.html"),
+		readFunc = function(path) {
+			paste(readLines(path, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+		}
+	)## ss_html_content
+	
+	
+	# Render the current HTML content
+	output$stresssum_html <- renderUI({
+		HTML(ss_html_content())
+	})
+	
 	
 # GAPS ----
 	

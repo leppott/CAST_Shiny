@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "0.0.2.9015"
+pkg_version <- "0.0.2.9016"
 
 # Packages ----
 library(shiny)
@@ -20,6 +20,7 @@ library(CASTfxn)
 library(CASToolClusterPckg) 
 library(CASToolWSStressorPckg)
 library(CASToolBaseDataPckg)
+library(sf)
 
 # library(zip)	  # use `utils` as `zip` pkg doesn't work on ShinyApps.io
 
@@ -117,13 +118,13 @@ clean_dir(file.path(dn_results), boo_dir = TRUE)
 ## Create Dirs ----
 create_dir(file.path(dn_data))
 create_dir(file.path(dn_data, dn_checked))
-create_dir(file.path(dn_data, dn_clusters))
-create_dir(file.path(dn_data, dn_import))
-create_dir(file.path(dn_data, dn_temp))
-create_dir(file.path(dn_data, dn_ws_stress))
+# create_dir(file.path(dn_data, dn_clusters))
+# create_dir(file.path(dn_data, dn_import))
+# create_dir(file.path(dn_data, dn_temp))
+# create_dir(file.path(dn_data, dn_ws_stress))
 create_dir(file.path(dn_results))
-create_dir(file.path(dn_results, dn_bmi))
-create_dir(file.path(dn_results, dn_woe))
+# create_dir(file.path(dn_results, dn_bmi))
+# create_dir(file.path(dn_results, dn_woe))
 
 ## Colors ----
 color_good <- "lightblue"
@@ -161,3 +162,12 @@ int_report <- 0
 # GitHub Files ----
 url_github_castfxn <- "https://raw.githubusercontent.com/leppott/CASTfxn/main/inst/extdata"
 
+# WWW----
+dn_fc <- file.path("www", "RMD_HTML")
+fn_from <- file.path(dn_fc, "html_frag_blank.html")
+fn_to <- file.path(dn_fc, "ShinyHTML_StressSumm.html")
+file.copy(from = fn_from, to = fn_to, overwrite = TRUE)
+
+# WSStressors ----
+# fn_wsstressors <- file.path("www", "CASTool_WSStressors.csv")
+# df_wsstressors <- read.csv(fn_wsstressors)

@@ -28,12 +28,12 @@ function() {
 								 				choices = NULL,
 								 				multiple = FALSE),
 								 hr(),
-								 h2("testing"),
-								 p("state of target site"),
-								 p(textOutput("txt_target_site_state")),
-								 br(),
-								 bsButton("but_setup_cluster_laura",
-								 			"Get Clusters (Laura)")
+								 # h2("testing"),
+								 # p("state of target site"),
+								 # p(textOutput("txt_target_site_state")),
+								 # br(),
+								 # bsButton("but_setup_cluster_laura",
+								 # 			"Get Clusters (Laura)")
 								#  radioButtons("rad_setup_explore",
 								#  				 "Explore watershed stressor data",
 								#  				 choices = c("Yes", "No"),
