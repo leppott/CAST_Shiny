@@ -80,7 +80,7 @@ function(input, output, session) {
 			# print(dir.exists(file.path(dn_data, dn_import)))
 			
 			# Unzip (remove any zip file directories)
-			utils::unzip(fn_inFile,
+			zip::unzip(fn_inFile,
 							 overwrite = TRUE,
 							 exdir = normalizePath(file.path(dn_data, dn_import)),
 							 junkpaths = TRUE)
@@ -953,7 +953,7 @@ function(input, output, session) {
 			
 			# Unzip (remove any zip file directories)
 			## only the one file so is faster
-			utils::unzip(fn_inFile,
+			zip::unzip(fn_inFile,
 							 overwrite = TRUE,
 							 exdir = file.path(tempdir(), dn_checked_sk),
 							 files = fn_metadata, 
@@ -994,7 +994,7 @@ function(input, output, session) {
 			
 			# Unzip all files to app dir
 			# (remove any zip file directories)
-			utils::unzip(fn_inFile,
+			zip::unzip(fn_inFile,
 							 overwrite = TRUE,
 							 exdir = file.path(path_check_sk),
 							 junkpaths = TRUE)
@@ -1172,7 +1172,7 @@ function(input, output, session) {
 		clean_dir(file.path(dn_data, dn_clusters))
 		
 		# # Unzip (remove any zip file directories)
-		# utils::unzip(fn_inFile,
+		# zip::unzip(fn_inFile,
 		# 				 overwrite = TRUE,
 		# 				 exdir = file.path(dn_data, dn_clusters),
 		# 				 junkpaths = TRUE)

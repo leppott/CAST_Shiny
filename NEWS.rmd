@@ -20,6 +20,10 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 0.0.2.9018 (2025-12-19)
+
+* refactor: Change utils::unzip to zip::zip for use on ShinyApps.io
+
 # CAST_Shiny 0.0.2.9017 (2025-12-19)
 
 * refactor: getReport report render
