@@ -1388,7 +1388,6 @@ function(input, output, session) {
 		boo_Shiny <- TRUE
 		boo.debug <- FALSE
 		debug.person <- "Shiny" # Ann, Erik, Laura
-		
 		#  
 		region <- data_region
 		#
@@ -1417,7 +1416,7 @@ function(input, output, session) {
 		# 	
 			
 			# Skeleton Code
-			source(path_skelcode, local = FALSE)
+			source(path_skelcode, local = TRUE)
 		}, message = "Skeleton Code"
 		)## withProgress
 		

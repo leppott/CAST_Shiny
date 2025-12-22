@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-12-22 10:57:44.613392
+    #> Last Update: 2025-12-22 14:47:20.121519
+
+# CAST_Shiny 0.0.2.9021 (2025-12-22)
+
+- fix: Update source of skeleton code to local = TRUE
 
 # CAST_Shiny 0.0.2.9020 (2025-12-22)
 
