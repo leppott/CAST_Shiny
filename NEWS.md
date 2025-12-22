@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-12-22 10:28:07.92386
+    #> Last Update: 2025-12-22 10:57:44.613392
+
+# CAST_Shiny 0.0.2.9020 (2025-12-22)
+
+- refactor: Update links to download files
 
 # CAST_Shiny 0.0.2.9019 (2025-12-22)
 

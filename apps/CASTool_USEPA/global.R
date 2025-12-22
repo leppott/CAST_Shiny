@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "0.0.2.9019"
+pkg_version <- "0.0.2.9020"
 
 # Packages ----
 library(shiny)
@@ -161,7 +161,7 @@ int_report <- 0
 
 # GitHub Files ----
 url_github_castfxn <- "https://raw.githubusercontent.com/leppott/CASTfxn/main/inst/extdata"
-url_github_castshiny <- "https://raw.githubusercontent.com/leppott/CAST_Shiny/main/inst/extdata"
+url_github_castshiny <- "https://raw.githubusercontent.com/leppott/CAST_Shiny/main/apps/CASTool_USEPA/www"
 
 # WWW----
 dn_fc <- file.path("www", "RMD_HTML")
