@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-12-22 14:47:20.121519
+    #> Last Update: 2025-12-22 15:06:40.454821
+
+# CAST_Shiny 0.0.2.9022 (2025-12-22)
+
+- docs: Add kableExtra package to DESCRIPTION and global
 
 # CAST_Shiny 0.0.2.9021 (2025-12-22)
 

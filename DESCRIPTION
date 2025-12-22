@@ -1,7 +1,7 @@
 Package: CAST_Shiny
 Title: Shiny App for CASTfxn package
 Description: Shiny app (CASTool) to create web app for CAST process.
-Version: 0.0.2.9021
+Version: 0.0.2.9022
 Authors@R: c(
   person("Erik W.", "Leppo", email="Erik.Leppo@tetratech.com", role=c("aut","cre")),
   person("Ann","Roseberry Lincoln", role="aut"),
@@ -25,7 +25,8 @@ Imports:
   CASToolClusterPckg,
   CASToolWSStressorPckg,
   CASToolBaseDataPckg.
-  sf
+  sf,
+  kableExtra
 Suggests:
     rmarkdown,
 LazyData: true
