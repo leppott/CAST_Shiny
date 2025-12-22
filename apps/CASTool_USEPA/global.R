@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "0.0.2.9018"
+pkg_version <- "0.0.2.9019"
 
 # Packages ----
 library(shiny)
@@ -119,7 +119,7 @@ clean_dir(file.path(dn_results), boo_dir = TRUE)
 create_dir(file.path(dn_data))
 create_dir(file.path(dn_data, dn_checked))
 # create_dir(file.path(dn_data, dn_clusters))
-# create_dir(file.path(dn_data, dn_import))
+create_dir(file.path(dn_data, dn_import))
 # create_dir(file.path(dn_data, dn_temp))
 # create_dir(file.path(dn_data, dn_ws_stress))
 create_dir(file.path(dn_results))
@@ -161,6 +161,7 @@ int_report <- 0
 
 # GitHub Files ----
 url_github_castfxn <- "https://raw.githubusercontent.com/leppott/CASTfxn/main/inst/extdata"
+url_github_castshiny <- "https://raw.githubusercontent.com/leppott/CAST_Shiny/main/inst/extdata"
 
 # WWW----
 dn_fc <- file.path("www", "RMD_HTML")

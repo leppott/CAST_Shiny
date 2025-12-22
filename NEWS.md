@@ -4,7 +4,15 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-12-19 16:51:20.247316
+    #> Last Update: 2025-12-22 10:28:07.92386
+
+# CAST_Shiny 0.0.2.9019 (2025-12-22)
+
+- fix: Restore some directories in global had marked an extra/not needed
+- files: Add files for download links
+  - CASTool_UserGuide.pdf
+  - CASTool_Templates.zip
+- refactor: Update links to download files
 
 # CAST_Shiny 0.0.2.9018 (2025-12-19)
 

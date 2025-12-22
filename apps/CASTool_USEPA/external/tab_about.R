@@ -7,10 +7,10 @@ function() {
 					includeHTML("www/RMD_HTML/txt_about.html"),
 					shiny::hr(),
 					# download user guide
-					a(href = url_github_castfxn,
+					a(href = url_github_castshiny,
 					  class = "btn bnh-primary",
 					  target = "_blank",
-					  download = "901SJSJC9_CoOccurrence_20180802_123825.pdf",
+					  download = "CASTool_UserGuide.pdf",
 					  "Download User Guide")
 					)## mainPanel
 				)## tabPanel

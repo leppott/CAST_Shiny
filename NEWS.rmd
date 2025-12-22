@@ -20,6 +20,14 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 0.0.2.9019 (2025-12-22)
+
+* fix: Restore some directories in global had marked an extra/not needed
+* files: Add files for download links
+    + CASTool_UserGuide.pdf
+    + CASTool_Templates.zip
+* refactor: Update links to download files
+
 # CAST_Shiny 0.0.2.9018 (2025-12-19)
 
 * refactor: Change utils::unzip to zip::zip for use on ShinyApps.io

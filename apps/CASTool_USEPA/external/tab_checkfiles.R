@@ -6,10 +6,10 @@ function() {
 					useShinyjs(),
 					h2("Template"),
 					p("download template as a zip file."),
-					a(href = url_github_castfxn,
+					a(href = url_github_castshiny,
 					  class = "btn bnh-primary",
 					  target = "_blank",
-					  download = "901SJSJC9_CoOccurrence_20180802_123825.pdf",
+					  download = "CASTool_Templates.zip",
 					  "Download Template Files"),
 					# Load Files ----
 					h2("Load Files"),
