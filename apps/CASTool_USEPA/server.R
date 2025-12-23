@@ -1858,7 +1858,7 @@ function(input, output, session) {
 								 sel_targsite(), 
 								 "SiteInfo", 
 								 paste0(sel_targsite(),
-								 		 "_BMI_IndexBoxPlotsByCase.png")
+								 		 "_BMI_IndexBoxplotsByCase.png")
 								 ),
 			contentType = "image/png",
 			alt = "Biological Index Distributions",
@@ -1890,7 +1890,7 @@ function(input, output, session) {
 	
 	# Watch the file for changes. intervalMillis defines check frequency.
 	ss_html_content <- reactiveFileReader(
-		intervalMillis = 1000,  # check every 1 second (adjust as needed)
+		intervalMillis = 1000,  # check every 1 second (1000 ms) (adjust as needed)
 		session = session,
 		filePath = file.path("www", "RMD_HTML", "ShinyHTML_StressSumm.html"),
 		readFunc = function(path) {

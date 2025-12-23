@@ -20,6 +20,11 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 0.0.2.9024 (2025-12-23)
+
+* refactor: Update stressor summary RMD for new file location in Shiny app
+* refactor: Update name of png to use for WoE tab for bio index 
+
 # CAST_Shiny 0.0.2.9023 (2025-12-23)
 
 * refactor: Update render of Stress Summary RMD in server.R

@@ -29,13 +29,14 @@ knitr::opts_chunk$set(results = 'asis',
 # adjust directory based on location of RMD file
 ## go up 2 directories with dirname()
 
-img_dir <- file.path(dirname(dirname(getwd())),
-							dn_results,
-							react_setup_region(),
-							sel_targsite(),
-							# "Washington",
-							# "BIO06600_DEER04",
-							dn_bmi)
+img_dir <- file.path(
+	# dirname(dirname(getwd())), # from original dir
+	dn_results,
+	react_setup_region(),
+	sel_targsite(),
+	# "Washington",
+	# "BIO06600_DEER04",
+	dn_bmi)
 
 # Find PNG files (non-recursive). 
 # Use pattern = "\\.png$" for case-sensitive,

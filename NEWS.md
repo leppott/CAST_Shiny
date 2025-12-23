@@ -4,7 +4,13 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-12-23 09:38:25.626636
+    #> Last Update: 2025-12-23 10:41:05.667093
+
+# CAST_Shiny 0.0.2.9024 (2025-12-23)
+
+- refactor: Update stressor summary RMD for new file location in Shiny
+  app
+- refactor: Update name of png to use for WoE tab for bio index
 
 # CAST_Shiny 0.0.2.9023 (2025-12-23)
 
