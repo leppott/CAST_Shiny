@@ -16,7 +16,7 @@ knitr::opts_chunk$set(results = 'asis',
 							 )
 ```
 
-```{r, fig.cap=caps}
+```{r figs, fig.cap=caps}
 
 # This notebook lists every `.png` from the folder **foo**,
 # sorts so should be in relatively the same order each time.  

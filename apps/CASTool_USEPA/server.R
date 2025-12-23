@@ -725,7 +725,6 @@ function(input, output, session) {
 
 		path_table <- file.path(out.dir, 
 										region,
-										dn_results,
 										dn_checked_sk)
 
 		inFile <- file.path(path_table, "TableOne.tab")
@@ -805,7 +804,6 @@ function(input, output, session) {
 		
 		path_table <- file.path(out.dir, 
 										region,
-										dn_results,
 										dn_checked_sk)
 		
 		inFile <- file.path(path_table, "TableTwo.tab")
@@ -1457,14 +1455,28 @@ function(input, output, session) {
 		react_report_run(TRUE) # gaps
 	
 		## Stress Summ RMD ----
-		rend_input <- file.path("external",
-										"RMD",
-										"display_images_StressSumm.RMD")
+		# rend_input <- file.path("external",
+		# 								"RMD",
+		# 								"display_images_StressSumm.Rmd")
+		#
+		# copy RMD so works in Shiny
+		## same issue for stress summ as getReport in skeleton code
+		## render switches working directory to location of RMD
+		rmd2copy <- list.files(file.path("external",
+													"RMD"),
+									  pattern = "display_images_StressSumm\\.Rmd$",
+									  full.names = TRUE)
+		file.copy(rmd2copy, ".", overwrite = TRUE)
+		rend_input <- "display_images_StressSumm.Rmd"
 		path_shiny_www <- file.path("www",
 											 "RMD_HTML")
+		# browser()
 		rmarkdown::render(input = rend_input,
-								output_dir = path_shiny_www,
-								output_file = "ShinyHTML_StressSumm.html")
+								# output_dir = path_shiny_www,
+								output_file = file.path(path_shiny_www,
+																"ShinyHTML_StressSumm.html"),
+								params = list(react_setup_region = react_setup_region)
+		)
 		
 		## Wshed Stress Fig Zip ----
 

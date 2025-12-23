@@ -4,7 +4,12 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-12-22 15:06:40.454821
+    #> Last Update: 2025-12-23 09:38:25.626636
+
+# CAST_Shiny 0.0.2.9023 (2025-12-23)
+
+- refactor: Update render of Stress Summary RMD in server.R
+- refactor: Update path to qc tables 1 and 2 on check files tab
 
 # CAST_Shiny 0.0.2.9022 (2025-12-22)
 
