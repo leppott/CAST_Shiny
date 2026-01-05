@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2025-12-23 16:02:13.153582
+    #> Last Update: 2026-01-05 13:16:30.245561
+
+# CAST_Shiny 1.0.0.9001 (2026-01-05)
+
+- refactor: Fix timing issue for abiotic clustering image on setup tab
 
 # CAST_Shiny 1.0.0 (2025-12-23)
 

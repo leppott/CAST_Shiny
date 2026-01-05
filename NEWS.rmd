@@ -20,6 +20,10 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 1.0.0.9001 (2026-01-05)
+
+* refactor: Fix timing issue for abiotic clustering image on setup tab
+
 # CAST_Shiny 1.0.0 (2025-12-23)
 
 * docs: Bump version as task complete and code is working

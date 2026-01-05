@@ -1290,25 +1290,34 @@ function(input, output, session) {
 	})## oE ~ Report
 	
 	## fig, clust ----
-	output$map_sites <- renderImage({
+	# split image path and render
+	# ensure have stable path before render image
+	path_img_abiotic <- reactive({
+		
 		# ensure files uploaded
 		req(input$fn_input_setup_checked_uload)
-
-		# map file name
+		
 		# don't have dir so use temp version
-		data_CASTmeta_temp <- readRDS(file.path(tempdir(),
-															 dn_checked_sk, 
-															 "CASTmetadata.rds"))
+		# map file name
+		path_CASTmeta_temp <- file.path(tempdir(),
+												  dn_checked_sk, 
+												  "CASTmetadata.rds")
+		# ensure file exists
+		validate(need(file.exists(path_CASTmeta_temp),
+						  "Uploaded file not found."))
+		# read file
+		data_CASTmeta_temp <- readRDS(path_CASTmeta_temp)
+		
 		# get region
 		data_region <- data_CASTmeta_temp |>
 			dplyr::filter(Variable == "region") |>
 			dplyr::pull(Value)
-
+		
 		# dir of 'checked' files
 		path_check_sk <- file.path(dn_results,
 											data_region,
 											dn_checked_sk)
-
+		
 		## Get map file	
 		# fn_map <- data_CASTmeta_temp |>
 		# 	# filter for filename
@@ -1317,11 +1326,25 @@ function(input, output, session) {
 		fn_map <- "cluster_graphic.png"
 		path_map <- file.path(path_check_sk, fn_map)
 		
+		# return 
+		path_map
+
+	})## path_img_abiotic
+	
+	
+	output$map_sites <- renderImage({
+		
+		# image file, triggers only when ready
+		path_map <- path_img_abiotic()
+		
 		# QC
 		ext <- tools::file_ext(path_map)
 		validate(need(tolower(ext) %in% 
 						  	c("png", "jpg", "jpeg"),
 						  "Please use PNG or JPG graphic."))
+		
+		# alt name
+		fn_map <- basename(path_map)
 		
 		# Display
 		list(src = path_map,
@@ -1329,7 +1352,50 @@ function(input, output, session) {
 			  alt = fn_map,
 			  width = 7200 / 10, #orig size /  scale value
 			  height = 4800 / 10)
-	}, deleteFile = FALSE)## map_sites
+	}, deleteFile = FALSE
+	)## map_sites (new)
+	
+	# output$map_sites_orig <- renderImage({
+	# 	# ensure files uploaded
+	# 	req(input$fn_input_setup_checked_uload)
+	# 
+	# 	# map file name
+	# 	# don't have dir so use temp version
+	# 	data_CASTmeta_temp <- readRDS(file.path(tempdir(),
+	# 														 dn_checked_sk, 
+	# 														 "CASTmetadata.rds"))
+	# 	# get region
+	# 	data_region <- data_CASTmeta_temp |>
+	# 		dplyr::filter(Variable == "region") |>
+	# 		dplyr::pull(Value)
+	# 
+	# 	# dir of 'checked' files
+	# 	path_check_sk <- file.path(dn_results,
+	# 										data_region,
+	# 										dn_checked_sk)
+	# 
+	# 	## Get map file	
+	# 	# fn_map <- data_CASTmeta_temp |>
+	# 	# 	# filter for filename
+	# 	# 	dplyr::filter(Variable == "fn.map") |>
+	# 	# 	dplyr::pull(Value)
+	# 	fn_map <- "cluster_graphic.png"
+	# 	path_map <- file.path(path_check_sk, fn_map)
+	# 	
+	# 	# QC
+	# 	ext <- tools::file_ext(path_map)
+	# 	validate(need(tolower(ext) %in% 
+	# 					  	c("png", "jpg", "jpeg"),
+	# 					  "Please use PNG or JPG graphic."))
+	# 	
+	# 	# Display
+	# 	list(src = path_map,
+	# 		  contentType = if (tolower(ext) == "png") "image/png" else "image/jpeg",
+	# 		  alt = fn_map,
+	# 		  width = 7200 / 10, #orig size /  scale value
+	# 		  height = 4800 / 10)
+	# }, deleteFile = FALSE
+	# )## map_sites-orig
 	
 # REPORT----
 	
