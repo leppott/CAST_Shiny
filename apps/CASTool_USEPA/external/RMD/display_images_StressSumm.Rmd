@@ -12,35 +12,54 @@ knitr::opts_chunk$set(results = 'asis',
 							 fig.align = "center",
 							 # dev = "png",
 							 # out.height="80%",
-							 out.width="80%" 
+							 # out.width="80%" 
+							 out.width= 4800 / 5 
 							 )
+bc_dir <- c("BMI", "FISH", "alg")
+bc_text <- c("Benthic Macroninvertebrates", "Fish", "Algae")
+boo_print_nodata <- FALSE
 ```
 
-```{r figs, fig.cap=caps}
+```{r figs, fig.cap=fig_caps}
 
 # This notebook lists every `.png` from the folder **foo**,
 # sorts so should be in relatively the same order each time.  
 
 # includes caption below each figure using basename
 
-# images 50% (set in opts_chunk)
+# images 50% (set in opts_chunk).  Can't zoom %
+# use 4800/10 
 
 # Set the image directory — adjust if needed
 # adjust directory based on location of RMD file
 ## go up 2 directories with dirname()
 
-img_dir <- file.path(
-	# dirname(dirname(getwd())), # from original dir
-	dn_results,
-	react_setup_region(),
-	sel_targsite(),
-	# "Washington",
-	# "BIO06600_DEER04",
-	dn_bmi)
+# loop through each biocomm
 
+
+i <- 1
+
+img_dir <- file.path(dn_results,
+							react_setup_region(),
+							sel_targsite(),
+							bc_dir[i])
+
+# Print if directory exists
+if (dir.exists(img_dir)) {
+	# Section Title
+	cat(paste0("### ", bc_text[i], "\n\n"))
+} else {
+	if (boo_print_nodata) {
+		# Section Title
+		cat(paste0("### ", bc_text[i], "\n\n"))
+		# no data statement
+		cat(paste0("No ", tolower(bc_text[i]), " data available.\n\n"))
+	}## IF ~ boo_print_nodata
+}## IF ~ dir.exists
+	
 # Find PNG files (non-recursive). 
-# Use pattern = "\\.png$" for case-sensitive,
-# or ignore.case = TRUE to allow .PNG
+# pattern = "\\.png$"
+# ignore.case = TRUE to allow ".PNG"
 png_all <- list.files(
   path = img_dir,
   pattern = "\\.png$",
@@ -58,7 +77,97 @@ png_files <- sort(normalizePath(png_no_woe))
 
 # output images as vector
 knitr::include_graphics(png_files)
-caps <- basename(png_files)		
+fig_caps <- basename(png_files)
 
+```
+
+```{r}
+
+i <- 2
+
+img_dir <- file.path(dn_results,
+							react_setup_region(),
+							sel_targsite(),
+							bc_dir[i])
+
+# Print if directory exists
+if (dir.exists(img_dir)) {
+	# Section Title
+	cat(paste0("### ", bc_text[i], "\n\n"))
+} else {
+	if (boo_print_nodata) {
+		# Section Title
+		cat(paste0("### ", bc_text[i], "\n\n"))
+		# no data statement
+		cat(paste0("No ", tolower(bc_text[i]), " data available.\n\n"))
+	}## IF ~ boo_print_nodata
+}## IF ~ dir.exists
+	
+# Find PNG files (non-recursive). 
+# pattern = "\\.png$"
+# ignore.case = TRUE to allow ".PNG"
+png_all <- list.files(
+  path = img_dir,
+  pattern = "\\.png$",
+  full.names = TRUE,
+  recursive = TRUE,
+  ignore.case = TRUE
+)
+
+# Exclude those in "_WoE" directory
+pat_woe <- paste0("(^|[\\/])_WoE([\\/]|$)")
+png_no_woe <- png_all[!grepl(pat_woe, png_all)]
+
+# Sort for stable order
+png_files <- sort(normalizePath(png_no_woe))
+
+# output images as vector
+knitr::include_graphics(png_files)
+fig_caps <- basename(png_files)
+```
+
+```{r}
+
+i <- 3
+
+img_dir <- file.path(dn_results,
+							react_setup_region(),
+							sel_targsite(),
+							bc_dir[i])
+
+# Print if directory exists
+if (dir.exists(img_dir)) {
+	# Section Title
+	cat(paste0("### ", bc_text[i], "\n\n"))
+} else {
+	if (boo_print_nodata) {
+		# Section Title
+		cat(paste0("### ", bc_text[i], "\n\n"))
+		# no data statement
+		cat(paste0("No ", tolower(bc_text[i]), " data available.\n\n"))
+	}## IF ~ boo_print_nodata
+}## IF ~ dir.exists
+	
+# Find PNG files (non-recursive). 
+# pattern = "\\.png$"
+# ignore.case = TRUE to allow ".PNG"
+png_all <- list.files(
+  path = img_dir,
+  pattern = "\\.png$",
+  full.names = TRUE,
+  recursive = TRUE,
+  ignore.case = TRUE
+)
+
+# Exclude those in "_WoE" directory
+pat_woe <- paste0("(^|[\\/])_WoE([\\/]|$)")
+png_no_woe <- png_all[!grepl(pat_woe, png_all)]
+
+# Sort for stable order
+png_files <- sort(normalizePath(png_no_woe))
+
+# output images as vector
+knitr::include_graphics(png_files)
+fig_caps <- basename(png_files)
 ```
 

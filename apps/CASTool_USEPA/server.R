@@ -1707,9 +1707,9 @@ function(input, output, session) {
 		list(src = path_plot,
 			  contentType = if (tolower(ext) == "png") "image/png" else "image/jpeg",
 			  alt = fn_plot,
-			  width = "80%"#, #orig size /  scale value
+			  # width = "80%"#, #orig size /  scale value
 			  # height = "80%" / 10
-			  # width = 4800 / 10, #orig size /  scale value
+			  width = 4800 / 10# , #orig size /  scale value
 			  # height = 5400 / 10
 			  )
 	}, deleteFile = FALSE)## map_sites

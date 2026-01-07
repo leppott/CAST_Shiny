@@ -20,6 +20,14 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 1.0.0.9002 (2026-01-07)
+
+* refactor: Change Wshed Summ images from % to set size
+* refactor: Update StressSumm RMD
+    + Change image width from % to set size
+    + Add title for each biocomm
+    + Allow for option of printing of "no data" message or remove section when no data
+
 # CAST_Shiny 1.0.0.9001 (2026-01-05)
 
 * refactor: Fix timing issue for abiotic clustering image on setup tab

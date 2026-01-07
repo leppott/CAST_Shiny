@@ -4,7 +4,16 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-01-05 13:16:30.245561
+    #> Last Update: 2026-01-07 11:57:25.409938
+
+# CAST_Shiny 1.0.0.9002 (2026-01-07)
+
+- refactor: Change Wshed Summ images from % to set size
+- refactor: Update StressSumm RMD
+  - Change image width from % to set size
+  - Add title for each biocomm
+  - Allow for option of printing of “no data” message or remove section
+    when no data
 
 # CAST_Shiny 1.0.0.9001 (2026-01-05)
 
