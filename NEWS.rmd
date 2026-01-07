@@ -20,6 +20,10 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 1.0.0.9004 (2026-01-07)
+
+* refactor: Add catch for data_stressorinfoWS when WS stress summary not being used
+
 # CAST_Shiny 1.0.0.9003 (2026-01-07)
 
 * refactor: Update StressSumm RMD for biocomm folder names

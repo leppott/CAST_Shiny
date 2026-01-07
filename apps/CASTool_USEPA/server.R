@@ -1575,15 +1575,19 @@ function(input, output, session) {
 		
 		
 		# have data_stressorinfoWS in env so use it
-		df_plots_data_stressorinfoWS <- data_stressorinfoWS %>%
-			# keep columns need
-			dplyr::select(StreamCatVar, Label) %>%
-			# remove duplicates
-			unique() %>%
-			# note if have plot
-			dplyr::mutate(plot_present = StreamCatVar %in% fn_zip_ws_var)
-		
-		react_wshed_var(df_plots_data_stressorinfoWS)
+		if (exists("data_stressorinfoWS")) {
+			
+			df_plots_data_stressorinfoWS <- data_stressorinfoWS %>%
+				# keep columns need
+				dplyr::select(StreamCatVar, Label) %>%
+				# remove duplicates
+				unique() %>%
+				# note if have plot
+				dplyr::mutate(plot_present = StreamCatVar %in% fn_zip_ws_var)
+			
+			react_wshed_var(df_plots_data_stressorinfoWS)
+			
+		}## exists ~ data_stressorinfoWS
 		
 	})## oE ~ Report
 	

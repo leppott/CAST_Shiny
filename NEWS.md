@@ -4,7 +4,12 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-01-07 12:45:00.137547
+    #> Last Update: 2026-01-07 13:51:21.186084
+
+# CAST_Shiny 1.0.0.9004 (2026-01-07)
+
+- refactor: Add catch for data_stressorinfoWS when WS stress summary not
+  being used
 
 # CAST_Shiny 1.0.0.9003 (2026-01-07)
 
