@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-01-07 11:57:25.409938
+    #> Last Update: 2026-01-07 12:45:00.137547
+
+# CAST_Shiny 1.0.0.9003 (2026-01-07)
+
+- refactor: Update StressSumm RMD for biocomm folder names
 
 # CAST_Shiny 1.0.0.9002 (2026-01-07)
 
