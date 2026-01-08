@@ -1589,6 +1589,15 @@ function(input, output, session) {
 			
 		}## exists ~ data_stressorinfoWS
 		
+		### Info Pop Up ----
+		msg <- paste("Creation of report is complete.\n",
+						 sep = "\n")
+		shinyalert::shinyalert(title = "Generate Report",
+									  text = msg,
+									  type = "info",
+									  closeOnEsc = TRUE,
+									  closeOnClickOutside = TRUE)
+		
 	})## oE ~ Report
 	
 	
@@ -1960,7 +1969,7 @@ function(input, output, session) {
 	
 	# Watch the file for changes. intervalMillis defines check frequency.
 	ss_html_content <- reactiveFileReader(
-		intervalMillis = 1000,  # check every 1 second (1000 ms) (adjust as needed)
+		intervalMillis = 1000/2,  # check every 1 second (1000 ms) (adjust as needed)
 		session = session,
 		filePath = file.path("www", "RMD_HTML", "ShinyHTML_StressSumm.html"),
 		readFunc = function(path) {

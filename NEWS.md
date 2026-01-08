@@ -4,7 +4,17 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-01-07 13:51:21.186084
+    #> Last Update: 2026-01-08 12:39:01.276273
+
+# CAST_Shiny 1.0.0.9005 (2026-01-08)
+
+- refactor: Add shiny alert when report finished
+- refactor: Update stressor summary report
+  - Change to html_document from html_fragment
+  - Add table of contents
+  - Change content structure
+    - Add sections for each file directory
+    - Change directory names to labels
 
 # CAST_Shiny 1.0.0.9004 (2026-01-07)
 

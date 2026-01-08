@@ -9,11 +9,21 @@ function() {
 					# imageOutput("img_stressors",
 					# 				width = "50%",
 					# 				height = "auto")
-					# does't update when change contents of html
+					# doesn't update when change contents of html
 					# includeHTML(file.path("www",
 					# 							 "RMD_HTML",
 					# 							 "ShinyHTML_StressSumm.html"))
+					# file not found
+					# tags$iframe(
+					# 	src = file.path("www",
+					# 						 "RMD_HTML",
+					# 						 "ShinyHTML_StressSumm.html"))
+					# app crashes
+					# includeHTML("stresssum_html") 
+					# works with both fragment (no toc) and document
 					htmlOutput("stresssum_html")
+					 
+					
 							)## mainPanel
 				)## tabPanel
 }## FUNCTION

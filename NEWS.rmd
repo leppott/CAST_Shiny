@@ -20,6 +20,16 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 1.0.0.9005 (2026-01-08)
+
+* refactor: Add shiny alert when report finished
+* refactor: Update stressor summary report
+   + Change to html_document from html_fragment
+   + Add table of contents
+   + Change content structure
+      - Add sections for each file directory
+      - Change directory names to labels
+
 # CAST_Shiny 1.0.0.9004 (2026-01-07)
 
 * refactor: Add catch for data_stressorinfoWS when WS stress summary not being used
