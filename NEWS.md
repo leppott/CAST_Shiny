@@ -4,7 +4,13 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-01-08 12:39:01.276273
+    #> Last Update: 2026-01-09 13:00:57.905955
+
+# CAST_Shiny 1.0.0.9006 (2026-01-09)
+
+- refactor: Update Stressor Summary report
+  - Code to convert tibble to vector
+  - Adjust table of contents and theme in YAML header
 
 # CAST_Shiny 1.0.0.9005 (2026-01-08)
 

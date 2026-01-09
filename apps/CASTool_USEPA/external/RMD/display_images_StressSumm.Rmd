@@ -4,6 +4,9 @@ output:
     toc: true
     toc_float: true
     toc_depth: 4
+    collapsed: true
+    smooth_scroll: true
+theme: flatly
 ---
 
 ```{r setup, include=FALSE}
@@ -15,7 +18,7 @@ knitr::opts_chunk$set(results = 'asis',
 							 # dev = "png",
 							 # out.height="80%",
 							 # out.width="80%" 
-							 out.width= 4800 / 5 
+							 out.width= 4800 / 6 
 							 )
 bc_dir <- c("BMI", "FISH", "ALG")
 bc_text <- c("Benthic Macroinvertebrates", "Fish", "Algae")
@@ -83,7 +86,8 @@ for (i in seq_len(length(bc_dir))) {
 	## convert to labels
 	png_dirs_labs <- data_stressInfo[
 		match(png_dirs, data_stressInfo$StdParamName),
-		"Label"]
+		"Label",
+		TRUE] # convert to vector from tibble
 	## clean up (same as CASTfxn BMI.rmd)
 	png_dirs_labs <- sub("(mg/l)", 
 								"mg/L", 

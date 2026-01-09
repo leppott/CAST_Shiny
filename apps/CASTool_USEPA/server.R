@@ -1536,7 +1536,7 @@ function(input, output, session) {
 		rend_input <- "display_images_StressSumm.Rmd"
 		path_shiny_www <- file.path("www",
 											 "RMD_HTML")
-		# browser()
+		 browser()
 		rmarkdown::render(input = rend_input,
 								# output_dir = path_shiny_www,
 								output_file = file.path(path_shiny_www,

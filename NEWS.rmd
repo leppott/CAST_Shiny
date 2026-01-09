@@ -20,6 +20,12 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 1.0.0.9006 (2026-01-09)
+
+* refactor: Update Stressor Summary report 
+   + Code to convert tibble to vector
+   + Adjust table of contents and theme in YAML header
+
 # CAST_Shiny 1.0.0.9005 (2026-01-08)
 
 * refactor: Add shiny alert when report finished
