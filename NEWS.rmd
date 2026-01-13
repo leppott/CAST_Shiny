@@ -20,6 +20,11 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 1.0.0.9007 (2026-01-13)
+
+* fix: Intermittent issue of metadata file not available
+   + Add req() to server in 3 locations for path to metadata Excel file
+
 # CAST_Shiny 1.0.0.9006 (2026-01-09)
 
 * refactor: Update Stressor Summary report 

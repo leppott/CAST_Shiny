@@ -4,7 +4,12 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-01-09 13:00:57.905955
+    #> Last Update: 2026-01-13 08:40:17.645403
+
+# CAST_Shiny 1.0.0.9007 (2026-01-13)
+
+- fix: Intermittent issue of metadata file not available
+  - Add req() to server in 3 locations for path to metadata Excel file
 
 # CAST_Shiny 1.0.0.9006 (2026-01-09)
 

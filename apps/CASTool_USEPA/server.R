@@ -224,10 +224,11 @@ function(input, output, session) {
 											  full.names = FALSE))
 		
 		# User, CASTool MetaData
-		df_user_metadata <- readxl::read_excel(
-			file.path(dn_data, 
-						 dn_import, 
-						 fn_default_check_input_cast_metadata))
+		path_metadata <- file.path(dn_data, 
+											dn_import, 
+											fn_default_check_input_cast_metadata)
+		req(path_metadata)
+		df_user_metadata <- readxl::read_excel(path_metadata)
 		# "_CASTool_Metadata.xlsx"
 		
 		# User, Region
@@ -354,10 +355,11 @@ function(input, output, session) {
 											  full.names = FALSE))
 		
 		# User, CASTool MetaData
-		df_user_metadata <- readxl::read_excel(
-			file.path(dn_data, 
-						 dn_import, 
-						 fn_default_check_input_cast_metadata))
+		path_metadata <- file.path(dn_data, 	
+											dn_import, 
+											fn_default_check_input_cast_metadata)
+		req(path_metadata)
+		df_user_metadata <- readxl::read_excel(path_metadata)
 		# "_CASTool_Metadata.xlsx"
 		
 		# User, Region
@@ -423,10 +425,11 @@ function(input, output, session) {
 											  full.names = FALSE))
 		
 		# User, CASTool MetaData
-		df_user_metadata <- readxl::read_excel(
-			file.path(dn_data, 
-						 dn_import, 
-						 fn_default_check_input_cast_metadata))
+		path_metadata <- file.path(dn_data,
+											dn_import, 
+											fn_default_check_input_cast_metadata)
+		req(path_metadata)
+		df_user_metadata <- readxl::read_excel(path_metadata)
 		# "_CASTool_Metadata.xlsx"
 		
 		# User, Region
@@ -1536,7 +1539,7 @@ function(input, output, session) {
 		rend_input <- "display_images_StressSumm.Rmd"
 		path_shiny_www <- file.path("www",
 											 "RMD_HTML")
-		 browser()
+		 # browser()
 		rmarkdown::render(input = rend_input,
 								# output_dir = path_shiny_www,
 								output_file = file.path(path_shiny_www,
