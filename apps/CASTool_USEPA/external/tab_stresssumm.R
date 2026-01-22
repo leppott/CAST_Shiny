@@ -3,7 +3,7 @@
 function() {
 	tabPanel("Stressor Summaries",
 				value = "tab_stresssumm",
-				mainPanel(
+				#mainPanel(
 					h2("Stressor Summaries"),
 					# p("example images, not plots of data"),
 					# imageOutput("img_stressors",
@@ -21,9 +21,12 @@ function() {
 					# app crashes
 					# includeHTML("stresssum_html") 
 					# works with both fragment (no toc) and document
-					htmlOutput("stresssum_html")
+					
+					#htmlOutput("stresssum_html") #LCN commentedout
+					uiOutput("stresssum_frame")
 					 
 					
-							)## mainPanel
+				#			)## mainPanel
 				)## tabPanel
 }## FUNCTION
+

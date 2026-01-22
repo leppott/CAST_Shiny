@@ -2,6 +2,14 @@
 
 function() {
 	tabPanel("Set Up Tool",
+				tags$head(tags$style(HTML("
+				  .pill {
+				    background: #f5f5f5;
+				    padding: 8px 12px;
+				    border-radius: 4px;
+				    margin-bottom: 10px;
+				  }
+						 "))),
 				mainPanel(
 					h2("Select target site and analysis parameters"),
 					fileInput('fn_input_setup_checked_uload', 
@@ -21,13 +29,13 @@ function() {
 						# width = 12
 						column(4,
 								 p(strong("Explore watershed stressor data: ")),
-								 textOutput("txt_setup_explore"),
+								 div(class = "pill", textOutput("txt_setup_explore")),
 								 br(),
 								 selectInput("si_checked_sites_targ",
 								 				"Select target site",
 								 				choices = NULL,
 								 				multiple = FALSE),
-								 hr(),
+								 hr()),
 								 # h2("testing"),
 								 # p("state of target site"),
 								 # p(textOutput("txt_target_site_state")),
@@ -51,19 +59,16 @@ function() {
 						# 		 # bsButton("but_setup_comp",
 						# 		 # 			"Get comparators")
 						# 		 ),
-						column(8,
+						fluidRow(
 								 # p("text showing cluster method and number."),
 								 # br(),
 								 # p("if choose abiotic method get some plots"),
 								 # br(),
-								 h2("Abiotic clustering"),
+								 column(12, h2("Clustering figure"),
 								 imageOutput("map_sites", # size set in map_sites
 								 				width = "100%",
 								 				height = "100%")
-								 )
-						)## fluidRow
-					
-					
-							)## mainPanel
-				)## tabPanel
+								 ))
+						)## mainPanel
+					)## tabPanel
 }## FUNCTION

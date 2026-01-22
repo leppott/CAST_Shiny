@@ -3,7 +3,7 @@
 function() {
 	tabPanel("WoE Summary",
 				value = "tab_woesumm",
-				mainPanel(
+				#mainPanel(
 					h2("Biological Index Distributions"),
 					imageOutput("img_bio_index",
 									width = "100%",
@@ -16,6 +16,6 @@ function() {
 									height = "100%"),
 					h2("Weight of Evidence Table"),
 					DT::dataTableOutput("tbl_woe")
-					)## mainPanel
+				#	)## mainPanel
 				)## tabPanel
 }## FUNCTION
