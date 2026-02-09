@@ -16,9 +16,16 @@ function() {
 						 "))),
 				#mainPanel(
 					h2("Explore watershed stressor figures"),
+					p(em("All watershed stressor figures are available in the SiteInfo subfolder in the downloaded results zipped folder.")),
 					fluidRow(
 						column(4,
-								p(strong("Reaches to display: ")),
+								p(tagList(
+									strong("Reaches to display: "),
+									icon("info-circle", style = "color: #2fa4e7", id="reachesInfo",
+									))),
+								bsPopover(id="reachesInfo", title = HTML("<b>Helpful Hints</b>"), 
+											 content = HTML("To modify, change the useAllCompReaches parameter in _CASTool_Metadata.xlsx."),
+											 placement = "right", trigger = "hover"),
 								div(class = "pill", textOutput("txt_wshed_reach")),
 								br(),
 								selectInput("si_wshed_var",
@@ -34,10 +41,18 @@ function() {
 								# 						 placement = "right")
 						),## column
 						column(8,
+								 p(tagList(strong("Watershed stressor figure"),
+								 			 actionLink("helpWSStrFig", label = NULL, icon = icon("circle-info"), class = "help-btn"))
+								   ),
 								 imageOutput("plot_wshed", # size set in plot_wshed
 								 				width = "100%",
-								 				height = "100%"))
-					)## fluidRow
+								 				height = "100%")
+								 )
+					), ## fluidRow
+				fluidRow(
+					column(12, 
+							 p(strong("Table of watershed stressor variables elevated at the target reach")),
+							 DT::dataTableOutput("ws_stress_high")))
 					
 				#			)## mainPanel
 				)## tabPanel

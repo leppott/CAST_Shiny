@@ -468,6 +468,9 @@ function(input, output, session) {
 		path_metadata <- file.path(dn_data,
 											dn_import, 
 											fn_default_check_input_cast_metadata)
+		
+		#browser()
+		
 		req(path_metadata)
 		df_user_metadata <- readxl::read_excel(path_metadata)
 		# "_CASTool_Metadata.xlsx"
@@ -791,7 +794,7 @@ function(input, output, session) {
 
 		DT::datatable(df_table,
 						  filter = "top",
-						  caption = "Summarizes whether uploaded files have the expected columns with the expected data types, defines the parameters that uniquely identify observations (primary keys), and counts the number of observations for each primary key. Rows are shaded based on their value for the QC_Passed column (blue = true, orange = false), which is true if all expected columns are present (QC_ExpectedColumns) with expected datatypes (QC_ExpectedDatatypes). Available as TableOne in the folder downloaded from the Download file check tables button below.",
+						  caption = "Summarizes whether uploaded files have the expected columns with the expected data types, defines the parameters that uniquely identify observations (primary keys), and counts the number of observations for each primary key. Rows are shaded based on their value for the QC_Passed column (blue = true, orange = false), which is true if all expected columns are present (QC_ExpectedColumns) with expected datatypes (QC_ExpectedDatatypes). Available as TableOne in the folder downloaded from the Download file check tables button below. Add missing columns or correct input data types as instructed by the table before proceeding.",
 						  options = list(
 						  	scrollX=TRUE,
 						  	lengthMenu = c(5, 10, 25, 50, 100),
@@ -869,7 +872,7 @@ function(input, output, session) {
 		
 		DT::datatable(df_table,
 						  filter = "top",
-						  caption = "Evaluates match ups between paired input data files. Available as TableTwo in the folder downloaded from the Download file check tables button below.",
+						  caption = "Evaluates match ups between paired input data files. FileOneCondition reports the number of unique values of the join column (JoinCols) present in FileTwo but not FileOne. FileTwoCondition reports the number of unique values of the join column (JoinCols) present in FileOne but not FileTwo. Review these columns to ensure that you have an explanation for these conditions before proceeding. Available as TableTwo in the folder downloaded from the Download file check tables button below.",
 						  options = list(
 						  	scrollX=TRUE,
 						  	lengthMenu = c(5, 10, 25, 50, 100),
@@ -930,6 +933,10 @@ function(input, output, session) {
 	
 	
 # SET UP ----
+	
+	## LCN 2/2/26
+	unzipped_done <- reactiveVal(FALSE)
+	
 	## Set Up, Reactives ----
 	sel_targsite <- reactive(input$si_checked_sites_targ)
 	react_setup_explore <- reactiveVal("..No file uploaded..")
@@ -1001,6 +1008,7 @@ function(input, output, session) {
 							 files = fn_metadata, 
 							 junkpaths = TRUE)
 			
+			
 			## 04, Catalog ----
 			prog_detail <- "Catalog Files"
 			message(paste0("\n", prog_detail))
@@ -1040,6 +1048,8 @@ function(input, output, session) {
 							 overwrite = TRUE,
 							 exdir = file.path(path_check_sk),
 							 junkpaths = TRUE)
+			
+			unzipped_done(TRUE) # LCN 2/2/26 solution
 			
 			# List Files
 			fn_checked <- sort(list.files(file.path(path_check_sk),
@@ -1334,44 +1344,84 @@ function(input, output, session) {
 	## fig, clust ----
 	# split image path and render
 	# ensure have stable path before render image
-	path_img_abiotic <- reactive({
-		
+	# LCN 2/2/26 test solution
+	path_img_abiotic <- eventReactive(unzipped_done(), {
+
 		# ensure files uploaded
 		req(input$fn_input_setup_checked_uload)
-		
+
 		# don't have dir so use temp version
 		# map file name
 		path_CASTmeta_temp <- file.path(tempdir(),
-												  dn_checked_sk, 
+												  dn_checked_sk,
 												  "CASTmetadata.rds")
 		# ensure file exists
 		validate(need(file.exists(path_CASTmeta_temp),
 						  "Uploaded file not found."))
 		# read file
 		data_CASTmeta_temp <- readRDS(path_CASTmeta_temp)
-		
+
 		# get region
 		data_region <- data_CASTmeta_temp |>
 			dplyr::filter(Variable == "region") |>
 			dplyr::pull(Value)
-		
+
 		# dir of 'checked' files
 		path_check_sk <- file.path(dn_results,
 											data_region,
 											dn_checked_sk)
-		
-		## Get map file	
+
+		## Get map file
 		# fn_map <- data_CASTmeta_temp |>
 		# 	# filter for filename
 		# 	dplyr::filter(Variable == "fn.map") |>
 		# 	dplyr::pull(Value)
 		fn_map <- "cluster_graphic.png"
 		path_map <- file.path(path_check_sk, fn_map)
-		
-		# return 
+
+		# return
 		path_map
 
 	})## path_img_abiotic
+	
+	# path_img_abiotic <- reactive({
+	# 
+	# 	# ensure files uploaded
+	# 	req(input$fn_input_setup_checked_uload)
+	# 
+	# 	# don't have dir so use temp version
+	# 	# map file name
+	# 	path_CASTmeta_temp <- file.path(tempdir(),
+	# 											  dn_checked_sk,
+	# 											  "CASTmetadata.rds")
+	# 	# ensure file exists
+	# 	validate(need(file.exists(path_CASTmeta_temp),
+	# 					  "Uploaded file not found."))
+	# 	# read file
+	# 	data_CASTmeta_temp <- readRDS(path_CASTmeta_temp)
+	# 
+	# 	# get region
+	# 	data_region <- data_CASTmeta_temp |>
+	# 		dplyr::filter(Variable == "region") |>
+	# 		dplyr::pull(Value)
+	# 
+	# 	# dir of 'checked' files
+	# 	path_check_sk <- file.path(dn_results,
+	# 										data_region,
+	# 										dn_checked_sk)
+	# 
+	# 	## Get map file
+	# 	# fn_map <- data_CASTmeta_temp |>
+	# 	# 	# filter for filename
+	# 	# 	dplyr::filter(Variable == "fn.map") |>
+	# 	# 	dplyr::pull(Value)
+	# 	fn_map <- "cluster_graphic.png"
+	# 	path_map <- file.path(path_check_sk, fn_map)
+	# 
+	# 	# return
+	# 	path_map
+	# 
+	# })## path_img_abiotic
 	
 	output$map_sites <- renderImage({
 		
@@ -1541,6 +1591,17 @@ function(input, output, session) {
 		dn_zip_hist <- file.path(dn_results,
 										 react_setup_region(),
 										 "_Histograms")
+		# select most recent status csv
+		status_file <- list.files(
+								file.path(
+									dn_results, 
+									react_setup_region())) |> 
+							stringr::str_subset("Status") |> 
+							sort() |> 
+							dplyr::last()
+		dn_status <- file.path(dn_results,
+									  react_setup_region(), 
+									  status_file)
 		fn_zip_stat <- list.files(path = dn_zip_stat,
 										  recursive = TRUE,
 										  full.names = TRUE)
@@ -1548,7 +1609,7 @@ function(input, output, session) {
 										  recursive = TRUE,
 										  full.names = TRUE)
 		# combined files
-		fn_zip <- c(fn_zip_stat, fn_zip_hist)
+		fn_zip <- c(fn_zip_stat, fn_zip_hist, dn_status)
 		# create zip
 		tic <- Sys.time()
 		zip::zip(file.path(dn_results, "report_results.zip"),
@@ -1769,6 +1830,50 @@ function(input, output, session) {
 			  )
 	}, deleteFile = FALSE)## map_sites
 	
+	observeEvent(input$helpWSStrFig, {
+		showModal(modalDialog(
+			title = "Watershed stressor figure description",
+			"Boxplot(s) represent the distribution of comparator reach watershed stressor values, which are displayed as blue points. The red triangle(s) and label(s) represent the target site reach value(s). For stressors with multiple years, the timeline(s) below the boxplots depict the timing of biological community samples at the target site.",
+			easyClose = TRUE,
+			footer = modalButton("Close")
+		))
+	})
+	
+	output$ws_stress_high <- DT::renderDT({
+		req(react_report_run())
+		
+		stat_id <- sel_targsite()
+		
+		dn_tab <- file.path(dn_results,
+									 react_setup_region(),
+									 stat_id,
+									 "SiteInfo")
+		
+		fn_tab <- paste0(stat_id,
+							  "WSStressHigh.csv")
+		
+		path_tab <- file.path(dn_tab, fn_tab)
+		
+		
+		df_ws_high <- read.csv(path_tab,
+									  header = TRUE) |> 
+			dplyr::rename("Watershed stressor" = "Watershed.Stressor",
+					 "Comparator reaches median" = "Comparator.Median", 
+					 "Target reach value" = "Target.Site.Value")
+		
+		DT::datatable(
+			df_ws_high,
+			options = list(
+				scrollX = TRUE,
+				pageLength = 5,
+				lengthMenu = c(5, 10, 25, 50, 100, 1000),
+				autoWidth = TRUE
+			), 
+			rownames = FALSE,
+			filter = "top"
+		)
+		
+	})
 	
 	## button, wshed, download ----
 	output$but_dload_wshed_figs <- shiny::downloadHandler(
@@ -1792,6 +1897,15 @@ function(input, output, session) {
 	react_candcause_thresh_ph_lo <- reactiveVal(NULL)
 	react_candcause_thresh_ph_hi <- reactiveVal(NULL)
 	react_candcause_thresh_do <- reactiveVal(NULL)
+	
+	observeEvent(input$helpCandCause, {
+		showModal(modalDialog(
+			title = "Thresholds description",
+			"For pH and DO, the user specifies thresholds in the _CASTool_Metadata.xlsx file that when exceeded in a target site sample automatically advance the candidate cause to the other analyses regardless of its relative value among unimpaired comparator samples. For pH, an upper and lower limit are implemented using the pHlimHigh and pHlimLow parameters, respectively. For DO, a lower limit is implemented using the DOlim parameter. To modify these thresholds, change the corresponding parameter in the _CASTool_Metadata.xlsx file.",
+			easyClose = TRUE,
+			footer = modalButton("Close")
+		))
+	})
 	
 	## text ----
 	output$txt_candcause_thresh_ph <- renderText({
@@ -1883,7 +1997,62 @@ function(input, output, session) {
 		return(names_ret)
 	})
 	
-	output$df_candcause_elim_DT <- renderText({
+	woe_comms <- reactive({
+		woe_folds <- list.files(file.path(dn_results, react_setup_region(), sel_targsite()))
+		intersect(woe_folds, c("ALG", "BMI", "FISH"))
+	})
+	
+	output$elimUI <- renderUI({
+		shiny::tagList(
+			if("BMI" %in% woe_comms()){
+				shiny::tagList(
+					# h4(HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (benthic macroinvertebrates)")),
+					
+					h4(tagList(
+						HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (benthic macroinvertebrates)"),
+						tags$span(icon("info-circle"), id = "bmiElimInfo", style = "color:#2fa4e7;"))),
+					bsPopover(id="bmiElimInfo", title = HTML("<b>Helpful Hints</b>"), 
+								 content = HTML("Stressors receiving a co-occurrence score of -1 for all target site samples, indicating that the stressor sample values were not elevated relative to unimpaired comparator samples if the stress increases with increasing stressor values (e.g. conductivity) or not low if stress decreases with increasing stressor values (e.g., dissolved oxygen)."),
+								 placement = "right", trigger = "hover"),
+					
+					
+					pre(textOutput("df_candcause_elim_DT_bmi")),
+					br())
+			}
+			,
+			if("FISH" %in% woe_comms()){
+				shiny::tagList(
+					# h4(HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (fish)")),
+					
+					h4(tagList(
+						HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (fish)"),
+						tags$span(icon("info-circle", style = "color: #2fa4e7", id="fishElimInfo"),
+						))),
+					bsPopover(id="fishElimInfo", title = HTML("<b>Helpful Hints</b>"), 
+								 content = HTML("Stressors receiving a co-occurrence score of -1 for all target site samples, indicating that the stressor sample values were not elevated relative to unimpaired comparator samples if the stress increases with increasing stressor values (e.g. conductivity) or not low if stress decreases with increasing stressor values (e.g., dissolved oxygen)."),
+								 placement = "right", trigger = "hover"),
+					
+					pre(textOutput("df_candcause_elim_DT_fish")),
+					br())
+			}
+			,
+			if("ALG" %in% woe_comms()){
+				shiny::tagList(
+					# h4(HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (algae)")),
+					h4(tagList(
+						HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (algae)"),
+						tags$span(icon("info-circle", style = "color: #2fa4e7", id="algElimInfo"),
+						))),
+					bsPopover(id="algElimInfo", title = HTML("<b>Helpful Hints</b>"), 
+								 content = HTML("Stressors receiving a co-occurrence score of -1 for all target site samples, indicating that the stressor sample values were not elevated relative to unimpaired comparator samples if the stress increases with increasing stressor values (e.g. conductivity) or not low if stress decreases with increasing stressor values (e.g., dissolved oxygen)."),
+								 placement = "right", trigger = "hover"),
+					pre(textOutput("df_candcause_elim_DT_alg")),
+					br())
+			}
+		)
+	})
+	
+	output$df_candcause_elim_DT_bmi <- renderText({
 		
 		# trigger created when save table
 		req(react_report_run())
@@ -1915,6 +2084,76 @@ function(input, output, session) {
 		
 		return(dt_elim)
 
+	}##expression
+	)## df_cc_elim_DT
+	
+	output$df_candcause_elim_DT_fish <- renderText({
+		
+		# trigger created when save table
+		req(react_report_run())
+		
+		stat_id <- sel_targsite()
+		fn_gaps <- paste0(stat_id, "_FISH_DetectsNotEvalFurther.tab")
+		
+		path_table <- file.path(dn_results, 
+										react_setup_region(),
+										stat_id,
+										"FISH",
+										"_WoE")
+		
+		inFile <- file.path(path_table, fn_gaps)
+		
+		# Blank if no data
+		if (!file.exists(inFile)) {
+			return(NULL)
+		} ## IF ~ is.null(inFile)
+		
+		# import file
+		dt_elim <- read.delim(inFile,
+									 header = TRUE,
+									 colClasses = "character",
+									 sep = "\t") |> 
+			dplyr::left_join(names_label(), by = c("FISH_NotEvaluated" = "StdParamName")) |> 
+			dplyr::pull(Label) |> 
+			paste(collapse = "\n")
+		
+		return(dt_elim)
+		
+	}##expression
+	)## df_cc_elim_DT
+	
+	output$df_candcause_elim_DT_alg <- renderText({
+		
+		# trigger created when save table
+		req(react_report_run())
+		
+		stat_id <- sel_targsite()
+		fn_gaps <- paste0(stat_id, "_ALG_DetectsNotEvalFurther.tab")
+		
+		path_table <- file.path(dn_results, 
+										react_setup_region(),
+										stat_id,
+										"ALG",
+										"_WoE")
+		
+		inFile <- file.path(path_table, fn_gaps)
+		
+		# Blank if no data
+		if (!file.exists(inFile)) {
+			return(NULL)
+		} ## IF ~ is.null(inFile)
+		
+		# import file
+		dt_elim <- read.delim(inFile,
+									 header = TRUE,
+									 colClasses = "character",
+									 sep = "\t") |> 
+			dplyr::left_join(names_label(), by = c("ALG_NotEvaluated" = "StdParamName")) |> 
+			dplyr::pull(Label) |> 
+			paste(collapse = "\n")
+		
+		return(dt_elim)
+		
 	}##expression
 	)## df_cc_elim_DT
 	
@@ -1994,12 +2233,212 @@ function(input, output, session) {
 	}##expression
 	)## df_cc_all_DT
 	
-# WOE SUMM ----
+
 	
-	## woe loe summary table ----
-	df_woe_summ <- reactive({
-		# check if data exists
+# WOE SUMM --- Revised
+output$woe_tab_ui <- renderUI({
+	
+	shiny::tagList(
+		h2("Benthic Macroinvertebrates"),
 		
+		if("BMI" %in% woe_comms()){
+			shiny::tagList(
+				#h3("Biological index distributions"),
+				
+				h3(tagList(
+					"Biological index distributions",
+					icon("info-circle", style = "color: #2fa4e7", id="bmiIndInfo",
+					))),
+				bsPopover(id="bmiIndInfo", title = HTML("<b>Helpful Hints</b>"), 
+							 content = HTML("Boxplots depicting the distribution of benthic macroinvertebrate index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds)."),
+							 placement = "right", trigger = "hover"),
+				
+				imageOutput("img_bmi_index",
+								width = "100%",
+								height = "100%"),
+				
+				#h3("Weight of evidence table"),
+				
+				h3(tagList(
+					"Weight of evidence table",
+					icon("info-circle", style = "color: #2fa4e7", id="bmiWOEInfo",
+					))),
+				bsPopover(id="bmiWOEInfo", title = HTML("<b>Helpful Hints</b>"),
+							 content = HTML("Line of evidence scores assigned to each benthic macroinvertebrate sample for each evaluated stressor."),
+							 placement = "right", trigger = "hover"),
+				
+				DT::dataTableOutput("tbl_woe_bmi"),
+				
+				#h3("Lines of evidence summary"),
+				h3(tagList(
+					"Lines of evidence summary",
+					icon("info-circle", style = "color: #2fa4e7", id="bmiWOESummInfo",
+					))),
+				bsPopover(id="bmiWOESummInfo", title = HTML("<b>Helpful Hints</b>"),
+							 content = HTML("Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each benthic macroinvertebrate sample and each evaluated stressor."),
+							 placement = "right", trigger = "hover"),
+				
+				DT::dataTableOutput("tbl_woe_summ_bmi"),
+				br(),
+				imageOutput("img_loe_summ_bmi",
+								width = "100%",
+								height = "100%")
+			)
+		} else{
+			shiny::tagList(
+				p("No benthic macroinvertebrate data available.")
+			)
+		} # end BMI
+		,
+		h2("Fish"),
+		
+		if("FISH" %in% woe_comms()){
+			shiny::tagList(
+				# h3("Biological index distributions"),
+				
+				h3(tagList(
+					"Biological index distributions",
+					icon("info-circle", style = "color: #2fa4e7", id="fishIndInfo",
+					))),
+				bsPopover(id="fishIndInfo", title = HTML("<b>Helpful Hints</b>"),
+							 content = HTML("Boxplots depicting the distribution of fish index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds)."),
+							 placement = "right", trigger = "hover"),
+				
+				imageOutput("img_fish_index",
+								width = "100%",
+								height = "100%"),
+				
+				#h3("Weight of evidence table"),
+				h3(tagList(
+					"Weight of evidence table",
+					icon("info-circle", style = "color: #2fa4e7", id="fishWOEInfo",
+					))),
+				bsPopover(id="fishWOEInfo", title = HTML("<b>Helpful Hints</b>"),
+							 content = HTML("Line of evidence scores assigned to each fish sample for each evaluated stressor."),
+							 placement = "right", trigger = "hover"),
+				
+				DT::dataTableOutput("tbl_woe_fish"),
+				
+				#h3("Lines of evidence summary"),
+				h3(tagList(
+					"Lines of evidence summary",
+					icon("info-circle", style = "color: #2fa4e7", id="fishWOESummInfo",
+					))),
+				bsPopover(id="fishWOESummInfo", title = HTML("<b>Helpful Hints</b>"),
+							 content = HTML("Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each fish sample and each evaluated stressor."),
+							 placement = "right", trigger = "hover"),
+				
+				DT::dataTableOutput("tbl_woe_summ_fish"),
+				br(),
+				imageOutput("img_loe_summ_fish",
+								width = "100%",
+								height = "100%")
+			)
+		} else{
+			shiny::tagList(
+				p("No fish data available.")
+			)
+		} # end FISH
+		,
+		h2("Algae"),
+		
+		if("ALG" %in% woe_comms()){
+			shiny::tagList(
+				#h3("Biological index distributions"),
+				h3(tagList(
+					"Biological index distributions",
+					icon("info-circle", style = "color: #2fa4e7", id="algIndInfo",
+					))),
+				bsPopover(id="algIndInfo", title = HTML("<b>Helpful Hints</b>"),
+							 content = HTML("Boxplots depicting the distribution of algae index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds)."),
+							 placement = "right", trigger = "hover"),
+				
+				imageOutput("img_alg_index",
+								width = "100%",
+								height = "100%"),
+				
+				#h3("Weight of evidence table"),
+				h3(tagList(
+					"Weight of evidence table",
+					icon("info-circle", style = "color: #2fa4e7", id="algWOEInfo",
+					))),
+				bsPopover(id="algWOEInfo", title = HTML("<b>Helpful Hints</b>"),
+							 content = HTML("Line of evidence scores assigned to each algae sample for each evaluated stressor."),
+							 placement = "right", trigger = "hover"),
+				
+				DT::dataTableOutput("tbl_woe_alg"),
+				
+				#h3("Lines of evidence summary"),
+				h3(tagList(
+					"Lines of evidence summary",
+					icon("info-circle", style = "color: #2fa4e7", id="algWOESummInfo",
+					))),
+				bsPopover(id="algWOESummInfo", title = HTML("<b>Helpful Hints</b>"),
+							 content = HTML("Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each algae sample and each evaluated stressor."),
+							 placement = "right", trigger = "hover"),
+				
+				DT::dataTableOutput("tbl_woe_summ_alg"),
+				br(),
+				imageOutput("img_loe_summ_alg",
+								width = "100%",
+								height = "100%")
+			)
+		} else{
+			shiny::tagList(
+				p("No algae data available.")
+			)
+		} # end ALG
+	)
+	
+
+})
+
+# WOE SUMM ---- OLD
+
+sketch <- htmltools::withTags(table(
+	class = 'display',
+	thead(
+		tr(
+			th(rowspan = 3, 'Stressor'),
+			th(rowspan = 3, 'Response Sample ID'),
+			th(rowspan = 3, 'Response Sample Date'),
+			th(colspan = 7, 'Inside-the-Case'),
+			th(rowspan = 3, ''),
+			th(rowspan = 1, 'Outside the Case')
+		),
+		tr(
+			th(rowspan = 2, 'Co-Occurrence'),
+			th(rowspan = 2, 'Sufficiency'),
+			th(rowspan = 2, 'Biological Gradient'),
+			th(rowspan = 2, 'Time Sequence'),
+			th(colspan = 3, 'Verified Prediction'),
+			th(rowspan = 2, 'Biological Gradient')
+		),
+		tr(
+			lapply(c('SSTolVals', 'SSI Co-Occurrence', 'SSI Sufficiency'), th)
+		)
+	)
+))
+
+sketch_summ <- htmltools::withTags(table(
+	class = 'display',
+	thead(
+		tr(
+			th('Stressor'),
+			th('Response Sample ID'),
+			th('Response Sample Date'),
+			th('Supporting (>0)'),
+			th('Refuting (<0)'),
+			th('Indeterminate (=0)'),
+			th('Not evaluated')
+		)
+	)
+))
+
+ # BMI
+	## woe loe summary table ----
+	df_woe_summ_bmi <- reactive({
+		# check if data exists
 		fn_data <- file.path(dn_results, 
 									react_setup_region(),
 									sel_targsite(), 
@@ -2010,7 +2449,10 @@ function(input, output, session) {
 			df <- read.table(fn_data, 
 								  header = TRUE, 
 								  sep = "\t", 
-								  stringsAsFactors = FALSE)
+								  stringsAsFactors = FALSE) |> 
+				dplyr::select(Stressor, RespSampleID, RespSampleDate, NumSupport,
+								  NumRefute, NumIndeterminate, NumNotEvaluated) |> 
+				dplyr::arrange(Stressor, RespSampleDate)
 		} else {
 			showNotification("WoE LoE Summary file not found.",
 								  type = "warning",
@@ -2018,24 +2460,52 @@ function(input, output, session) {
 		}## IF ~ exists
 		return(df)
 	})## data
-	
+
 	# render LoE summary table
-	output$tbl_woe_summ <- DT::renderDataTable({
-		DT::datatable(
-			df_woe_summ(),
-			options = list(
-				scrollX = TRUE,
-				pageLength = 5,
-				lengthMenu = c(5, 10, 25, 50, 100, 1000),
-				autoWidth = TRUE
-			), 
-			rownames = FALSE,
-			filter = "top"
-		)
-	})## table
+	# output$tbl_woe_summ_bmi <- DT::renderDataTable({
+	# 	DT::datatable(
+	# 		df_woe_summ_bmi(),
+	# 		options = list(
+	# 			scrollX = TRUE,
+	# 			pageLength = 5,
+	# 			lengthMenu = c(5, 10, 25, 50, 100, 1000),
+	# 			autoWidth = TRUE
+	# 		),
+	# 		rownames = FALSE,
+	# 		filter = "top"
+	# 	)
+	# 	})
+
+	output$tbl_woe_summ_bmi <- DT::renderDataTable({
+		DT::datatable(df_woe_summ_bmi(),
+						  container = sketch_summ,
+						  extensions = 'FixedColumns',
+						  class = 'striped hover row-border',
+						  filter = 'none',
+						  rownames = FALSE,
+						  escape = FALSE,
+						  options = list(layout = list(topStart = 'pageLength',
+						  									  topEnd = 'search',
+						  									  bottomStart = 'info',
+						  									  bottomEnd = 'paging'),
+						  					pageLength = 10,
+						  					bSort = TRUE,
+						  					scrollX = TRUE,
+						  					fixedColumns = list(leftColumns = 1),
+						  					autoWidth = FALSE,
+						  					menu = ifelse(nrow(df_woe_summ_bmi()) > 10,
+						  									  c(10, 25, 50, 100), 10),
+						  					columnDefs = list(
+						  						list(className = 'dt-bottom',
+						  							  targets = "_all")))) %>%
+			DT::formatStyle(columns = colnames(df_woe_summ_bmi()), fontSize = '80%') %>%
+			DT::formatStyle("RespSampleID", "white-space" = "nowrap")
+	})
+		
 	
 	## woe table ----
-	df_woe <- reactive({
+	df_woe_bmi <- reactive({
+		
 		# check if data exists
 		# dn_site <- basename(list.dirs(file.path(dn_results), 
 		# 										recursive = FALSE))
@@ -2049,7 +2519,24 @@ function(input, output, session) {
 			df <- read.table(fn_data, 
 								  header = TRUE, 
 								  sep = "\t", 
-								  stringsAsFactors = FALSE)
+								  stringsAsFactors = FALSE) |> 
+				dplyr::select(-StationID, -StressSampleID, -StressSampleDate, -bioComm, -StressorValue)
+			
+			
+			if(!"VP_SSTV" %in% names(df)){ 
+				df$VP_SSTV <- NA
+			}
+			if(!"VP_SSIbox" %in% names(df)){
+				df$VP_SSIbox <- NA
+			}
+			if(!"VP_SSIlog" %in% names(df)){
+				df$VP_SSIlog <- NA
+			}
+			
+			df <- df |> 
+				dplyr::mutate(Blank1 = NA) %>%
+				dplyr::select(Stressor, RespSampleID, RespSampleDate, CO, Suff, `Gradient..inside.`, TS, VP_SSTV, VP_SSIbox, VP_SSIlog, Blank1, `Gradient..outside.`)
+			
 		} else {
 			showNotification("WoE file not found.",
 								  type = "warning",
@@ -2059,23 +2546,49 @@ function(input, output, session) {
 	})## data
 	
 	# render WoE table
-	output$tbl_woe <- DT::renderDataTable({
-		
-		DT::datatable(
-			df_woe(),
-			options = list(
-				scrollX = TRUE,
-				pageLength = 5,
-				lengthMenu = c(5, 10, 25, 50, 100, 1000),
-				autoWidth = TRUE
-			), 
-			rownames = FALSE,
-			filter = "top"
-		)
+	# output$tbl_woe_bmi <- DT::renderDataTable({
+	# 	
+	# 	DT::datatable(
+	# 		df_woe_bmi(),
+	# 		options = list(
+	# 			scrollX = TRUE,
+	# 			pageLength = 5,
+	# 			lengthMenu = c(5, 10, 25, 50, 100, 1000),
+	# 			autoWidth = TRUE
+	# 		), 
+	# 		rownames = FALSE,
+	# 		filter = "top"
+	# 	)
+	# })## table
+	
+	output$tbl_woe_bmi <- DT::renderDataTable({
+		DT::datatable(df_woe_bmi(),
+						  container = sketch,
+						  extensions = 'FixedColumns',
+						  class = 'striped hover row-border',
+						  filter = 'none',
+						  rownames = FALSE,
+						  escape = FALSE,
+						  options = list(layout = list(topStart = 'pageLength',
+						  									  topEnd = 'search',
+						  									  bottomStart = 'info',
+						  									  bottomEnd = 'paging'),
+						  					pageLength = 10,
+						  					bSort = FALSE,
+						  					scrollX = TRUE,
+						  					fixedColumns = list(leftColumns = 1),
+						  					autoWidth = FALSE,
+						  					menu = ifelse(nrow(df_woe_bmi()) > 10,
+						  									  c(10, 25, 50, 100), 10),
+						  					columnDefs = list(
+						  						list(className = 'dt-bottom',
+						  							  targets = "_all")))) %>%
+			DT::formatStyle(columns = colnames(df_woe_bmi()), fontSize = '80%') %>%
+			DT::formatStyle("RespSampleID", "white-space" = "nowrap")
 	})## table
 	
 	## woe fig, bio index----
-	output$img_bio_index <- renderImage({
+	output$img_bmi_index <- renderImage({
 		# return path
 		list(
 			src = file.path(dn_results,
@@ -2093,7 +2606,7 @@ function(input, output, session) {
 	}, deleteFile = FALSE)
 	
 	## woe fig, loe----
-	output$img_loe_summ <- renderImage({
+	output$img_loe_summ_bmi <- renderImage({
 		# return path
 		list(
 			src = file.path(dn_results, 
@@ -2109,6 +2622,385 @@ function(input, output, session) {
 			height = 3600 / 5
 		)
 	}, deleteFile = FALSE)
+
+	# END BMI
+	
+	# FISH
+	## woe loe summary table ----
+	df_woe_summ_fish <- reactive({
+		# check if data exists
+		# browser()
+		fn_data <- file.path(dn_results, 
+									react_setup_region(),
+									sel_targsite(), 
+									dn_fish, 
+									dn_woe,
+									paste0(sel_targsite(), "_LoESummary.tab"))
+		if (file.exists(fn_data)) {
+			df <- read.table(fn_data, 
+								  header = TRUE, 
+								  sep = "\t", 
+								  stringsAsFactors = FALSE)|> 
+				dplyr::select(Stressor, RespSampleID, RespSampleDate, NumSupport,
+								  NumRefute, NumIndeterminate, NumNotEvaluated) |> 
+				dplyr::arrange(Stressor, RespSampleDate)
+		} else {
+			showNotification("WoE LoE Summary file not found.",
+								  type = "warning",
+								  duration = 5)
+		}## IF ~ exists
+		return(df)
+	})## data
+	
+	# render LoE summary table
+	# output$tbl_woe_summ_fish <- DT::renderDataTable({
+	# 	DT::datatable(
+	# 		df_woe_summ_fish(),
+	# 		options = list(
+	# 			scrollX = TRUE,
+	# 			pageLength = 5,
+	# 			lengthMenu = c(5, 10, 25, 50, 100, 1000),
+	# 			autoWidth = TRUE
+	# 		), 
+	# 		rownames = FALSE,
+	# 		filter = "top"
+	# 	)
+	# })## table
+	# 
+	output$tbl_woe_summ_fish <- DT::renderDataTable({
+		DT::datatable(df_woe_summ_fish(),
+						  container = sketch_summ,
+						  extensions = 'FixedColumns',
+						  class = 'striped hover row-border',
+						  filter = 'none',
+						  rownames = FALSE,
+						  escape = FALSE,
+						  options = list(layout = list(topStart = 'pageLength',
+						  									  topEnd = 'search',
+						  									  bottomStart = 'info',
+						  									  bottomEnd = 'paging'),
+						  					pageLength = 10,
+						  					bSort = TRUE,
+						  					scrollX = TRUE,
+						  					fixedColumns = list(leftColumns = 1),
+						  					autoWidth = FALSE,
+						  					menu = ifelse(nrow(df_woe_summ_fish()) > 10,
+						  									  c(10, 25, 50, 100), 10),
+						  					columnDefs = list(
+						  						list(className = 'dt-bottom',
+						  							  targets = "_all")))) %>%
+			DT::formatStyle(columns = colnames(df_woe_summ_fish()), fontSize = '80%') %>%
+			DT::formatStyle("RespSampleID", "white-space" = "nowrap")
+	})
+	
+	## woe table ----
+	df_woe_fish <- reactive({
+		# check if data exists
+		# dn_site <- basename(list.dirs(file.path(dn_results), 
+		# 										recursive = FALSE))
+		fn_data <- file.path(dn_results,
+									react_setup_region(),
+									sel_targsite(),
+									dn_fish, 
+									dn_woe,
+									paste0(sel_targsite(), "_LoEs.tab"))
+		if (file.exists(fn_data)) {
+			df <- read.table(fn_data, 
+								  header = TRUE, 
+								  sep = "\t", 
+								  stringsAsFactors = FALSE)|> 
+				dplyr::select(-StationID, -StressSampleID, -StressSampleDate, -bioComm, -StressorValue)
+			
+			
+			if(!"VP_SSTV" %in% names(df)){ 
+				df$VP_SSTV <- NA
+			}
+			if(!"VP_SSIbox" %in% names(df)){
+				df$VP_SSIbox <- NA
+			}
+			if(!"VP_SSIlog" %in% names(df)){
+				df$VP_SSIlog <- NA
+			}
+			
+			df <- df |> 
+				dplyr::mutate(Blank1 = NA) %>%
+				dplyr::select(Stressor, RespSampleID, RespSampleDate, CO, Suff, `Gradient..inside.`, TS, VP_SSTV, VP_SSIbox, VP_SSIlog, Blank1, `Gradient..outside.`)
+		} else {
+			showNotification("WoE file not found.",
+								  type = "warning",
+								  duration = 5)
+		}## IF ~ exists
+		return(df)
+	})## data
+	
+	# render WoE table
+	# output$tbl_woe_fish <- DT::renderDataTable({
+	# 	
+	# 	DT::datatable(
+	# 		df_woe_fish(),
+	# 		options = list(
+	# 			scrollX = TRUE,
+	# 			pageLength = 5,
+	# 			lengthMenu = c(5, 10, 25, 50, 100, 1000),
+	# 			autoWidth = TRUE
+	# 		), 
+	# 		rownames = FALSE,
+	# 		filter = "top"
+	# 	)
+	# })## table
+	
+	
+	output$tbl_woe_fish <- DT::renderDataTable({
+		DT::datatable(df_woe_fish(),
+						  container = sketch,
+						  extensions = 'FixedColumns',
+						  class = 'striped hover row-border',
+						  filter = 'none',
+						  rownames = FALSE,
+						  escape = FALSE,
+						  options = list(layout = list(topStart = 'pageLength',
+						  									  topEnd = 'search',
+						  									  bottomStart = 'info',
+						  									  bottomEnd = 'paging'),
+						  					pageLength = 10,
+						  					bSort = FALSE,
+						  					scrollX = TRUE,
+						  					fixedColumns = list(leftColumns = 1),
+						  					autoWidth = FALSE,
+						  					menu = ifelse(nrow(df_woe_fish()) > 10,
+						  									  c(10, 25, 50, 100), 10),
+						  					columnDefs = list(
+						  						list(className = 'dt-bottom',
+						  							  targets = "_all")))) %>%
+			DT::formatStyle(columns = colnames(df_woe_fish()), fontSize = '80%') %>%
+			DT::formatStyle("RespSampleID", "white-space" = "nowrap")
+	})
+	
+	## woe fig, bio index----
+	output$img_fish_index <- renderImage({
+		# return path
+		list(
+			src = file.path(dn_results,
+								 react_setup_region(),
+								 sel_targsite(), 
+								 "SiteInfo", 
+								 paste0(sel_targsite(),
+								 		 "_FISH_IndexBoxplotsByCase.png")
+			),
+			contentType = "image/png",
+			alt = "Biological Index Distributions",
+			width = 7200 / 8, #orig size /  scale value
+			height = 4800 / 8
+		)
+	}, deleteFile = FALSE)
+	
+	## woe fig, loe----
+	output$img_loe_summ_fish <- renderImage({
+		# return path
+		list(
+			src = file.path(dn_results, 
+								 react_setup_region(),
+								 sel_targsite(),
+								 "FISH",
+								 "_WoE",
+								 paste0(sel_targsite(),
+								 		 "_FISH_LoESummaryFig.png")),
+			contentType = "image/png",
+			alt = "Lines of Evidence Summary",
+			width = 4800 / 5, #orig size /  scale value
+			height = 3600 / 5
+		)
+	}, deleteFile = FALSE)
+	
+	# End FISH
+	
+	# ALG
+	## woe loe summary table ----
+	df_woe_summ_alg <- reactive({
+		# check if data exists
+		# browser()
+		fn_data <- file.path(dn_results, 
+									react_setup_region(),
+									sel_targsite(), 
+									dn_alg, 
+									dn_woe,
+									paste0(sel_targsite(), "_LoESummary.tab"))
+		if (file.exists(fn_data)) {
+			df <- read.table(fn_data, 
+								  header = TRUE, 
+								  sep = "\t", 
+								  stringsAsFactors = FALSE)|> 
+				dplyr::select(Stressor, RespSampleID, RespSampleDate, NumSupport,
+								  NumRefute, NumIndeterminate, NumNotEvaluated) |> 
+				dplyr::arrange(Stressor, RespSampleDate)
+		} else {
+			showNotification("WoE LoE Summary file not found.",
+								  type = "warning",
+								  duration = 5)
+		}## IF ~ exists
+		return(df)
+	})## data
+	
+	# render LoE summary table
+	# output$tbl_woe_summ_alg <- DT::renderDataTable({
+	# 	DT::datatable(
+	# 		df_woe_summ_alg(),
+	# 		options = list(
+	# 			scrollX = TRUE,
+	# 			pageLength = 5,
+	# 			lengthMenu = c(5, 10, 25, 50, 100, 1000),
+	# 			autoWidth = TRUE
+	# 		), 
+	# 		rownames = FALSE,
+	# 		filter = "top"
+	# 	)
+	# })## table
+	
+	output$tbl_woe_summ_alg <- DT::renderDataTable({
+		DT::datatable(df_woe_summ_alg(),
+						  container = sketch_summ,
+						  extensions = 'FixedColumns',
+						  class = 'striped hover row-border',
+						  filter = 'none',
+						  rownames = FALSE,
+						  escape = FALSE,
+						  options = list(layout = list(topStart = 'pageLength',
+						  									  topEnd = 'search',
+						  									  bottomStart = 'info',
+						  									  bottomEnd = 'paging'),
+						  					pageLength = 10,
+						  					bSort = TRUE,
+						  					scrollX = TRUE,
+						  					fixedColumns = list(leftColumns = 1),
+						  					autoWidth = FALSE,
+						  					menu = ifelse(nrow(df_woe_summ_alg()) > 10,
+						  									  c(10, 25, 50, 100), 10),
+						  					columnDefs = list(
+						  						list(className = 'dt-bottom',
+						  							  targets = "_all")))) %>%
+			DT::formatStyle(columns = colnames(df_woe_summ_alg()), fontSize = '80%') %>%
+			DT::formatStyle("RespSampleID", "white-space" = "nowrap")
+	})
+	
+	## woe table ----
+	df_woe_alg <- reactive({
+		# check if data exists
+		# dn_site <- basename(list.dirs(file.path(dn_results), 
+		# 										recursive = FALSE))
+		fn_data <- file.path(dn_results,
+									react_setup_region(),
+									sel_targsite(),
+									dn_alg, 
+									dn_woe,
+									paste0(sel_targsite(), "_LoEs.tab"))
+		if (file.exists(fn_data)) {
+			df <- read.table(fn_data, 
+								  header = TRUE, 
+								  sep = "\t", 
+								  stringsAsFactors = FALSE)|> 
+				dplyr::select(-StationID, -StressSampleID, -StressSampleDate, -bioComm, -StressorValue)
+			
+			
+			if(!"VP_SSTV" %in% names(df)){ 
+				df$VP_SSTV <- NA
+			}
+			if(!"VP_SSIbox" %in% names(df)){
+				df$VP_SSIbox <- NA
+			}
+			if(!"VP_SSIlog" %in% names(df)){
+				df$VP_SSIlog <- NA
+			}
+			
+			df <- df |> 
+				dplyr::mutate(Blank1 = NA) %>%
+				dplyr::select(Stressor, RespSampleID, RespSampleDate, CO, Suff, `Gradient..inside.`, TS, VP_SSTV, VP_SSIbox, VP_SSIlog, Blank1, `Gradient..outside.`)
+		} else {
+			showNotification("WoE file not found.",
+								  type = "warning",
+								  duration = 5)
+		}## IF ~ exists
+		return(df)
+	})## data
+	
+	# render WoE table
+	# output$tbl_woe_alg <- DT::renderDataTable({
+	# 	
+	# 	DT::datatable(
+	# 		df_woe_alg(),
+	# 		options = list(
+	# 			scrollX = TRUE,
+	# 			pageLength = 5,
+	# 			lengthMenu = c(5, 10, 25, 50, 100, 1000),
+	# 			autoWidth = TRUE
+	# 		), 
+	# 		rownames = FALSE,
+	# 		filter = "top"
+	# 	)
+	# })## table
+	
+	output$tbl_woe_alg <- DT::renderDataTable({
+		DT::datatable(df_woe_alg(),
+						  container = sketch,
+						  extensions = 'FixedColumns',
+						  class = 'striped hover row-border',
+						  filter = 'none',
+						  rownames = FALSE,
+						  escape = FALSE,
+						  options = list(layout = list(topStart = 'pageLength',
+						  									  topEnd = 'search',
+						  									  bottomStart = 'info',
+						  									  bottomEnd = 'paging'),
+						  					pageLength = 10,
+						  					bSort = FALSE,
+						  					scrollX = TRUE,
+						  					fixedColumns = list(leftColumns = 1),
+						  					autoWidth = FALSE,
+						  					menu = ifelse(nrow(df_woe_alg()) > 10,
+						  									  c(10, 25, 50, 100), 10),
+						  					columnDefs = list(
+						  						list(className = 'dt-bottom',
+						  							  targets = "_all")))) %>%
+			DT::formatStyle(columns = colnames(df_woe_alg()), fontSize = '80%') %>%
+			DT::formatStyle("RespSampleID", "white-space" = "nowrap")
+	})
+	
+	## woe fig, bio index----
+	output$img_alg_index <- renderImage({
+		# return path
+		list(
+			src = file.path(dn_results,
+								 react_setup_region(),
+								 sel_targsite(), 
+								 "SiteInfo", 
+								 paste0(sel_targsite(),
+								 		 "_ALG_IndexBoxplotsByCase.png")
+			),
+			contentType = "image/png",
+			alt = "Biological Index Distributions",
+			width = 7200 / 8, #orig size /  scale value
+			height = 4800 / 8
+		)
+	}, deleteFile = FALSE)
+	
+	## woe fig, loe----
+	output$img_loe_summ_alg <- renderImage({
+		# return path
+		list(
+			src = file.path(dn_results, 
+								 react_setup_region(),
+								 sel_targsite(),
+								 "ALG",
+								 "_WoE",
+								 paste0(sel_targsite(),
+								 		 "_ALG_LoESummaryFig.png")),
+			contentType = "image/png",
+			alt = "Lines of Evidence Summary",
+			width = 4800 / 5, #orig size /  scale value
+			height = 3600 / 5
+		)
+	}, deleteFile = FALSE)
+	
+	# End ALG
 	
 # STRESS SUMM ----
 	# RMD created in Run Report section

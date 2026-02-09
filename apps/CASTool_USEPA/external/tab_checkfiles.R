@@ -41,17 +41,17 @@ function() {
 					
 					# Define Files----
 					h2("Identify files"),
-					div(style = "margin-bottom: 20px", p(paste0("Names for each data input file are specified in the metadata file '",
+					div(style = "margin-bottom: 20px", p(em(paste0("Names for each data input file are specified in the metadata file '",
 								fn_default_check_input_cast_metadata,
-								"'"))),
+								".'")))),
 					# table for imported files
 					h4("Matching files"),
 					DT::dataTableOutput("df_import_files_DT"),
 					h4("Missing files"),
-					p("Files included in the metadata but not present in the uploaded zipped folder."),
+					p(em("Files included in the metadata but not present in the uploaded zipped folder.")),
 					div(style = "margin-bottom: 20px", pre(textOutput("txt_import_files_missing"))),
 					h4("Extra files"),
-					p("Files in the uploaded zipped folder but not included in the metadata."),
+					p(em("Files in the uploaded zipped folder but not included in the metadata.")),
 					div(style = "margin-bottom: 20px", pre(textOutput("txt_import_files_extra"))),
 					  
 					# Define Scenario ----
@@ -102,8 +102,14 @@ function() {
 								 ),
 						fluidRow(
 							column(6,
-								 p(strong("Exclude outliers: ")),
-								 div(class = "pill", textOutput("txt_check_outliers"))),
+									 p(tagList(
+									 	strong("Exclude outliers: "),
+									 	icon("info-circle", style = "color: #2fa4e7", id="outlierInfo",
+									 	))),
+									 bsPopover(id="outlierInfo", title = HTML("<b>Helpful Hints</b>"), content = HTML("To modify, change the removeOutliers parameter in _CASTool_Metadata.xlsx."),
+									 			 placement = "right", trigger = "hover"),
+								 div(class = "pill", textOutput("txt_check_outliers"))
+								 )
 								 # radioButtons("rad_check_outliers",
 								 # 				 "Exclude outliers",
 								 # 				 choices = c("Yes", "No"),
@@ -119,6 +125,7 @@ function() {
 					bsTooltip(id = "but_check_check",
 								 title = paste0("Enabled after files uploaded"),
 								 placement = "right"),
+					div(style = "width: 50%", p(em("Generate tables checking that input files contain expected columns with expected datatypes and evaluating match ups between paired input data files."))),
 		
 					#h4("Input File Check"),
 					#
@@ -136,14 +143,18 @@ function() {
 					bsTooltip(id = "but_check_dload_qctables",
 								 title = paste0("Only enabled after files checked."),
 								 placement = "right"),
+					div(style = "width: 50%", 
+							 p(em("Download a zipped folder with the Summary of file inputs and Relational integrity table."))),
 					
 					h2("Download checked data"),
-					div(style = "margin-bottom:20px", shinyjs::disabled(shiny::downloadButton(
+					div(shinyjs::disabled(shiny::downloadButton(
 						"but_check_dload_rds",
 						"Download checked data"))),
 					bsTooltip(id = "but_check_dload_rds",
 								 title = paste0("Only enabled after files checked"),
-								 placement = "right")
+								 placement = "right"),
+					div(style = "width: 50%", 
+							 p(em("Download a zipped folder with all checked data files. This folder is required to run the next step of the CASTool.")))
 
 							)## mainPanel
 				)## tabPanel
