@@ -20,6 +20,10 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 1.0.0.9008 (2026-02-10)
+
+* docs: Update README life cycle from proof of concept to stable
+
 # CAST_Shiny 1.0.0.9007 (2026-01-13)
 
 * fix: Intermittent issue of metadata file not available
