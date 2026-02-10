@@ -108,15 +108,38 @@ dn_temp      <- "temp"
 dn_ws_stress <- "ws_stress"
 #### results
 dn_bmi       <- "BMI"
+dn_fish       <-"FISH"
+dn_alg       <- "ALG"
 dn_woe       <- "_WoE"
 #### skeleton
 dn_checked_sk <- "_CheckedInputs"
 
-## Clean Dirs ----
+# # Gov chat answer
+app_name <- "CASTool_USEPA"
+ BASE_DIR <- if (nzchar(Sys.getenv("APP_BASE_DIR"))) {
+	Sys.getenv("APP_BASE_DIR")
+} else {
+	file.path(tempdir(), app_name)
+}
+
+# Define your paths
+dn_data    <- file.path(BASE_DIR, "data")
+dn_results <- file.path(BASE_DIR, "results")
+
+# Ensure base dirs exist (create before cleaning)
+dir.create(dn_data,    recursive = TRUE, showWarnings = FALSE)
+dir.create(dn_results, recursive = TRUE, showWarnings = FALSE)
+
+
+
+# ## Clean Dirs ----
 clean_dir(file.path(dn_data), boo_dir = TRUE)
 clean_dir(file.path(dn_results), boo_dir = TRUE)
 
-## Create Dirs ----
+dn_data      <- "Data"
+dn_results   <- "Results"
+
+# ## Create Dirs ----
 create_dir(file.path(dn_data))
 create_dir(file.path(dn_data, dn_checked))
 # create_dir(file.path(dn_data, dn_clusters))
@@ -126,6 +149,8 @@ create_dir(file.path(dn_data, dn_import))
 create_dir(file.path(dn_results))
 # create_dir(file.path(dn_results, dn_bmi))
 # create_dir(file.path(dn_results, dn_woe))
+
+
 
 ## Colors ----
 color_good <- "lightblue"

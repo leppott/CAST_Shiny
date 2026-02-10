@@ -14,7 +14,14 @@ function() {
 					  target = "_blank",
 					  class = "btn bnh-primary",
 					  download = "CASTool_UserGuide.pdf",
-					  "Download User Guide")
+					  "Download User Guide"),
+					shiny::a(href = paste0(url_github_castshiny,
+												  "/",
+												  "CASTool_Templates.zip"),
+								target = "_blank",
+								class = "btn bnh-primary",
+								download = "CASTool_Templates.zip",
+								"Download Templates (zip)")
 					)## mainPanel
 				)## tabPanel
 }## FUNCTION

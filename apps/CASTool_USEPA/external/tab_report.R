@@ -2,27 +2,40 @@
 
 function() {
 	tabPanel("Run Report",
+				tags$head(tags$style(HTML("
+				  .pill {
+				    background: #f5f5f5;
+				    padding: 8px 12px;
+				    border-radius: 4px;
+				    margin-bottom: 10px;
+				  }
+						 "))),
 				mainPanel(
 					# doesn't work unless in include this line (even though it is in UI.R)
 					useShinyjs(), 
-					p(strong("Report delivery format:")),
-					textOutput("txt_setup_format"),
-					# selectInput("report_format",
-					# 				"Report delivery format",
-					# 				choices = c("HTML", 
-					# 								"PDF"),
-					# 				selected = "HTML"),
-					br(),
-					shinyjs::disabled(bsButton("but_report_run",
-														"Generate report")),
-					shinyBS::bsTooltip(id = "but_report_run",
-											 title = paste0("Disabled until checked files uploaded."),
-											 placement = "right"),
-					br(),
-					br(),
-					textOutput("txt_rep_siteid"),
-					br(),
-					hr(),
+					fluidRow(
+						column(4,
+								 p(strong("Report delivery format:")),
+								 div(class = "pill", textOutput("txt_setup_format")),
+								 # selectInput("report_format",
+								 # 				"Report delivery format",
+								 # 				choices = c("HTML", 
+								 # 								"PDF"),
+								 # 				selected = "HTML"),
+								 br(),
+								 p(strong("Target site:")),
+								 div(class = "pill", textOutput("txt_rep_siteid")),
+								 br(),
+								 shinyjs::disabled(bsButton("but_report_run",
+								 									"Generate report")),
+								 shinyBS::bsTooltip(id = "but_report_run",
+								 						 title = paste0("Disabled until checked files uploaded."),
+								 						 placement = "right"),
+								 p(em("Report should take approximately 5 minutes to generate for every biological community analyzed. A popup window will appear when the report is completed.")),
+								 br(),
+								 hr()
+								 )
+						),
 					shinyjs::disabled(radioButtons("rad_report_tabs",
 															 "Show report summary tabs",
 															 choices = c("Yes", "No"),

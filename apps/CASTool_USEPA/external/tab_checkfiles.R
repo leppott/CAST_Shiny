@@ -2,21 +2,30 @@
 
 function() {
 	tabPanel("Check File Inputs",
+				tags$head(tags$style(HTML("
+				  .pill {
+				    background: #f5f5f5;
+				    padding: 8px 12px;
+				    border-radius: 4px;
+				    margin-bottom: 10px;
+				  }
+						 "))),
+				
 				mainPanel(
 					useShinyjs(),
-					h2("Template"),
-					p("download template as a zip file."),
-					shiny::a(href = paste0(url_github_castshiny,
-												  "/",
-												  "CASTool_Templates.zip"),
-								target = "_blank",
-								class = "btn bnh-primary",
-								download = "CASTool_Templates.zip",
-								"Download Templates (zip)"),
+					#h2("Template"),
+					#p("download template as a zip file."),
+					# shiny::a(href = paste0(url_github_castshiny,
+					# 							  "/",
+					# 							  "CASTool_Templates.zip"),
+					# 			target = "_blank",
+					# 			class = "btn bnh-primary",
+					# 			download = "CASTool_Templates.zip",
+					# 			"Download Templates (zip)"),
 					# Load Files ----
-					h2("Load Files"),
+					h2("Load files"),
 					fileInput("fn_input_check_uload", 
-								 'Upload zipped folder',
+								 'Upload zipped folder with input data files',
 								 multiple = FALSE,
 								 accept = c(
 								 	'zip',
@@ -31,28 +40,29 @@ function() {
 					# doesn't work on fileinput
 					
 					# Define Files----
-					h2("Identify Files"),
-					p(paste0("Files for each data type are specified in the metadata file '",
+					h2("Identify files"),
+					div(style = "margin-bottom: 20px", p(em(paste0("Names for each data input file are specified in the metadata file '",
 								fn_default_check_input_cast_metadata,
-								"'")),
+								".'")))),
 					# table for imported files
-					h4("Matching Files"),
+					h4("Matching files"),
 					DT::dataTableOutput("df_import_files_DT"),
-					h4("Missing Files"),
-					p("Any files listed in metadata but not present in the loaded files are displayed below."),
-					pre(textOutput("txt_import_files_missing")),
-					h4("Extra Files"),
-					p("Any files in the loaded files but not listed in the metadata are displayed below."),
-					pre(textOutput("txt_import_files_extra")),
+					h4("Missing files"),
+					p(em("Files included in the metadata but not present in the uploaded zipped folder.")),
+					div(style = "margin-bottom: 20px", pre(textOutput("txt_import_files_missing"))),
+					h4("Extra files"),
+					p(em("Files in the uploaded zipped folder but not included in the metadata.")),
+					div(style = "margin-bottom: 20px", pre(textOutput("txt_import_files_extra"))),
 					  
 					# Define Scenario ----
-					h2("Show Contents of Uploaded Files"),
+					h4("Contents of uploaded files"),
 					# p("**variables from metadata file**"),
-					fluidRow(
+					#fluidRow(
 						# width = 12
-						column(3,
+						fluidRow(
+							column(6,
 								 p(strong("Biotic communities available: ")),
-								 textOutput("txt_chk_check_comm"),
+								 div(class = "pill", textOutput("txt_chk_check_comm"))),
 								 # checkboxGroupInput("chk_check_comm",
 								 # 						 "Biotic communities available",
 								 # 						 choices = choices_chk_check_comm,
@@ -70,44 +80,54 @@ function() {
 						# 		 				 choices = c("Measured", "Modeled"),
 						# 		 				 selected = "Measured",
 						# 		 )),
-						column(3,
+						fluidRow(
+							column(6,
 								 p(strong("Stressor data available: ")),
-								 textOutput("txt_chk_check_stress"),
+								 div(class = "pill", textOutput("txt_chk_check_stress"))),
 								 # checkboxGroupInput("chk_check_stress",
 								 # 						 "Stressor data available",
 								 # 						 choices = choices_chk_check_stress,
 								 # 						 selected = NULL
 								 # )
 								 ),
-						column(3,
+						fluidRow(
+							column(6,
 								 p(strong("Stressor-specific tolerance values available: ")),
-								 textOutput("txt_chk_check_tol"),
+								 div(class = "pill", textOutput("txt_chk_check_tol"))),
 								 # checkboxGroupInput("chk_check_tol",
 								 # 						 "Stressor-specific tolerance values available",
 								 # 						 choices = choices_chk_check_tol,
 								 # 						 selected = NULL
 								 # )
 								 ),
-						column(3,
-								 p(strong("Exclude outliers: ")),
-								 textOutput("txt_check_outliers"),
+						fluidRow(
+							column(6,
+									 p(tagList(
+									 	strong("Exclude outliers: "),
+									 	icon("info-circle", style = "color: #2fa4e7", id="outlierInfo",
+									 	))),
+									 bsPopover(id="outlierInfo", title = HTML("<b>Helpful Hints</b>"), content = HTML("To modify, change the removeOutliers parameter in _CASTool_Metadata.xlsx."),
+									 			 placement = "right", trigger = "hover"),
+								 div(class = "pill", textOutput("txt_check_outliers"))
+								 )
 								 # radioButtons("rad_check_outliers",
 								 # 				 "Exclude outliers",
 								 # 				 choices = c("Yes", "No"),
 								 # 				 selected = "Yes"
 								 # )
-								 )
-					),## fluidRow
+								 ),
+					#),## fluidRow
 					
 					# 
-					h2("Check Files"),
+					h2("Check files"),
 					shinyjs::disabled(bsButton("but_check_check",
 														"Check input files")),
 					bsTooltip(id = "but_check_check",
 								 title = paste0("Enabled after files uploaded"),
 								 placement = "right"),
+					div(style = "width: 50%", p(em("Generate tables checking that input files contain expected columns with expected datatypes and evaluating match ups between paired input data files."))),
 		
-					h3("Input File Check"),
+					#h4("Input File Check"),
 					#
 					h4("Summary of file inputs"),
 					DT::dataTableOutput("df_check_qctable1_DT"),
@@ -115,22 +135,26 @@ function() {
 					h4("Relational integrity"),
 					DT::dataTableOutput("df_check_qctable2_DT"),
 					
-					h3("Input Files Matchups"),
-					p("Download file evaluation qc tables"),
+					h4("Download file check tables"),
+					# p("Download file check tables"),
 					shinyjs::disabled(shiny::downloadButton(
 						"but_check_dload_qctables",
 						"Download file check tables")),
 					bsTooltip(id = "but_check_dload_qctables",
 								 title = paste0("Only enabled after files checked."),
 								 placement = "right"),
+					div(style = "width: 50%", 
+							 p(em("Download a zipped folder with the Summary of file inputs and Relational integrity table."))),
 					
-					h3("Checked Data"),
-					shinyjs::disabled(shiny::downloadButton(
+					h2("Download checked data"),
+					div(shinyjs::disabled(shiny::downloadButton(
 						"but_check_dload_rds",
-						"Download checked files")),
+						"Download checked data"))),
 					bsTooltip(id = "but_check_dload_rds",
 								 title = paste0("Only enabled after files checked"),
-								 placement = "right")
+								 placement = "right"),
+					div(style = "width: 50%", 
+							 p(em("Download a zipped folder with all checked data files. This folder is required to run the next step of the CASTool.")))
 
 							)## mainPanel
 				)## tabPanel
