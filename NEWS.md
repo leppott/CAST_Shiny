@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-02-10 11:12:27.184261
+    #> Last Update: 2026-02-11 09:48:51.721889
+
+# CAST_Shiny 1.0.0.9009 (2026-02-11)
+
+- merge updates for laura-naslund fork (2 commits)
 
 # CAST_Shiny 1.0.0.9008 (2026-02-10)
 
