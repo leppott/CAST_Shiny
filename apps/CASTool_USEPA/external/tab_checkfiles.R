@@ -41,7 +41,8 @@ function() {
 					
 					# Define Files----
 					h2("Identify files"),
-					div(style = "margin-bottom: 20px", p(em(paste0("Names for each data input file are specified in the metadata file '",
+					div(style = "margin-bottom: 20px", 
+						 p(em(paste0("Names for each data input file are specified in the metadata file '",
 								fn_default_check_input_cast_metadata,
 								".'")))),
 					# table for imported files

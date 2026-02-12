@@ -20,6 +20,10 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 1.0.0.9010 (2026-02-11)
+
+* refactor: Add display time warning text to StressorSummary tab
+
 # CAST_Shiny 1.0.0.9009 (2026-02-11)
 
 * merge updates for laura-naslund fork (2 commits)

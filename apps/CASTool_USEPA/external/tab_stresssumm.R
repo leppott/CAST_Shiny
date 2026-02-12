@@ -5,6 +5,8 @@ function() {
 				value = "tab_stresssumm",
 				#mainPanel(
 					h2("Stressor Summaries"),
+				div(style = "margin-bottom: 20px", 
+					 p(em("Figures may take up to a minute to display."))),
 					# p("example images, not plots of data"),
 					# imageOutput("img_stressors",
 					# 				width = "50%",
