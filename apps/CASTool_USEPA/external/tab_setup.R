@@ -11,6 +11,7 @@ function() {
 				  }
 						 "))),
 				mainPanel(
+					use_bs_popover(),
 					h2("Select target site and analysis parameters"),
 					fileInput('fn_input_setup_checked_uload', 
 								 'Upload checked zip file',
@@ -31,11 +32,18 @@ function() {
 								 
 								 p(tagList(
 								 	strong("Explore watershed stressor data: "),
-								 	icon("info-circle", style = "color: #2fa4e7", id="wsStressorInfo",
-								 	))),
-								 bsPopover(id="wsStressorInfo", title = HTML("<b>Helpful Hints</b>"), 
-								 			 content = HTML("To modify, change the exploreWSStressor parameter in _CASTool_Metadata.xlsx."),
-								 			 placement = "right", trigger = "hover"),
+								 	icon("info-circle", 
+								 		  style = "color: #2fa4e7", 
+								 		  id="wsStressorInfo") |>
+								 		bs_embed_popover(title = "Helpful Hints",
+								 							  content = "To modify, change the exploreWSStressor parameter in '_CASTool_Metadata.xlsx'.",
+								 							  placement = "right",
+								 							  trigger = "hover"))),
+								 # bsPopover(id="wsStressorInfo", 
+								 # 			 title = HTML("<b>Helpful Hints</b>"), 
+								 # 			 content = HTML("To modify, change the exploreWSStressor parameter in _CASTool_Metadata.xlsx."),
+								 # 			 placement = "right", 
+								 # 			 trigger = "hover"),
 								 
 								 
 								 div(class = "pill", textOutput("txt_setup_explore")),

@@ -2007,13 +2007,21 @@ function(input, output, session) {
 			if("BMI" %in% woe_comms()){
 				shiny::tagList(
 					# h4(HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (benthic macroinvertebrates)")),
-					
+					use_bs_popover(),
 					h4(tagList(
 						HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (benthic macroinvertebrates)"),
-						tags$span(icon("info-circle"), id = "bmiElimInfo", style = "color:#2fa4e7;"))),
-					bsPopover(id="bmiElimInfo", title = HTML("<b>Helpful Hints</b>"), 
-								 content = HTML("Stressors receiving a co-occurrence score of -1 for all target site samples, indicating that the stressor sample values were not elevated relative to unimpaired comparator samples if the stress increases with increasing stressor values (e.g. conductivity) or not low if stress decreases with increasing stressor values (e.g., dissolved oxygen)."),
-								 placement = "right", trigger = "hover"),
+						tags$span(icon("info-circle"), 
+									 id = "bmiElimInfo", 
+									 style = "color:#2fa4e7;") |>
+							bs_embed_popover(title = "Helpful Hints",
+												  content = "Stressors receiving a co-occurrence score of -1 for all target site samples, indicating that the stressor sample values were not elevated relative to unimpaired comparator samples if the stress increases with increasing stressor values (e.g. conductivity) or not low if stress decreases with increasing stressor values (e.g., dissolved oxygen).",
+												  placement = "right",
+												  trigger = "hover"))),
+					# bsPopover(id="bmiElimInfo", 
+					# 			 title = HTML("<b>Helpful Hints</b>"), 
+					# 			 content = HTML("Stressors receiving a co-occurrence score of -1 for all target site samples, indicating that the stressor sample values were not elevated relative to unimpaired comparator samples if the stress increases with increasing stressor values (e.g. conductivity) or not low if stress decreases with increasing stressor values (e.g., dissolved oxygen)."),
+					# 			 placement = "right", 
+					# 			 trigger = "hover"),
 					
 					
 					pre(textOutput("df_candcause_elim_DT_bmi")),
@@ -2023,14 +2031,21 @@ function(input, output, session) {
 			if("FISH" %in% woe_comms()){
 				shiny::tagList(
 					# h4(HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (fish)")),
-					
+					use_bs_popover(),
 					h4(tagList(
 						HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (fish)"),
-						tags$span(icon("info-circle", style = "color: #2fa4e7", id="fishElimInfo"),
-						))),
-					bsPopover(id="fishElimInfo", title = HTML("<b>Helpful Hints</b>"), 
-								 content = HTML("Stressors receiving a co-occurrence score of -1 for all target site samples, indicating that the stressor sample values were not elevated relative to unimpaired comparator samples if the stress increases with increasing stressor values (e.g. conductivity) or not low if stress decreases with increasing stressor values (e.g., dissolved oxygen)."),
-								 placement = "right", trigger = "hover"),
+						tags$span(icon("info-circle",
+											style = "color: #2fa4e7",
+											id="fishElimInfo") |>
+							bs_embed_popover(title = "Helpful Hints",
+												  content = "Stressors receiving a co-occurrence score of -1 for all target site samples, indicating that the stressor sample values were not elevated relative to unimpaired comparator samples if the stress increases with increasing stressor values (e.g. conductivity) or not low if stress decreases with increasing stressor values (e.g., dissolved oxygen).",
+												  placement = "right",
+												  trigger = "hover")))),
+					# bsPopover(id="fishElimInfo", 
+					# 			 title = HTML("<b>Helpful Hints</b>"), 
+					# 			 content = HTML("Stressors receiving a co-occurrence score of -1 for all target site samples, indicating that the stressor sample values were not elevated relative to unimpaired comparator samples if the stress increases with increasing stressor values (e.g. conductivity) or not low if stress decreases with increasing stressor values (e.g., dissolved oxygen)."),
+					# 			 placement = "right",
+					# 			 trigger = "hover"),
 					
 					pre(textOutput("df_candcause_elim_DT_fish")),
 					br())
@@ -2038,14 +2053,22 @@ function(input, output, session) {
 			,
 			if("ALG" %in% woe_comms()){
 				shiny::tagList(
+					use_bs_popover(),
 					# h4(HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (algae)")),
 					h4(tagList(
 						HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (algae)"),
-						tags$span(icon("info-circle", style = "color: #2fa4e7", id="algElimInfo"),
-						))),
-					bsPopover(id="algElimInfo", title = HTML("<b>Helpful Hints</b>"), 
-								 content = HTML("Stressors receiving a co-occurrence score of -1 for all target site samples, indicating that the stressor sample values were not elevated relative to unimpaired comparator samples if the stress increases with increasing stressor values (e.g. conductivity) or not low if stress decreases with increasing stressor values (e.g., dissolved oxygen)."),
-								 placement = "right", trigger = "hover"),
+						tags$span(icon("info-circle", 
+											style = "color: #2fa4e7", 
+											id="algElimInfo") |>
+									 	bs_embed_popover(title = "Helpful Hints",
+									 						  content = "",
+									 						  placement = "right",
+									 						  trigger = "hover")))),
+					# bsPopover(id="algElimInfo", 
+					# 			 title = HTML("<b>Helpful Hints</b>"), 
+					# 			 content = HTML("Stressors receiving a co-occurrence score of -1 for all target site samples, indicating that the stressor sample values were not elevated relative to unimpaired comparator samples if the stress increases with increasing stressor values (e.g. conductivity) or not low if stress decreases with increasing stressor values (e.g., dissolved oxygen)."),
+					# 			 placement = "right", 
+					# 			 trigger = "hover"),
 					pre(textOutput("df_candcause_elim_DT_alg")),
 					br())
 			}
@@ -2240,18 +2263,25 @@ output$woe_tab_ui <- renderUI({
 	
 	shiny::tagList(
 		h2("Benthic Macroinvertebrates"),
-		
+		use_bs_popover(),
 		if("BMI" %in% woe_comms()){
 			shiny::tagList(
 				#h3("Biological index distributions"),
-				
+				use_bs_popover(),
 				h3(tagList(
 					"Biological index distributions",
-					icon("info-circle", style = "color: #2fa4e7", id="bmiIndInfo",
-					))),
-				bsPopover(id="bmiIndInfo", title = HTML("<b>Helpful Hints</b>"), 
-							 content = HTML("Boxplots depicting the distribution of benthic macroinvertebrate index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds)."),
-							 placement = "right", trigger = "hover"),
+					icon("info-circle", 
+						  style = "color: #2fa4e7", 
+						  id="bmiIndInfo") |>
+						bs_embed_popover(title = "Helpful Hints",
+											  content = "Boxplots depicting the distribution of benthic macroinvertebrate index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds).",
+											  placement = "right",
+											  trigger = "hover"))),
+				# bsPopover(id="bmiIndInfo", 
+				# 			 title = HTML("<b>Helpful Hints</b>"), 
+				# 			 content = HTML("Boxplots depicting the distribution of benthic macroinvertebrate index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds)."),
+				# 			 placement = "right", 
+				# 			 trigger = "hover"),
 				
 				imageOutput("img_bmi_index",
 								width = "100%",
@@ -2261,22 +2291,36 @@ output$woe_tab_ui <- renderUI({
 				
 				h3(tagList(
 					"Weight of evidence table",
-					icon("info-circle", style = "color: #2fa4e7", id="bmiWOEInfo",
-					))),
-				bsPopover(id="bmiWOEInfo", title = HTML("<b>Helpful Hints</b>"),
-							 content = HTML("Line of evidence scores assigned to each benthic macroinvertebrate sample for each evaluated stressor."),
-							 placement = "right", trigger = "hover"),
+					icon("info-circle", 
+						  style = "color: #2fa4e7", 
+						  id="bmiWOEInfo") |>
+						bs_embed_popover(title = "Helpful Hints",
+											  content = "Line of evidence scores assigned to each benthic macroinvertebrate sample for each evaluated stressor.",
+											  placement = "right",
+											  trigger = "hover"))),
+				# bsPopover(id="bmiWOEInfo", 
+				# 			 title = HTML("<b>Helpful Hints</b>"),
+				# 			 content = HTML("Line of evidence scores assigned to each benthic macroinvertebrate sample for each evaluated stressor."),
+				# 			 placement = "right", 
+				# 			 trigger = "hover"),
 				
 				DT::dataTableOutput("tbl_woe_bmi"),
 				
 				#h3("Lines of evidence summary"),
 				h3(tagList(
 					"Lines of evidence summary",
-					icon("info-circle", style = "color: #2fa4e7", id="bmiWOESummInfo",
-					))),
-				bsPopover(id="bmiWOESummInfo", title = HTML("<b>Helpful Hints</b>"),
-							 content = HTML("Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each benthic macroinvertebrate sample and each evaluated stressor."),
-							 placement = "right", trigger = "hover"),
+					icon("info-circle", 
+						  style = "color: #2fa4e7", 
+						  id="bmiWOESummInfo") |>
+						bs_embed_popover(title = "Helpful Hints",
+											  content = "Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each benthic macroinvertebrate sample and each evaluated stressor.",
+											  placement = "right",
+											  trigger = "hover"))),
+				# bsPopover(id="bmiWOESummInfo", 
+				# 			 title = HTML("<b>Helpful Hints</b>"),
+				# 			 content = HTML("Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each benthic macroinvertebrate sample and each evaluated stressor."),
+				# 			 placement = "right", 
+				# 			 trigger = "hover"),
 				
 				DT::dataTableOutput("tbl_woe_summ_bmi"),
 				br(),
@@ -2295,14 +2339,21 @@ output$woe_tab_ui <- renderUI({
 		if("FISH" %in% woe_comms()){
 			shiny::tagList(
 				# h3("Biological index distributions"),
-				
+				use_bs_popover(),
 				h3(tagList(
 					"Biological index distributions",
-					icon("info-circle", style = "color: #2fa4e7", id="fishIndInfo",
-					))),
-				bsPopover(id="fishIndInfo", title = HTML("<b>Helpful Hints</b>"),
-							 content = HTML("Boxplots depicting the distribution of fish index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds)."),
-							 placement = "right", trigger = "hover"),
+					icon("info-circle", 
+						  style = "color: #2fa4e7", 
+						  id="fishIndInfo") |>
+						bs_embed_popover(title = "Helpful Hints",
+											  content = "Boxplots depicting the distribution of fish index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds).",
+											  placement = "right",
+											  trigger = "hover"))),
+				# bsPopover(id="fishIndInfo", 
+				# 			 title = HTML("<b>Helpful Hints</b>"),
+				# 			 content = HTML("Boxplots depicting the distribution of fish index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds)."),
+				# 			 placement = "right", 
+				# 			 trigger = "hover"),
 				
 				imageOutput("img_fish_index",
 								width = "100%",
@@ -2311,22 +2362,36 @@ output$woe_tab_ui <- renderUI({
 				#h3("Weight of evidence table"),
 				h3(tagList(
 					"Weight of evidence table",
-					icon("info-circle", style = "color: #2fa4e7", id="fishWOEInfo",
-					))),
-				bsPopover(id="fishWOEInfo", title = HTML("<b>Helpful Hints</b>"),
-							 content = HTML("Line of evidence scores assigned to each fish sample for each evaluated stressor."),
-							 placement = "right", trigger = "hover"),
+					icon("info-circle", 
+						  style = "color: #2fa4e7", 
+						  id="fishWOEInfo") |>
+						  	bs_embed_popover(title = "Helpful Hints",
+						  						  content = "Line of evidence scores assigned to each fish sample for each evaluated stressor.",
+						  						  placement = "right",
+						  						  trigger = "hover"))),
+				# bsPopover(id="fishWOEInfo", 
+				# 			 title = HTML("<b>Helpful Hints</b>"),
+				# 			 content = HTML("Line of evidence scores assigned to each fish sample for each evaluated stressor."),
+				# 			 placement = "right", 
+				# 			 trigger = "hover"),
 				
 				DT::dataTableOutput("tbl_woe_fish"),
 				
 				#h3("Lines of evidence summary"),
 				h3(tagList(
 					"Lines of evidence summary",
-					icon("info-circle", style = "color: #2fa4e7", id="fishWOESummInfo",
-					))),
-				bsPopover(id="fishWOESummInfo", title = HTML("<b>Helpful Hints</b>"),
-							 content = HTML("Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each fish sample and each evaluated stressor."),
-							 placement = "right", trigger = "hover"),
+					icon("info-circle", 
+						  style = "color: #2fa4e7", 
+						  id="fishWOESummInfo") |>
+						bs_embed_popover(title = "Helpful Hints",
+											  content = "Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each fish sample and each evaluated stressor.",
+											  placement = "right",
+											  trigger = "hover"))),
+				# bsPopover(id="fishWOESummInfo", 
+				# 			 title = HTML("<b>Helpful Hints</b>"),
+				# 			 content = HTML("Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each fish sample and each evaluated stressor."),
+				# 			 placement = "right", 
+				# 			 trigger = "hover"),
 				
 				DT::dataTableOutput("tbl_woe_summ_fish"),
 				br(),
@@ -2345,13 +2410,21 @@ output$woe_tab_ui <- renderUI({
 		if("ALG" %in% woe_comms()){
 			shiny::tagList(
 				#h3("Biological index distributions"),
+				use_bs_popover(),
 				h3(tagList(
 					"Biological index distributions",
-					icon("info-circle", style = "color: #2fa4e7", id="algIndInfo",
-					))),
-				bsPopover(id="algIndInfo", title = HTML("<b>Helpful Hints</b>"),
-							 content = HTML("Boxplots depicting the distribution of algae index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds)."),
-							 placement = "right", trigger = "hover"),
+					icon("info-circle", 
+						  style = "color: #2fa4e7", 
+						  id="algIndInfo") |>
+						bs_embed_popover(title = "Helpful Hints",
+											  content = "Boxplots depicting the distribution of algae index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds).",
+											  placement = "right",
+											  trigger = "hover"))),
+				# bsPopover(id="algIndInfo", 
+				# 			 title = HTML("<b>Helpful Hints</b>"),
+				# 			 content = HTML("Boxplots depicting the distribution of algae index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds)."),
+				# 			 placement = "right", 
+				# 			 trigger = "hover"),
 				
 				imageOutput("img_alg_index",
 								width = "100%",
@@ -2360,22 +2433,36 @@ output$woe_tab_ui <- renderUI({
 				#h3("Weight of evidence table"),
 				h3(tagList(
 					"Weight of evidence table",
-					icon("info-circle", style = "color: #2fa4e7", id="algWOEInfo",
-					))),
-				bsPopover(id="algWOEInfo", title = HTML("<b>Helpful Hints</b>"),
-							 content = HTML("Line of evidence scores assigned to each algae sample for each evaluated stressor."),
-							 placement = "right", trigger = "hover"),
+					icon("info-circle", 
+						  style = "color: #2fa4e7", 
+						  id="algWOEInfo") |>
+						bs_embed_popover(title = "Helpful Hints",
+											  content = "Line of evidence scores assigned to each algae sample for each evaluated stressor.",
+											  placement = "right",
+											  trigger = "hover"))),
+				# bsPopover(id="algWOEInfo", 
+				# 			 title = HTML("<b>Helpful Hints</b>"),
+				# 			 content = HTML("Line of evidence scores assigned to each algae sample for each evaluated stressor."),
+				# 			 placement = "right", 
+				# 			 trigger = "hover"),
 				
 				DT::dataTableOutput("tbl_woe_alg"),
 				
 				#h3("Lines of evidence summary"),
 				h3(tagList(
 					"Lines of evidence summary",
-					icon("info-circle", style = "color: #2fa4e7", id="algWOESummInfo",
-					))),
-				bsPopover(id="algWOESummInfo", title = HTML("<b>Helpful Hints</b>"),
-							 content = HTML("Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each algae sample and each evaluated stressor."),
-							 placement = "right", trigger = "hover"),
+					icon("info-circle", 
+						  style = "color: #2fa4e7", 
+						  id="algWOESummInfo") |>
+						bs_embed_popover(title = "Helpful Hints",
+											  content = "Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each algae sample and each evaluated stressor.",
+											  placement = "right",
+											  trigger = "hover"))),
+				# bsPopover(id="algWOESummInfo", 
+				# 			 title = HTML("<b>Helpful Hints</b>"),
+				# 			 content = HTML("Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each algae sample and each evaluated stressor."),
+				# 			 placement = "right", 
+				# 			 trigger = "hover"),
 				
 				DT::dataTableOutput("tbl_woe_summ_alg"),
 				br(),

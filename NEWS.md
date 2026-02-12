@@ -4,7 +4,12 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-02-11 17:09:35.503171
+    #> Last Update: 2026-02-12 11:06:16.634818
+
+# CAST_Shiny 1.0.0.9011 (2026-02-12)
+
+- refactor: Replace shinyBS::bsPopover with bslib::bs_embed_popover
+  - Include use_bs_popover() on relevant tabs
 
 # CAST_Shiny 1.0.0.9010 (2026-02-11)
 

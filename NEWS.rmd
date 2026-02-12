@@ -20,6 +20,11 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 1.0.0.9011 (2026-02-12)
+
+* refactor: Replace shinyBS::bsPopover with bslib::bs_embed_popover
+    + Include use_bs_popover() on relevant tabs
+
 # CAST_Shiny 1.0.0.9010 (2026-02-11)
 
 * refactor: Add display time warning text to StressorSummary tab
