@@ -21,6 +21,9 @@ function() {
 					p(em("All watershed stressor figures are available in the SiteInfo subfolder in the downloaded results zipped folder.")),
 					fluidRow(
 						column(4,
+								 p(strong("Target site, report:")),
+								 div(class = "pill", textOutput("txt_rep_siteid_wshedstress")),
+								 br(),
 								p(tagList(
 									strong("Reaches to display: "),
 									icon("info-circle", 
@@ -51,7 +54,10 @@ function() {
 						),## column
 						column(8,
 								 p(tagList(strong("Watershed stressor figure"),
-								 			 actionLink("helpWSStrFig", label = NULL, icon = icon("circle-info"), class = "help-btn"))
+								 			 actionLink("helpWSStrFig", 
+								 			 			  label = NULL, 
+								 			 			  icon = icon("circle-info"), 
+								 			 			  class = "help-btn"))
 								   ),
 								 imageOutput("plot_wshed", # size set in plot_wshed
 								 				width = "100%",

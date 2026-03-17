@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "1.0.0.9011"
+pkg_version <- "1.0.0.9012"
 
 # Packages ----
 library(shiny)
@@ -22,6 +22,7 @@ library(CASToolWSStressorPckg)
 library(sf)
 library(CASToolBaseDataPckg)
 library(kableExtra)
+library(shinycssloaders) # withSpinner
 
 # library(zip)	  # use `utils` as `zip` pkg doesn't work on ShinyApps.io
 
@@ -114,41 +115,43 @@ dn_woe       <- "_WoE"
 #### skeleton
 dn_checked_sk <- "_CheckedInputs"
 
-# # Gov chat answer
-app_name <- "CASTool_USEPA"
- BASE_DIR <- if (nzchar(Sys.getenv("APP_BASE_DIR"))) {
-	Sys.getenv("APP_BASE_DIR")
-} else {
-	file.path(tempdir(), app_name)
-}
+# # # Gov chat answer
+# app_name <- "CASTool_USEPA"
+# BASE_DIR <- if (nzchar(Sys.getenv("APP_BASE_DIR"))) {
+# 	Sys.getenv("APP_BASE_DIR")
+# } else {
+# 	file.path(tempdir(), app_name)
+# }
 
-# Define your paths
-dn_data    <- file.path(BASE_DIR, "data")
-dn_results <- file.path(BASE_DIR, "results")
+# # Define your paths
+# dn_data    <- file.path(BASE_DIR, "data")
+# dn_results <- file.path(BASE_DIR, "results")
 
 # Ensure base dirs exist (create before cleaning)
-dir.create(dn_data,    recursive = TRUE, showWarnings = FALSE)
-dir.create(dn_results, recursive = TRUE, showWarnings = FALSE)
-
-
+# dir.create(dn_data,    
+# 			  recursive = TRUE, 
+# 			  showWarnings = FALSE)
+# dir.create(dn_results, 
+# 			  recursive = TRUE, 
+# 			  showWarnings = FALSE)
 
 # ## Clean Dirs ----
-clean_dir(file.path(dn_data), boo_dir = TRUE)
-clean_dir(file.path(dn_results), boo_dir = TRUE)
+# clean_dir(file.path(dn_data), boo_dir = TRUE)
+# clean_dir(file.path(dn_results), boo_dir = TRUE)
 
-dn_data      <- "Data"
-dn_results   <- "Results"
-
-# ## Create Dirs ----
-create_dir(file.path(dn_data))
-create_dir(file.path(dn_data, dn_checked))
-# create_dir(file.path(dn_data, dn_clusters))
-create_dir(file.path(dn_data, dn_import))
-# create_dir(file.path(dn_data, dn_temp))
-# create_dir(file.path(dn_data, dn_ws_stress))
-create_dir(file.path(dn_results))
-# create_dir(file.path(dn_results, dn_bmi))
-# create_dir(file.path(dn_results, dn_woe))
+# dn_data      <- "Data"
+# dn_results   <- "Results"
+# 
+# # ## Create Dirs ----
+# create_dir(file.path(dn_data))
+# create_dir(file.path(dn_data, dn_checked))
+# # create_dir(file.path(dn_data, dn_clusters))
+# create_dir(file.path(dn_data, dn_import))
+# # create_dir(file.path(dn_data, dn_temp))
+# # create_dir(file.path(dn_data, dn_ws_stress))
+# create_dir(file.path(dn_results))
+# # create_dir(file.path(dn_results, dn_bmi))
+# # create_dir(file.path(dn_results, dn_woe))
 
 
 
@@ -190,10 +193,10 @@ url_github_castfxn <- "https://raw.githubusercontent.com/leppott/CASTfxn/main/in
 url_github_castshiny <- "https://raw.githubusercontent.com/leppott/CAST_Shiny/main/apps/CASTool_USEPA/www"
 
 # WWW----
-dn_fc <- file.path("www", "RMD_HTML")
-fn_from <- file.path(dn_fc, "html_frag_blank.html")
-fn_to <- file.path(dn_fc, "ShinyHTML_StressSumm.html")
-file.copy(from = fn_from, to = fn_to, overwrite = TRUE)
+# dn_fc <- file.path("www", "RMD_HTML")
+# fn_from <- file.path(dn_fc, "html_frag_blank.html")
+# fn_to <- file.path(dn_fc, "ShinyHTML_StressSumm.html")
+# file.copy(from = fn_from, to = fn_to, overwrite = TRUE)
 
 # WSStressors ----
 # fn_wsstressors <- file.path("www", "CASTool_WSStressors.csv")

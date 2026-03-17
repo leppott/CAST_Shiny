@@ -4,7 +4,33 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-02-12 11:06:16.634818
+    #> Last Update: 2026-03-17 16:26:53.190154
+
+# CAST_Shiny 1.0.0.9012 (2026-03-17)
+
+- feature: Add per session folder for data and results directories
+  - Avoid possible collision of files between sessions
+- fix: Replace getwd() with base_session_dir in server
+  - check input file
+- style: Remove extra definition of dn_data and dn_results in check
+  input file
+- fix: Remove extra code in Global
+  - BASE_DIR, not used and repetitive of existing code
+  - instances of create and clean dirs
+- feature: Add progress bar for steps after skeleton code
+- refactor: Add Target SiteID to report tabs
+- refactor: Add shinycssloaders::withSpinner for long loading objects
+  - data gaps, table
+  - stressor summaries, report
+- docs: Add shinycssloaders to DESCRIPTION
+- refactor: Hide report result tabs on successive report runs
+- refactor: Between report runs and site ids changes keep watershed
+  stressors table and plots to selected site id for report
+- refactor: Warning if select different site after report generated
+- refactor: Move StressSumm.html from www to temp session RMD_HTML
+  folder
+  - Remove file copy of fragment
+- refactor: Move unzip temp metadata.rds to inside session folder
 
 # CAST_Shiny 1.0.0.9011 (2026-02-12)
 

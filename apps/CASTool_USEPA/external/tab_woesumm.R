@@ -17,7 +17,7 @@ function() {
 					# h2("Weight of Evidence Table"),
 					# DT::dataTableOutput("tbl_woe")
 				
-				uiOutput("woe_tab_ui")
+				shinycssloaders::withSpinner(uiOutput("woe_tab_ui"))
 				#	)## mainPanel
 				)## tabPanel
 }## FUNCTION

@@ -7,6 +7,10 @@ function() {
 					use_bs_popover(),
 					h2("Candidate Causes"),
 					
+					p(strong("Target site, report:")),
+					div(class = "pill", textOutput("txt_rep_siteid_candcause")),
+					br(),
+					
 					h4(tagList("User-specified thresholds for evaluating specific candidate causes",
 								 actionLink("helpCandCause", label = NULL, icon = icon("circle-info"), class = "help-btn"))
 					),

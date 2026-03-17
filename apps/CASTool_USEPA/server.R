@@ -10,9 +10,62 @@
 # Define server logic required to draw a histogram
 function(input, output, session) {
 
-	# Sections headers by tab
+# Sections headers by tab
+	
+# SESSION ----
+# CoPilot help, 2026-03-09
+# per session folders
+	# these setting override what is in Global.R
+	# every user writes to their own folder
+	# .../CASTool_USEPA_<session-token>/{Data,Results} under tempdir(),
 
-## ABOUT ----
+	app_name <- "CASTool_USEPA"   # keep in sync with global
+	base_session_dir <- file.path(tempdir(), 
+											paste0(app_name, "_", 
+													 session$token))
+	# have BASE_DIR in GLOBAL
+	
+	dn_data     <- file.path(base_session_dir, "Data")
+	dn_results  <- file.path(base_session_dir, "Results")
+	dn_rmd_html <- file.path(base_session_dir, "RMD_HTML")
+	
+	# Create the dirs once per session
+	dir.create(dn_data,     recursive = TRUE, showWarnings = FALSE)
+	dir.create(dn_results,  recursive = TRUE, showWarnings = FALSE)
+	dir.create(dn_rmd_html, recursive = TRUE, showWarnings = FALSE)
+	# add
+	dir.create(file.path(dn_data, dn_checked),
+				  recursive = TRUE,
+				  showWarnings = FALSE)
+	dir.create(file.path(dn_data, dn_import),
+				  recursive = TRUE, 
+				  showWarnings = FALSE)
+	
+	
+	# Clean just this session's folders (your helper)
+	# clean_dir(dn_data,    boo_dir = FALSE)
+	# clean_dir(dn_results, boo_dir = FALSE)
+	# if just created for this session don't need to clean
+	
+	# Optional: remove on session end
+	session$onSessionEnded(function() {
+		unlink(base_session_dir, recursive = TRUE, force = TRUE)
+	})
+	
+## other
+	
+	react_report_targetsiteid <- reactiveVal("")
+	
+	# copy temp www stress summ fragment file
+	file.copy(from = file.path("www", 
+										"RMD_HTML",
+										"html_frag_blank.html"),
+				 to = file.path(dn_rmd_html,
+				 					"ShinyHTML_StressSumm.html"),
+				 overwrite = TRUE)
+
+
+# ABOUT ----
 	
 # CHECK ----
 	
@@ -380,7 +433,7 @@ function(input, output, session) {
 	
 	## Import, Files, missing ----
 	output$txt_import_files_missing <- renderText({
-		
+	
 		inFile <- input$fn_input_check_uload
 		
 		# Blank if no data
@@ -555,9 +608,11 @@ function(input, output, session) {
 			incProgress(1/prog_n, detail = prog_detail)
 			Sys.sleep(prog_sleep)
 			
-			# define checkInputs parameters
-			in.dir <- file.path(getwd(), dn_data, dn_import)
-			out.dir <- file.path(getwd(), dn_data, dn_checked)
+			# # define checkInputs parameters
+			# in.dir <- file.path(getwd(), dn_data, dn_import)
+			# out.dir <- file.path(getwd(), dn_data, dn_checked)
+			in.dir <- file.path(dn_data, dn_import)
+			out.dir <- file.path(dn_data, dn_checked)
 			fn.inputcheck <- system.file("extdata", 
 												  "CASTool_InputCheck.xlsx",
 												  package = "CASTfxn")
@@ -693,7 +748,9 @@ function(input, output, session) {
 			fn_4zip <- list.files(path = path_4zip,
 										 full.names = TRUE,
 										 pattern = "\\.tab$")
-			zip::zip(file.path(getwd(), dn_data, "check_qctables.zip"), 
+			# zip::zip(file.path(getwd(), dn_data, "check_qctables.zip"),
+			zip::zip(file.path(dn_data, 
+									 "check_qctables.zip"), 
 						files = fn_4zip,
 						mode = "cherry-pick")
 			### RDS
@@ -706,7 +763,8 @@ function(input, output, session) {
 			
 			fn_4zip <- c(fn_4zip_rds, fn_4zip_extra)
 			
-			zip::zip(file.path(getwd(), dn_data, "check_rds.zip"), 
+			# zip::zip(file.path(getwd(), dn_data, "check_rds.zip"), 
+			zip::zip(file.path(dn_data, "check_rds.zip"), 
 						fn_4zip,
 						mode = "cherry-pick")
 			
@@ -751,10 +809,12 @@ function(input, output, session) {
 		req(check_qctable_1_save())
  
 		# region
-		dn_data <- "Data"
-		dn_results <- "Results"
-		in.dir <- file.path(getwd(), dn_data, "input")
-		out.dir <- file.path(getwd(), dn_data, "checked")
+		# dn_data <- "Data"
+		# dn_results <- "Results"
+		# in.dir <- file.path(getwd(), dn_data, "input")
+		# out.dir <- file.path(getwd(), dn_data, "checked")
+		in.dir <- file.path(dn_data, dn_import)
+		out.dir <- file.path(dn_data, dn_checked)
 		path_meta <- file.path(in.dir, fn_default_check_input_cast_metadata)
 
 		# Blank no metadata file
@@ -830,10 +890,12 @@ function(input, output, session) {
 		req(check_qctable_2_save())
 		
 		# region
-		dn_data <- "Data"
-		dn_results <- "Results"
-		in.dir <- file.path(getwd(), dn_data, "input")
-		out.dir <- file.path(getwd(), dn_data, "checked")
+		# dn_data <- "Data"
+		# dn_results <- "Results"
+		# in.dir <- file.path(getwd(), dn_data, "input")
+		# out.dir <- file.path(getwd(), dn_data, "checked")
+		in.dir <- file.path(dn_data, dn_import)
+		out.dir <- file.path(dn_data, dn_checked)
 		path_meta <- file.path(in.dir, fn_default_check_input_cast_metadata)
 		
 		# Blank no metadata file
@@ -951,6 +1013,30 @@ function(input, output, session) {
 		react_setup_format()
 	})
 	
+	## Set Up, SiteID, Selected and Report different ----
+	observeEvent(input$si_checked_sites_targ, {
+		
+		# ensure input is not NULL or empty string
+		req(input$si_checked_sites_targ, 
+			 input$si_checked_sites_targ != "")
+		
+		# ensure reactive target is not empty string
+		req(react_report_targetsiteid() != "")
+		
+		# trigger only when different
+		if (!identical(input$si_checked_sites_targ, 
+							react_report_targetsiteid())) {
+			
+			shinyalert::shinyalert(
+				title = "Selection Mismatch",
+				text = paste0("Selected target site id does not match the report results target site id.\n",
+								  "\n",
+								  "If you run the report the current results will be erased."),
+				type = "warning"
+			)
+		}
+	})## oe ~ target site id
+	
 	## Set Up, Files, Checked ----
 	observeEvent(input$fn_input_setup_checked_uload, {
 		shiny::withProgress({
@@ -1004,7 +1090,7 @@ function(input, output, session) {
 			## only the one file so is faster
 			zip::unzip(fn_inFile,
 							 overwrite = TRUE,
-							 exdir = file.path(tempdir(), dn_checked_sk),
+							 exdir = file.path(dn_data, dn_checked_sk),
 							 files = fn_metadata, 
 							 junkpaths = TRUE)
 			
@@ -1017,7 +1103,7 @@ function(input, output, session) {
 			Sys.sleep(prog_sleep)
 			
 			# open metadata
-			data_CASTmeta_temp <- readRDS(file.path(tempdir(),
+			data_CASTmeta_temp <- readRDS(file.path(dn_data,
 																 dn_checked_sk, 
 																 "CASTmetadata.rds"))
 			# get region
@@ -1352,7 +1438,7 @@ function(input, output, session) {
 
 		# don't have dir so use temp version
 		# map file name
-		path_CASTmeta_temp <- file.path(tempdir(),
+		path_CASTmeta_temp <- file.path(dn_data,
 												  dn_checked_sk,
 												  "CASTmetadata.rds")
 		# ensure file exists
@@ -1494,12 +1580,73 @@ function(input, output, session) {
 	react_report_run <- reactiveVal(FALSE)
 	
 	## siteid ----
-	output$txt_rep_siteid <- renderText({
+	### Report
+	output$txt_rep_siteid_report <- renderText({
 		# The expression here is reactive; it updates when input$text_input_id changes
 		if (is.null(sel_targsite()) | sel_targsite() == "") {
 			txt_siteid <- "..No target site selected.."
 		} else {
 			txt_siteid <- sel_targsite()
+		}## IF
+		#paste0("Target Site: ", txt_siteid)
+		txt_siteid
+	})
+	### Wshed Stress
+	output$txt_rep_siteid_wshedstress <- renderText({
+		# The expression here is reactive; it updates when input$text_input_id changes
+		if (is.null(react_report_targetsiteid()) |
+			 react_report_targetsiteid() == "") {
+			txt_siteid <- "..Report not generated.."
+		} else {
+			txt_siteid <- react_report_targetsiteid()
+		}## IF
+		#paste0("Target Site: ", txt_siteid)
+		txt_siteid
+	})
+	### Cand Cause
+	output$txt_rep_siteid_candcause <- renderText({
+		# The expression here is reactive; it updates when input$text_input_id changes
+		if (is.null(react_report_targetsiteid()) | 
+			 react_report_targetsiteid() == "") {
+			txt_siteid <- "..No target site selected.."
+		} else {
+			txt_siteid <- react_report_targetsiteid()
+		}## IF
+		#paste0("Target Site: ", txt_siteid)
+		txt_siteid
+	})
+	### WoE Summ
+	output$txt_rep_siteid_woesumm <- renderText({
+		# The expression here is reactive; it updates when input$text_input_id changes
+		if (is.null(react_report_targetsiteid()) | 
+			 react_report_targetsiteid() == "") {
+			txt_siteid <- "..No target site selected.."
+		} else {
+			txt_siteid <- react_report_targetsiteid()
+		}## IF
+		#paste0("Target Site: ", txt_siteid)
+		txt_siteid
+	})
+	### Stress Summ
+	output$txt_rep_siteid_stresssumm <- renderText({
+		# The expression here is reactive; it updates when input$text_input_id changes
+		if (is.null(react_report_targetsiteid()) | 
+			 react_report_targetsiteid() == "") {
+			txt_siteid <- "..No target site selected.."
+		} else {
+			txt_siteid <- react_report_targetsiteid()
+		}## IF
+		#paste0("Target Site: ", txt_siteid)
+		txt_siteid
+	})
+	### Data Gaps
+	output$txt_rep_siteid_gaps <- renderText({
+		# The expression here is reactive; it updates when input$text_input_id changes
+		if (is.null(react_report_targetsiteid()) | 
+			 react_report_targetsiteid() == "") {
+			txt_siteid <- "..No target site selected.."
+		} else {
+			txt_siteid <- react_report_targetsiteid()
 		}## IF
 		#paste0("Target Site: ", txt_siteid)
 		txt_siteid
@@ -1510,7 +1657,7 @@ function(input, output, session) {
 		# launch skeleton code
 		
 		# QC, site not null or ""
-			if(is.null(sel_targsite()) | sel_targsite() == "") {
+		if(is.null(sel_targsite()) | sel_targsite() == "") {
 			msg <- paste("No target site selected!",
 							 "\n",
 							 "Return to 'Set Up Tool' and 'Select target site' to make selection.",
@@ -1523,12 +1670,47 @@ function(input, output, session) {
 			validate(msg)
 		}## IF ~ check_files_fails
 		
+		# # QC selected == report id
+		# if(is.null(sel_targsite()) | sel_targsite() == "") {
+		# 	msg <- paste("Attempt to run report with different ",
+		# 					 "\n",
+		# 					 "Return to 'Set Up Tool' and 'Select target site' to make selection.",
+		# 					 sep = "\n")
+		# 	shinyalert::shinyalert(title = "Run Report",
+		# 								  text = msg,
+		# 								  type = "error",
+		# 								  closeOnEsc = TRUE,
+		# 								  closeOnClickOutside = TRUE)
+		# 	validate(msg)
+		# }## IF ~ check_files_fails2
+		
+		## Report Run Variables ----
+		# set target siteid to user selected value
+		react_report_targetsiteid(sel_targsite())
+		# hide other tabs
+		updateRadioButtons(session,
+								 inputId = "rad_report_tabs",
+								 selected = "No")
+		# didn't work so do individually
+		# (ok since setting to "no")
+		hideTab(inputId = "navbar",
+				  target = "tab_candcause")
+		hideTab(inputId = "navbar",
+				  target = "tab_woesumm")
+		hideTab(inputId = "navbar",
+				  target = "tab_stresssumm")
+		hideTab(inputId = "navbar",
+				  target = "tab_gaps")
+
+		
+		
+		
 		### Global Variables ----
 		# define for sourced Skeleton Code file
 		
 		# borrow from SetUp (04, Catalog)
 		# open metadata
-		data_CASTmeta_temp <- readRDS(file.path(tempdir(), 
+		data_CASTmeta_temp <- readRDS(file.path(dn_data, 
 															 dn_checked_sk, 
 															 "CASTmetadata.rds"))
 		# get region
@@ -1551,7 +1733,8 @@ function(input, output, session) {
 		out.dir  <- file.path(dn_results)
 		boo.plot.user <- TRUE
 		
-		wd <- getwd()
+		# wd <- getwd()
+		wd <- base_session_dir
 		gitpath <- NULL # Not needed for Shiny
 		dir_rmd <- system.file("rmd", 
 									  package = "CASTfxn")
@@ -1576,124 +1759,224 @@ function(input, output, session) {
 		}, message = "Skeleton Code"
 		)## withProgress
 		
-		# Enabled buttons ----
-		shinyjs::enable("rad_report_tabs")
-		shinyjs::enable("but_report_dload")
-		shinyjs::enable("but_dload_wshed_figs")
+		shiny::withProgress({
+			## 00, Initialize----
+			prog_detail <- "Clean Up..."
+			message(paste0("\n", prog_detail))
+			# Number of increments
+			prog_n <- 5
+			prog_sleep <- 0.25
+			
+			### 01, Enabled buttons ----
+			prog_detail <- "01, Enable Buttons"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
 		
-		## create zip ----
-
-		# get files 4 zip
-		stat_id <- sel_targsite() # reactive value
-		dn_zip_stat <- file.path(dn_results,
-										 react_setup_region(),
-										 stat_id)
-		dn_zip_hist <- file.path(dn_results,
-										 react_setup_region(),
-										 "_Histograms")
-		# select most recent status csv
-		status_file <- list.files(
-								file.path(
-									dn_results, 
-									react_setup_region())) |> 
-							stringr::str_subset("Status") |> 
-							sort() |> 
-							dplyr::last()
-		dn_status <- file.path(dn_results,
-									  react_setup_region(), 
-									  status_file)
-		fn_zip_stat <- list.files(path = dn_zip_stat,
-										  recursive = TRUE,
-										  full.names = TRUE)
-		fn_zip_hist <- list.files(path = dn_zip_hist,
-										  recursive = TRUE,
-										  full.names = TRUE)
-		# combined files
-		fn_zip <- c(fn_zip_stat, fn_zip_hist, dn_status)
-		# create zip
-		tic <- Sys.time()
-		zip::zip(file.path(dn_results, "report_results.zip"),
-					files = fn_zip)
-		toc <- Sys.time()
-		msg <- paste0("zip time (sec): ",
-						  round(difftime(toc, tic, units = "secs"), 2))
-		message(msg)
-
-		## reactiveval updates ----
-		# used to indicate report run
-		react_report_run(TRUE) # gaps
+			#
+			shinyjs::enable("rad_report_tabs")
+			shinyjs::enable("but_report_dload")
+			shinyjs::enable("but_dload_wshed_figs")
+			
+			## 02, create zip ----
+			prog_detail <- "02, Create Zip"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
 	
-		## Stress Summ RMD ----
-		# rend_input <- file.path("external",
-		# 								"RMD",
-		# 								"display_images_StressSumm.Rmd")
-		#
-		# copy RMD so works in Shiny
-		## same issue for stress summ as getReport in skeleton code
-		## render switches working directory to location of RMD
-		rmd2copy <- list.files(file.path("external",
-													"RMD"),
-									  pattern = "display_images_StressSumm\\.Rmd$",
-									  full.names = TRUE)
-		file.copy(rmd2copy, ".", overwrite = TRUE)
-		rend_input <- "display_images_StressSumm.Rmd"
-		path_shiny_www <- file.path("www",
-											 "RMD_HTML")
-		 # browser()
-		rmarkdown::render(input = rend_input,
-								# output_dir = path_shiny_www,
-								output_file = file.path(path_shiny_www,
-																"ShinyHTML_StressSumm.html"),
-								params = list(react_setup_region = react_setup_region)
-		)
-		
-		## Wshed Stress Fig Zip ----
-
-		# get files 4 zip
-		stat_id <- sel_targsite() # reactive value
-		dn_zip_ws <- file.path(dn_results,
-									  react_setup_region(),
-									  stat_id,
-									  "SiteInfo")
-		fn_zip_ws <- list.files(path = dn_zip_ws,
-										pattern = "_WSstress_.*\\.png$",
-										full.names = TRUE,
-										recursive = FALSE)
-		# create zip
-		tic <- Sys.time()
-		zip::zip(file.path(dn_results, "WSstress_figs.zip"),
-					files = fn_zip_ws,
-					mode = "cherry-pick")
-		toc <- Sys.time()
-		msg <- paste0("zip time (sec): ",
-						  round(difftime(toc, tic, units = "secs"), 2))
-		message(msg)
-		
-
-		# get watershed variables
-		## fn_zip_ws above
-		# extract watershed variables
-		fn_zip_ws_var <- sub("^.*_WSstress_([^/]+)\\.png$", "\\1", 
-									basename(fn_zip_ws))
-		
-		
-		# have data_stressorinfoWS in env so use it
-		if (exists("data_stressorinfoWS")) {
+			# get files 4 zip
+			stat_id <- react_report_targetsiteid() #sel_targsite() # reactive value
+			dn_zip_stat <- file.path(dn_results,
+											 react_setup_region(),
+											 stat_id)
+			dn_zip_hist <- file.path(dn_results,
+											 react_setup_region(),
+											 "_Histograms")
+			# select most recent status csv
+			status_file <- list.files(
+									file.path(
+										dn_results, 
+										react_setup_region())) |> 
+								stringr::str_subset("Status") |> 
+								sort() |> 
+								dplyr::last()
+			fn_status <- file.path(dn_results,
+										  react_setup_region(), 
+										  status_file)
+			fn_zip_stat <- list.files(path = dn_zip_stat,
+											  recursive = TRUE,
+											  full.names = TRUE)
+			fn_zip_hist <- list.files(path = dn_zip_hist,
+											  recursive = TRUE,
+											  full.names = TRUE)
+			# combined files
+			fn_zip <- normalizePath(c(fn_zip_stat, 
+											  fn_zip_hist, 
+											  fn_status))
+			# get relative path (to zip file not wd)
+			## replace normalizePath 2 forward slash with back slash
+			# need 4 forward to make the 2 forward as forward is escape
+			# do same in search paths
+			# replace with last dir
+			# fn_zip <- gsub(paste0("^", 
+			# 							 gsub("\\\\", 
+			# 							 	  "/", 
+			# 							 	  normalizePath(dn_results)),
+			# 							 "/?"),
+			# 					paste0(basename(dn_results), "/"),
+			# 					gsub("\\\\", "/", fn_zip))
+	# browser()
+			# create zip
+			tic <- Sys.time()
+			zip::zip(file.path(dirname(dn_results), 
+									 "report_results.zip"),
+						files = fn_zip,
+						mode = "cherry-pick")
 			
-			df_plots_data_stressorinfoWS <- data_stressorinfoWS %>%
-				# keep columns need
-				dplyr::select(StreamCatVar, Label) %>%
-				# remove duplicates
-				unique() %>%
-				# note if have plot
-				dplyr::mutate(plot_present = StreamCatVar %in% fn_zip_ws_var)
+			# Need to modify to *not* use cherry-pick
+			# fails on ":" in "C:" for normalized Paths
 			
-			react_wshed_var(df_plots_data_stressorinfoWS)
+			toc <- Sys.time()
+			msg <- paste0("zip time (sec): ",
+							  round(difftime(toc, tic, units = "secs"), 2))
+			message(msg)
+	
+			## 03, reactiveval updates ----
+			prog_detail <- "03, Update ReactiveVal"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			# used to indicate report run
+			react_report_run(TRUE) # gaps
+	
+			## 04, Stress Summ RMD ----
+			prog_detail <- "04, Build Stressor Summary"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			# rend_input <- file.path("external",
+			# 								"RMD",
+			# 								"display_images_StressSumm.Rmd")
+			#
+			# copy RMD so works in Shiny
+			## same issue for stress summ as getReport in skeleton code
+			## render switches working directory to location of RMD
+			rmd2copy <- list.files(file.path("external",
+														"RMD"),
+										  pattern = "display_images_StressSumm\\.Rmd$",
+										  full.names = TRUE)
+			file.copy(rmd2copy, ".", overwrite = TRUE)
+			rend_input <- "display_images_StressSumm.Rmd"
+			path_shiny_www <- file.path(dn_rmd_html)
+			 # browser()
+			rmarkdown::render(input = rend_input,
+									# output_dir = path_shiny_www,
+									output_file = file.path(path_shiny_www,
+																	"ShinyHTML_StressSumm.html"),
+									params = list(react_setup_region = react_setup_region)
+			)
 			
-		}## exists ~ data_stressorinfoWS
+			## 05, Wshed Stress Fig Zip ----
+			prog_detail <- "05, Create WS Zip"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+	
+			# get files 4 zip
+			stat_id <- react_report_targetsiteid() # sel_targsite() # reactive value
+			dn_zip_ws <- file.path(dn_results,
+										  react_setup_region(),
+										  stat_id,
+										  "SiteInfo")
+			fn_zip_ws <- list.files(path = dn_zip_ws,
+											pattern = "_WSstress_.*\\.png$",
+											full.names = TRUE,
+											recursive = FALSE)
+			# create zip----
+			tic <- Sys.time()
+			zip::zip(file.path(dn_results, "WSstress_figs.zip"),
+						files = fn_zip_ws,
+						mode = "cherry-pick")
+			toc <- Sys.time()
+			msg <- paste0("zip time (sec): ",
+							  round(difftime(toc, tic, units = "secs"), 2))
+			message(msg)
+			
+	
+			## 06, get watershed variables----
+			prog_detail <- "06, WS Variables"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			## fn_zip_ws above
+			# extract watershed variables
+			fn_zip_ws_var <- sub("^.*_WSstress_([^/]+)\\.png$", "\\1", 
+										basename(fn_zip_ws))
+			
+			
+			# have data_stressorinfoWS in env so use it
+			if (exists("data_stressorinfoWS")) {
+				
+				df_plots_data_stressorinfoWS <- data_stressorinfoWS %>%
+					# keep columns need
+					dplyr::select(StreamCatVar, Label) %>%
+					# remove duplicates
+					unique() %>%
+					# note if have plot
+					dplyr::mutate(plot_present = StreamCatVar %in% fn_zip_ws_var)
+				
+				react_wshed_var(df_plots_data_stressorinfoWS)
+				
+			}## exists ~ data_stressorinfoWS
 		
-		### Info Pop Up ----
-		msg <- paste("Creation of report is complete.\n",
+			## 07, Target Site Status----
+			prog_detail <- "06, Target Site Status"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			# get status for use in pop up
+			# find file
+			# fn_status <- list.files(
+			# 	file.path(dn_results, react_setup_region()),
+			# 	pattern = "^TargetSiteID_Status_.*\\.csv$",
+			# 	full.names = TRUE)
+			# defined above as latest date in case ran multiple
+			# fn_status
+			## read file
+			if(length(fn_status) == 1) {
+				df_status <- read.csv(fn_status)
+			} else {
+				df_status <- data.frame(TargetSiteID = NA,
+												status = "error",
+												reason = "no status file")
+			}## file.exists
+			
+			
+			
+			
+		
+		}, message = "Report Clean Up"
+		)## withProgress
+		
+		#### Info Pop Up ----
+		msg <- paste("Creation of report is complete.", 
+						 "\n",
+						 "Status",
+						 "------",
+						 df_status$status, 
+						 "\n",
+						 "Reason",
+						 "------",
+						 df_status$reason,
 						 sep = "\n")
 		shinyalert::shinyalert(title = "Generate Report",
 									  text = msg,
@@ -1739,10 +2022,13 @@ function(input, output, session) {
 					 ".zip")
 		} ,
 		content = function(fname) {
+			browser()
 			# zip file created when report run
 			#
 			# file for download
-			file.copy(file.path(dn_results, "report_results.zip"), fname)
+			file.copy(file.path(dirname(dn_results),
+									  "report_results.zip"), 
+						 fname)
 		}##content~END
 		#, contentType = "application/zip"
 	)##download ~ check files
@@ -1793,7 +2079,7 @@ function(input, output, session) {
 		# report run
 		req(react_report_run())
 
-		stat_id <- sel_targsite()
+		stat_id <- react_report_targetsiteid() #sel_targsite()
 		dn_plots <- file.path(dn_results,
 										react_setup_region(),
 										stat_id,
@@ -1842,7 +2128,7 @@ function(input, output, session) {
 	output$ws_stress_high <- DT::renderDT({
 		req(react_report_run())
 		
-		stat_id <- sel_targsite()
+		stat_id <- react_report_targetsiteid() #sel_targsite()
 		
 		dn_tab <- file.path(dn_results,
 									 react_setup_region(),
@@ -1886,7 +2172,8 @@ function(input, output, session) {
 			# zip file created when report run
 			#
 			# file for download
-			file.copy(file.path(dn_results, "WSstress_figs.zip"), fname)
+			file.copy(file.path(dn_results, "WSstress_figs.zip"), 
+						 fname)
 		}##content~END
 		#, contentType = "application/zip"
 	)##download ~ check files
@@ -1998,7 +2285,10 @@ function(input, output, session) {
 	})
 	
 	woe_comms <- reactive({
-		woe_folds <- list.files(file.path(dn_results, react_setup_region(), sel_targsite()))
+		stat_id <- react_report_targetsiteid() # sel_targsite()
+		woe_folds <- list.files(file.path(dn_results, 
+													 react_setup_region(),
+													 stat_id))
 		intersect(woe_folds, c("ALG", "BMI", "FISH"))
 	})
 	
@@ -2080,7 +2370,7 @@ function(input, output, session) {
 		# trigger created when save table
 		req(react_report_run())
 
-		stat_id <- sel_targsite()
+		stat_id <- react_report_targetsiteid() #sel_targsite()
 		fn_gaps <- paste0(stat_id, "_BMI_DetectsNotEvalFurther.tab")
 		
 		path_table <- file.path(dn_results, 
@@ -2115,7 +2405,7 @@ function(input, output, session) {
 		# trigger created when save table
 		req(react_report_run())
 		
-		stat_id <- sel_targsite()
+		stat_id <- react_report_targetsiteid() # sel_targsite()
 		fn_gaps <- paste0(stat_id, "_FISH_DetectsNotEvalFurther.tab")
 		
 		path_table <- file.path(dn_results, 
@@ -2150,7 +2440,7 @@ function(input, output, session) {
 		# trigger created when save table
 		req(react_report_run())
 		
-		stat_id <- sel_targsite()
+		stat_id <- react_report_targetsiteid() #sel_targsite()
 		fn_gaps <- paste0(stat_id, "_ALG_DetectsNotEvalFurther.tab")
 		
 		path_table <- file.path(dn_results, 
@@ -2228,7 +2518,7 @@ function(input, output, session) {
 		# trigger created when save table
 		req(react_report_run())
 
-		stat_id <- sel_targsite()
+		stat_id <- react_report_targetsiteid() # sel_targsite()
 		fn_detects <- paste0(stat_id, "_DetectsAll.tab")
 		
 		path_table <- file.path(dn_results, 
@@ -2263,6 +2553,9 @@ output$woe_tab_ui <- renderUI({
 	
 	shiny::tagList(
 		h2("Benthic Macroinvertebrates"),
+		p(strong("Target site, report:")),
+		div(class = "pill", textOutput("txt_rep_siteid_woesumm")),
+		br(),
 		use_bs_popover(),
 		if("BMI" %in% woe_comms()){
 			shiny::tagList(
@@ -2525,20 +2818,26 @@ sketch_summ <- htmltools::withTags(table(
  # BMI
 	## woe loe summary table ----
 	df_woe_summ_bmi <- reactive({
+		stat_id <- react_report_targetsiteid() # sel_targsite()
 		# check if data exists
 		fn_data <- file.path(dn_results, 
 									react_setup_region(),
-									sel_targsite(), 
+									stat_id, 
 									dn_bmi, 
 									dn_woe,
-									paste0(sel_targsite(), "_LoESummary.tab"))
+									paste0(stat_id, "_LoESummary.tab"))
 		if (file.exists(fn_data)) {
 			df <- read.table(fn_data, 
 								  header = TRUE, 
 								  sep = "\t", 
 								  stringsAsFactors = FALSE) |> 
-				dplyr::select(Stressor, RespSampleID, RespSampleDate, NumSupport,
-								  NumRefute, NumIndeterminate, NumNotEvaluated) |> 
+				dplyr::select(Stressor, 
+								  RespSampleID, 
+								  RespSampleDate, 
+								  NumSupport,
+								  NumRefute, 
+								  NumIndeterminate,
+								  NumNotEvaluated) |> 
 				dplyr::arrange(Stressor, RespSampleDate)
 		} else {
 			showNotification("WoE LoE Summary file not found.",
@@ -2592,22 +2891,26 @@ sketch_summ <- htmltools::withTags(table(
 	
 	## woe table ----
 	df_woe_bmi <- reactive({
-		
+		stat_id <- react_report_targetsiteid() # sel_targsite()
 		# check if data exists
 		# dn_site <- basename(list.dirs(file.path(dn_results), 
 		# 										recursive = FALSE))
 		fn_data <- file.path(dn_results,
 									react_setup_region(),
-									sel_targsite(),
+									stat_id,
 									dn_bmi, 
 									dn_woe,
-									paste0(sel_targsite(), "_LoEs.tab"))
+									paste0(stat_id, "_LoEs.tab"))
 		if (file.exists(fn_data)) {
 			df <- read.table(fn_data, 
 								  header = TRUE, 
 								  sep = "\t", 
 								  stringsAsFactors = FALSE) |> 
-				dplyr::select(-StationID, -StressSampleID, -StressSampleDate, -bioComm, -StressorValue)
+				dplyr::select(-StationID, 
+								  -StressSampleID, 
+								  -StressSampleDate, 
+								  -bioComm, 
+								  -StressorValue)
 			
 			
 			if(!"VP_SSTV" %in% names(df)){ 
@@ -2676,13 +2979,14 @@ sketch_summ <- htmltools::withTags(table(
 	
 	## woe fig, bio index----
 	output$img_bmi_index <- renderImage({
+		stat_id <- react_report_targetsiteid() # sel_targsite()
 		# return path
 		list(
 			src = file.path(dn_results,
 								 react_setup_region(),
-								 sel_targsite(), 
+								 stat_id, 
 								 "SiteInfo", 
-								 paste0(sel_targsite(),
+								 paste0(stat_id,
 								 		 "_BMI_IndexBoxplotsByCase.png")
 								 ),
 			contentType = "image/png",
@@ -2694,14 +2998,15 @@ sketch_summ <- htmltools::withTags(table(
 	
 	## woe fig, loe----
 	output$img_loe_summ_bmi <- renderImage({
+		stat_id <- react_report_targetsiteid() # sel_targsite()
 		# return path
 		list(
 			src = file.path(dn_results, 
 								 react_setup_region(),
-								 sel_targsite(),
+								 stat_id,
 								 "BMI",
 								 "_WoE",
-								 paste0(sel_targsite(),
+								 paste0(stat_id,
 								 		 "_BMI_LoESummaryFig.png")),
 			contentType = "image/png",
 			alt = "Lines of Evidence Summary",
@@ -2715,21 +3020,27 @@ sketch_summ <- htmltools::withTags(table(
 	# FISH
 	## woe loe summary table ----
 	df_woe_summ_fish <- reactive({
+		stat_id <- react_report_targetsiteid() # sel_targsiteid()
 		# check if data exists
 		# browser()
 		fn_data <- file.path(dn_results, 
 									react_setup_region(),
-									sel_targsite(), 
+									stat_id, 
 									dn_fish, 
 									dn_woe,
-									paste0(sel_targsite(), "_LoESummary.tab"))
+									paste0(stat_id, "_LoESummary.tab"))
 		if (file.exists(fn_data)) {
 			df <- read.table(fn_data, 
 								  header = TRUE, 
 								  sep = "\t", 
 								  stringsAsFactors = FALSE)|> 
-				dplyr::select(Stressor, RespSampleID, RespSampleDate, NumSupport,
-								  NumRefute, NumIndeterminate, NumNotEvaluated) |> 
+				dplyr::select(Stressor, 
+								  RespSampleID, 
+								  RespSampleDate,
+								  NumSupport,
+								  NumRefute,
+								  NumIndeterminate, 
+								  NumNotEvaluated) |> 
 				dplyr::arrange(Stressor, RespSampleDate)
 		} else {
 			showNotification("WoE LoE Summary file not found.",
@@ -2782,21 +3093,26 @@ sketch_summ <- htmltools::withTags(table(
 	
 	## woe table ----
 	df_woe_fish <- reactive({
+		stat_id <- react_report_targetsiteid() # sel_targsite()
 		# check if data exists
 		# dn_site <- basename(list.dirs(file.path(dn_results), 
 		# 										recursive = FALSE))
 		fn_data <- file.path(dn_results,
 									react_setup_region(),
-									sel_targsite(),
+									stat_id,
 									dn_fish, 
 									dn_woe,
-									paste0(sel_targsite(), "_LoEs.tab"))
+									paste0(stat_id, "_LoEs.tab"))
 		if (file.exists(fn_data)) {
 			df <- read.table(fn_data, 
 								  header = TRUE, 
 								  sep = "\t", 
 								  stringsAsFactors = FALSE)|> 
-				dplyr::select(-StationID, -StressSampleID, -StressSampleDate, -bioComm, -StressorValue)
+				dplyr::select(-StationID, 
+								  -StressSampleID, 
+								  -StressSampleDate,
+								  -bioComm,
+								  -StressorValue)
 			
 			
 			if(!"VP_SSTV" %in% names(df)){ 
@@ -2865,13 +3181,14 @@ sketch_summ <- htmltools::withTags(table(
 	
 	## woe fig, bio index----
 	output$img_fish_index <- renderImage({
+		stat_id <- react_report_targetsiteid() # sel_targsite()
 		# return path
 		list(
 			src = file.path(dn_results,
 								 react_setup_region(),
-								 sel_targsite(), 
+								 stat_id, 
 								 "SiteInfo", 
-								 paste0(sel_targsite(),
+								 paste0(stat_id,
 								 		 "_FISH_IndexBoxplotsByCase.png")
 			),
 			contentType = "image/png",
@@ -2883,14 +3200,15 @@ sketch_summ <- htmltools::withTags(table(
 	
 	## woe fig, loe----
 	output$img_loe_summ_fish <- renderImage({
+		stat_id <- react_report_targetsiteid() # sel_targsite()
 		# return path
 		list(
 			src = file.path(dn_results, 
 								 react_setup_region(),
-								 sel_targsite(),
+								 stat_id,
 								 "FISH",
 								 "_WoE",
-								 paste0(sel_targsite(),
+								 paste0(stat_id,
 								 		 "_FISH_LoESummaryFig.png")),
 			contentType = "image/png",
 			alt = "Lines of Evidence Summary",
@@ -2904,21 +3222,27 @@ sketch_summ <- htmltools::withTags(table(
 	# ALG
 	## woe loe summary table ----
 	df_woe_summ_alg <- reactive({
+		stat_id <- react_report_targetsiteid() # sel_targsite()
 		# check if data exists
 		# browser()
 		fn_data <- file.path(dn_results, 
 									react_setup_region(),
-									sel_targsite(), 
+									stat_id, 
 									dn_alg, 
 									dn_woe,
-									paste0(sel_targsite(), "_LoESummary.tab"))
+									paste0(stat_id, "_LoESummary.tab"))
 		if (file.exists(fn_data)) {
 			df <- read.table(fn_data, 
 								  header = TRUE, 
 								  sep = "\t", 
 								  stringsAsFactors = FALSE)|> 
-				dplyr::select(Stressor, RespSampleID, RespSampleDate, NumSupport,
-								  NumRefute, NumIndeterminate, NumNotEvaluated) |> 
+				dplyr::select(Stressor,
+								  RespSampleID, 
+								  RespSampleDate, 
+								  NumSupport,
+								  NumRefute,
+								  NumIndeterminate, 
+								  NumNotEvaluated) |> 
 				dplyr::arrange(Stressor, RespSampleDate)
 		} else {
 			showNotification("WoE LoE Summary file not found.",
@@ -2971,21 +3295,26 @@ sketch_summ <- htmltools::withTags(table(
 	
 	## woe table ----
 	df_woe_alg <- reactive({
+		stat_id <- react_report_targetsiteid() # sel_targsite()
 		# check if data exists
 		# dn_site <- basename(list.dirs(file.path(dn_results), 
 		# 										recursive = FALSE))
 		fn_data <- file.path(dn_results,
 									react_setup_region(),
-									sel_targsite(),
+									stat_id,
 									dn_alg, 
 									dn_woe,
-									paste0(sel_targsite(), "_LoEs.tab"))
+									paste0(stat_id, "_LoEs.tab"))
 		if (file.exists(fn_data)) {
 			df <- read.table(fn_data, 
 								  header = TRUE, 
 								  sep = "\t", 
 								  stringsAsFactors = FALSE)|> 
-				dplyr::select(-StationID, -StressSampleID, -StressSampleDate, -bioComm, -StressorValue)
+				dplyr::select(-StationID,
+								  -StressSampleID,
+								  -StressSampleDate,
+								  -bioComm, 
+								  -StressorValue)
 			
 			
 			if(!"VP_SSTV" %in% names(df)){ 
@@ -3053,13 +3382,14 @@ sketch_summ <- htmltools::withTags(table(
 	
 	## woe fig, bio index----
 	output$img_alg_index <- renderImage({
+		stat_id <- react_report_targetsiteid() # sel_targsite()
 		# return path
 		list(
 			src = file.path(dn_results,
 								 react_setup_region(),
-								 sel_targsite(), 
+								 stat_id, 
 								 "SiteInfo", 
-								 paste0(sel_targsite(),
+								 paste0(stat_id,
 								 		 "_ALG_IndexBoxplotsByCase.png")
 			),
 			contentType = "image/png",
@@ -3071,14 +3401,15 @@ sketch_summ <- htmltools::withTags(table(
 	
 	## woe fig, loe----
 	output$img_loe_summ_alg <- renderImage({
+		stat_id <- react_report_targetsiteid() # sel_targsite()
 		# return path
 		list(
 			src = file.path(dn_results, 
 								 react_setup_region(),
-								 sel_targsite(),
+								 stat_id,
 								 "ALG",
 								 "_WoE",
-								 paste0(sel_targsite(),
+								 paste0(stat_id,
 								 		 "_ALG_LoESummaryFig.png")),
 			contentType = "image/png",
 			alt = "Lines of Evidence Summary",
@@ -3096,7 +3427,7 @@ sketch_summ <- htmltools::withTags(table(
 	ss_html_content <- reactiveFileReader(
 		intervalMillis = 1000/2,  # check every 1 second (1000 ms) (adjust as needed)
 		session = session,
-		filePath = file.path("www", "RMD_HTML", "ShinyHTML_StressSumm.html"),
+		filePath = file.path(dn_rmd_html, "ShinyHTML_StressSumm.html"),
 		readFunc = function(path) {
 			paste(readLines(path, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
 		}
@@ -3124,7 +3455,7 @@ sketch_summ <- htmltools::withTags(table(
 		# trigger created when save table
 		req(react_report_run())
 		
-		stat_id <- sel_targsite()
+		stat_id <- react_report_targetsiteid() # sel_targsite()
 		fn_gaps <- paste0(stat_id, "_datagaps.tab")
 		
 		path_table <- file.path(dn_results, 
