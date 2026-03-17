@@ -2022,7 +2022,7 @@ function(input, output, session) {
 					 ".zip")
 		} ,
 		content = function(fname) {
-			browser()
+		
 			# zip file created when report run
 			#
 			# file for download

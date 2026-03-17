@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-03-17 16:26:53.190154
+    #> Last Update: 2026-03-17 16:33:56.126751
+
+# CAST_Shiny 1.0.0.9013 (2026-03-17)
+
+- fix: Remove stray browser() from server
 
 # CAST_Shiny 1.0.0.9012 (2026-03-17)
 
