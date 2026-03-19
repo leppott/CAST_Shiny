@@ -1663,6 +1663,8 @@ function(input, output, session) {
 	observeEvent(input$but_report_run, {
 		# launch skeleton code
 		
+		tic_oe_report <- Sys.time()
+		
 		# QC, site not null or ""
 		if(is.null(sel_targsite()) | sel_targsite() == "") {
 			msg <- paste("No target site selected!",
@@ -1745,9 +1747,9 @@ function(input, output, session) {
 		
 		
 		## Skeleton Code ----
+		tic_report <- Sys.time()
 		# code (wrap with progress pop up)
 		shiny::withProgress({
-			
 			
 			# browser()
 			# 	cat("debug here")
@@ -1762,8 +1764,15 @@ function(input, output, session) {
 			source(path_skelcode, local = TRUE)
 		}, message = "Skeleton Code"
 		)## withProgress
-		
-		### Post Skeleton ----
+		# report time in skeleton code,
+		# need exposed here for shiny alert
+		toc_report <- Sys.time()
+		msg_time_report <- paste0("Report (min): ",
+										  round(difftime(toc_report,
+										  					  tic_report,
+										  					units = "min"),
+										  		2))
+			### Post Skeleton ----
 		
 		shiny::withProgress({
 			## 00, Initialize----
@@ -1808,6 +1817,7 @@ function(input, output, session) {
 				stringr::str_subset("Status") |> 
 				sort() |> 
 				dplyr::last()
+			
 			fn_status <- file.path(dn_results,
 										  react_setup_region(), 
 										  status_file)
@@ -1835,7 +1845,7 @@ function(input, output, session) {
 			# 					gsub("\\\\", "/", fn_zip))
 			# browser()
 			# create zip
-			tic <- Sys.time()
+			tic_zip_report <- Sys.time()
 			zip::zip(file.path(dirname(dn_results), 
 									 "report_results.zip"),
 						files = fn_zip,
@@ -1844,10 +1854,12 @@ function(input, output, session) {
 			# Need to modify to *not* use cherry-pick
 			# fails on ":" in "C:" for normalized Paths
 			
-			toc <- Sys.time()
-			msg <- paste0("zip time (sec): ",
-							  round(difftime(toc, tic, units = "secs"), 2))
-			message(msg)
+			toc_zip_report <- Sys.time()
+			msg_time_zip_report <- paste0("Zip, report (sec): ",
+							  round(difftime(toc_zip_report, 
+							  					tic_zip_report,
+							  					units = "secs"), 2))
+			message(msg_time_zip_report)
 			
 			## 03, reactiveval updates ----
 			prog_detail <- "03, Update ReactiveVal"
@@ -1904,14 +1916,16 @@ function(input, output, session) {
 											full.names = TRUE,
 											recursive = FALSE)
 			# create zip----
-			tic <- Sys.time()
+			tic_zip_wsstress <- Sys.time()
 			zip::zip(file.path(dn_results, "WSstress_figs.zip"),
 						files = fn_zip_ws,
 						mode = "cherry-pick")
-			toc <- Sys.time()
-			msg <- paste0("zip time (sec): ",
-							  round(difftime(toc, tic, units = "secs"), 2))
-			message(msg)
+			toc_zip_wsstress <- Sys.time()
+			msg_time_zip_wsstress <- paste0("Zip, watershed stressors (sec): ",
+							  round(difftime(toc_zip_wsstress, 
+							  					tic_zip_wsstress, 
+							  					units = "secs"), 2))
+			message(msg_time_zip_wsstress)
 			
 			
 			## 06, get watershed variables----
@@ -1973,6 +1987,13 @@ function(input, output, session) {
 		}, message = "Report Clean Up"
 		)## withProgress
 		
+		toc_oe_report <- Sys.time()
+		msg_time_oe_report <- paste0("Total (min): ",
+											  round(difftime(toc_oe_report, 
+											  					  tic_oe_report, 
+											  					  units = "min"),
+											  		  2))
+		
 		#### Info Pop Up ----
 		msg <- paste("Creation of report is complete.", 
 						 "\n",
@@ -1983,6 +2004,20 @@ function(input, output, session) {
 						 "Reason",
 						 "------",
 						 df_status$reason,
+						 "\n",
+						 "Times",
+						 "------",
+						 msg_time_oe_report,
+						 "------",
+						 msg_time_report,
+						 msg_time_zip_report,
+						 msg_time_zip_wsstress,
+						 "\n",
+						 "Components",
+						 "------",
+						 "stressors (n) = #",
+						 "responses (n) = #",
+						 "with stressors = T/F",
 						 sep = "\n")
 		shinyalert::shinyalert(title = "Generate Report",
 									  text = msg,

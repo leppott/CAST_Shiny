@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-03-19 09:42:45.450314
+    #> Last Update: 2026-03-19 15:29:54.373165
+
+# CAST_Shiny 1.0.0.9015 (2026-03-19)
+
+- refactor: Add time to end of report alert
 
 # CAST_Shiny 1.0.0.9014 (2026-03-19)
 
