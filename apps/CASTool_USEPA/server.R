@@ -1035,6 +1035,13 @@ function(input, output, session) {
 				type = "warning"
 			)
 		}
+		
+		# update UI prior to report run
+		# hide other tabs
+		updateRadioButtons(session,
+								 inputId = "rad_report_tabs",
+								 selected = "No")
+		
 	})## oe ~ target site id
 	
 	## Set Up, Files, Checked ----
@@ -1688,23 +1695,20 @@ function(input, output, session) {
 		# set target siteid to user selected value
 		react_report_targetsiteid(sel_targsite())
 		# hide other tabs
+		## **UI updates only at *end* of entire process**
 		updateRadioButtons(session,
 								 inputId = "rad_report_tabs",
 								 selected = "No")
-		# didn't work so do individually
 		# (ok since setting to "no")
-		hideTab(inputId = "navbar",
-				  target = "tab_candcause")
-		hideTab(inputId = "navbar",
-				  target = "tab_woesumm")
-		hideTab(inputId = "navbar",
-				  target = "tab_stresssumm")
-		hideTab(inputId = "navbar",
-				  target = "tab_gaps")
+		# hideTab(inputId = "navbar",
+		# 		  target = "tab_candcause")
+		# hideTab(inputId = "navbar",
+		# 		  target = "tab_woesumm")
+		# hideTab(inputId = "navbar",
+		# 		  target = "tab_stresssumm")
+		# hideTab(inputId = "navbar",
+		# 		  target = "tab_gaps")
 
-		
-		
-		
 		### Global Variables ----
 		# define for sourced Skeleton Code file
 		
@@ -1738,26 +1742,28 @@ function(input, output, session) {
 		gitpath <- NULL # Not needed for Shiny
 		dir_rmd <- system.file("rmd", 
 									  package = "CASTfxn")
-
+		
 		
 		## Skeleton Code ----
 		# code (wrap with progress pop up)
 		shiny::withProgress({
 			
 			
-		# browser()
-		# 	cat("debug here")
-		# 	
-		# # debugging
-		# source("C:/Users/Erik.Leppo/Documents/GitHub/CASTfxn/inst/shiny-examples/CASTool/CASTool.r",
-		# 		 local = TRUE)
-		# 	
-		# 	
+			# browser()
+			# 	cat("debug here")
+			# 	
+			# # debugging
+			# source("C:/Users/Erik.Leppo/Documents/GitHub/CASTfxn/inst/shiny-examples/CASTool/CASTool.r",
+			# 		 local = TRUE)
+			# 	
+			# 	
 			
 			# Skeleton Code
 			source(path_skelcode, local = TRUE)
 		}, message = "Skeleton Code"
 		)## withProgress
+		
+		### Post Skeleton ----
 		
 		shiny::withProgress({
 			## 00, Initialize----
@@ -1773,7 +1779,7 @@ function(input, output, session) {
 			# Increment the progress bar, and update the detail text.
 			incProgress(1/prog_n, detail = prog_detail)
 			Sys.sleep(prog_sleep)
-		
+			
 			#
 			shinyjs::enable("rad_report_tabs")
 			shinyjs::enable("but_report_dload")
@@ -1785,7 +1791,7 @@ function(input, output, session) {
 			# Increment the progress bar, and update the detail text.
 			incProgress(1/prog_n, detail = prog_detail)
 			Sys.sleep(prog_sleep)
-	
+			
 			# get files 4 zip
 			stat_id <- react_report_targetsiteid() #sel_targsite() # reactive value
 			dn_zip_stat <- file.path(dn_results,
@@ -1796,12 +1802,12 @@ function(input, output, session) {
 											 "_Histograms")
 			# select most recent status csv
 			status_file <- list.files(
-									file.path(
-										dn_results, 
-										react_setup_region())) |> 
-								stringr::str_subset("Status") |> 
-								sort() |> 
-								dplyr::last()
+				file.path(
+					dn_results, 
+					react_setup_region())) |> 
+				stringr::str_subset("Status") |> 
+				sort() |> 
+				dplyr::last()
 			fn_status <- file.path(dn_results,
 										  react_setup_region(), 
 										  status_file)
@@ -1827,7 +1833,7 @@ function(input, output, session) {
 			# 							 "/?"),
 			# 					paste0(basename(dn_results), "/"),
 			# 					gsub("\\\\", "/", fn_zip))
-	# browser()
+			# browser()
 			# create zip
 			tic <- Sys.time()
 			zip::zip(file.path(dirname(dn_results), 
@@ -1842,7 +1848,7 @@ function(input, output, session) {
 			msg <- paste0("zip time (sec): ",
 							  round(difftime(toc, tic, units = "secs"), 2))
 			message(msg)
-	
+			
 			## 03, reactiveval updates ----
 			prog_detail <- "03, Update ReactiveVal"
 			message(paste0("\n", prog_detail))
@@ -1851,7 +1857,7 @@ function(input, output, session) {
 			Sys.sleep(prog_sleep)
 			# used to indicate report run
 			react_report_run(TRUE) # gaps
-	
+			
 			## 04, Stress Summ RMD ----
 			prog_detail <- "04, Build Stressor Summary"
 			message(paste0("\n", prog_detail))
@@ -1872,7 +1878,7 @@ function(input, output, session) {
 			file.copy(rmd2copy, ".", overwrite = TRUE)
 			rend_input <- "display_images_StressSumm.Rmd"
 			path_shiny_www <- file.path(dn_rmd_html)
-			 # browser()
+			# browser()
 			rmarkdown::render(input = rend_input,
 									# output_dir = path_shiny_www,
 									output_file = file.path(path_shiny_www,
@@ -1886,7 +1892,7 @@ function(input, output, session) {
 			# Increment the progress bar, and update the detail text.
 			incProgress(1/prog_n, detail = prog_detail)
 			Sys.sleep(prog_sleep)
-	
+			
 			# get files 4 zip
 			stat_id <- react_report_targetsiteid() # sel_targsite() # reactive value
 			dn_zip_ws <- file.path(dn_results,
@@ -1907,7 +1913,7 @@ function(input, output, session) {
 							  round(difftime(toc, tic, units = "secs"), 2))
 			message(msg)
 			
-	
+			
 			## 06, get watershed variables----
 			prog_detail <- "06, WS Variables"
 			message(paste0("\n", prog_detail))
@@ -1935,7 +1941,7 @@ function(input, output, session) {
 				react_wshed_var(df_plots_data_stressorinfoWS)
 				
 			}## exists ~ data_stressorinfoWS
-		
+			
 			## 07, Target Site Status----
 			prog_detail <- "06, Target Site Status"
 			message(paste0("\n", prog_detail))
@@ -1963,7 +1969,7 @@ function(input, output, session) {
 			
 			
 			
-		
+			
 		}, message = "Report Clean Up"
 		)## withProgress
 		

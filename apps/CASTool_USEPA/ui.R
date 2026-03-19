@@ -12,7 +12,7 @@ navbarPage("CASTool",
 			  id = "navbar",
 			  useShinyjs(),     # activate Shinyjs commands
 			  use_bs_tooltip(), # activate bsplus tooltips
-			  # theme = shinytheme("spacelab"),
+		     # theme = shinytheme("spacelab"),
 			  tab_code_about(),
 			  tab_code_checkfiles(),
 			  tab_code_setup(),

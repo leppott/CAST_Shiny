@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-03-17 16:33:56.126751
+    #> Last Update: 2026-03-19 09:42:45.450314
+
+# CAST_Shiny 1.0.0.9014 (2026-03-19)
+
+- refactor: Hide report summary tabs when new site is selected
 
 # CAST_Shiny 1.0.0.9013 (2026-03-17)
 
