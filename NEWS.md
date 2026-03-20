@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-03-20 13:34:13.481557
+    #> Last Update: 2026-03-20 14:59:19.22697
+
+# CAST_Shiny 1.0.0.9018 (2026-03-20)
+
+- refactor: Add mouse-over to title on woe summary table
 
 # CAST_Shiny 1.0.0.9017 (2026-03-20)
 

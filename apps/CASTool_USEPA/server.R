@@ -2862,26 +2862,26 @@ output$woe_tab_ui <- renderUI({
 
 })
 
-# WOE SUMM ---- OLD
+# WOE SUMM ---- 
 
 sketch <- htmltools::withTags(table(
 	class = 'display',
 	thead(
 		tr(
-			th(rowspan = 3, 'Stressor'),
-			th(rowspan = 3, 'Response Sample ID'),
-			th(rowspan = 3, 'Response Sample Date'),
-			th(colspan = 7, 'Inside-the-Case'),
+			th(rowspan = 3, shiny::HTML("<span title='Stressors being evaluated'>Stressor</span>")),
+			th(rowspan = 3, shiny::HTML("<span title='Biological response sample identifier'>Response Sample ID</span>")),
+			th(rowspan = 3, shiny::HTML("<span title='Sampling date for biological response'>Response Sample Date</span>")),
+			th(colspan = 7, shiny::HTML("<span title='Weight of Evidence lines inside the case group'>Inside-the-Case</span>")),
 			th(rowspan = 3, ''),
-			th(rowspan = 1, 'Outside the Case')
+			th(rowspan = 1, shiny::HTML("<span title='Weight of Evidence outside the case group'>Outside the Case</span>"))
 		),
 		tr(
-			th(rowspan = 2, 'Co-Occurrence'),
-			th(rowspan = 2, 'Sufficiency'),
-			th(rowspan = 2, 'Biological Gradient'),
-			th(rowspan = 2, 'Time Sequence'),
-			th(colspan = 3, 'Verified Prediction'),
-			th(rowspan = 2, 'Biological Gradient')
+			th(rowspan = 2, shiny::HTML("<span title='Co-occurrence: coincidence of stressor elevation with biological response'>Co-Occurrence</span>")),
+			th(rowspan = 2, shiny::HTML("<span title='Sufficiency: degree to which the stressor is adequate to cause response'>Sufficiency</span>")),
+			th(rowspan = 2, shiny::HTML("<span title='Biological gradient within case group'>Biological Gradient</span>")),
+			th(rowspan = 2, shiny::HTML("<span title='Time sequence between stressor and biological response'>Time Sequence</span>")),
+			th(colspan = 3, shiny::HTML("<span title='Verified predictions across different scoring approaches'>Verified Prediction</span>")),
+			th(rowspan = 2, shiny::HTML("<span title='Biological gradient outside case group'>Biological Gradient'</span>"))
 		),
 		tr(
 			lapply(c('SSTolVals', 'SSI Co-Occurrence', 'SSI Sufficiency'), th)

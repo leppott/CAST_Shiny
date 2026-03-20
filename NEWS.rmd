@@ -20,6 +20,10 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 1.0.0.9018 (2026-03-20)
+
+* refactor: Add mouse-over to title on woe summary table
+
 # CAST_Shiny 1.0.0.9017 (2026-03-20)
 
 * refactor: Convert TableOne and TableTwo from .tab to .csv
