@@ -701,28 +701,22 @@ function(input, output, session) {
 			Sys.sleep(prog_sleep)
 		
 			TableOne    <- list.Tables$TableOne
-			write.table(TableOne, 
+			write.csv(TableOne, 
 							file.path(out.dir, 
 										 region, 
 										 dn_checked_sk, 
-										 "TableOne.tab"),
-							sep = "\t", 
-							col.names = TRUE, 
-							row.names = FALSE, 
-							append = FALSE)
+										 "TableOne.csv"),
+							row.names = FALSE)
 			
 			check_qctable_1_save(TRUE) # trigger for table
 			
 			TableTwo    <- list.Tables$TableTwo
-			write.table(TableTwo, 
+			write.csv(TableTwo, 
 							file.path(out.dir, 
 										 region, 
 										 dn_checked_sk,
-										 "TableTwo.tab"),
-							sep = "\t", 
-							col.names = TRUE, 
-							row.names = FALSE, 
-							append = FALSE)
+										 "TableTwo.csv"),
+							row.names = FALSE)
 			
 			check_qctable_2_save(TRUE) # trigger for table
 			
@@ -777,7 +771,7 @@ function(input, output, session) {
 										  dn_checked_sk)
 			fn_4zip <- list.files(path = path_4zip,
 										 full.names = TRUE,
-										 pattern = "\\.tab$")
+										 pattern = "^Table(One|Two)\\.csv$")
 			# zip::zip(file.path(getwd(), dn_data, "check_qctables.zip"),
 			zip::zip(file.path(dn_data, 
 									 "check_qctables.zip"), 
@@ -871,9 +865,8 @@ function(input, output, session) {
 		} ## IF ~ is.null(inFile)
 
 		# import file
-		df_table <- read.delim(inFile,
-									  header = TRUE,
-									  sep = "\t")
+		df_table <- read.csv(inFile,
+									header = TRUE)
 
 		# QC_Passed
 		df_table <- df_table |>
@@ -952,9 +945,8 @@ function(input, output, session) {
 		} ## IF ~ is.null(inFile)
 		
 		# import file
-		df_table <- read.delim(inFile,
-									  header = TRUE,
-									  sep = "\t")
+		df_table <- read.csv(inFile,
+									  header = TRUE)
 		# QC_Passed
 		# df_table <- df_table |>
 		# 	dplyr::mutate(QC_II = grepl("^All", IntegrityIssues),

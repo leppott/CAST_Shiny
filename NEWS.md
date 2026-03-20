@@ -4,7 +4,12 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-03-20 13:08:13.480537
+    #> Last Update: 2026-03-20 13:34:13.481557
+
+# CAST_Shiny 1.0.0.9017 (2026-03-20)
+
+- refactor: Convert TableOne and TableTwo from .tab to .csv + read and
+  write + zip contents
 
 # CAST_Shiny 1.0.0.9016 (2026-03-20)
 
