@@ -4,7 +4,14 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-03-19 15:29:54.373165
+    #> Last Update: 2026-03-20 13:08:13.480537
+
+# CAST_Shiny 1.0.0.9016 (2026-03-20)
+
+- refactor: Shinyalert for report changed from info to success
+- feature: Add shinyalert for import Check File Inputs
+- feature: Add shinyalert for import Set Up Tool
+- refactor: Update missing progress bar steps
 
 # CAST_Shiny 1.0.0.9015 (2026-03-19)
 

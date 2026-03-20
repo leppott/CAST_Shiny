@@ -89,7 +89,7 @@ function(input, output, session) {
 			prog_detail <- "Import New Files..."
 			message(paste0("\n", prog_detail))
 			# Number of increments
-			prog_n <- 4
+			prog_n <- 7
 			prog_sleep <- 0.25
 			
 			### 01, Import ----
@@ -220,7 +220,31 @@ function(input, output, session) {
 			# return list of files
 			zip_contents_input <- import_filenames
 			
-			### 05, Info Pop Up ----
+			### 05, zip metadata ----
+			prog_detail <- "Metadata File"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			# check for "_CASTool_Metadata.xlsx"
+			boo_unzip_metadata_xlsx <- "_CASTool_Metadata.xlsx" %in% zip_contents_input
+			if(boo_unzip_metadata_xlsx == FALSE) {
+				msg <- paste("Import data is missing '_CASTool_Metadata.xlsx'\n",
+								 "Add this file before continuing.")
+				shinyalert::shinyalert(title = "Check File Inputs",
+											  text = msg,
+											  type = "error")
+				validate(msg)
+			}## boo_unzip_metadata_xlsx
+			
+			### 06, Info Pop Up ----
+			prog_detail <- "Info Pop Up"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
 			msg <- paste("Import of files is complete.\n",
 							 "'Verify' all files are included.",
 							 "Then 'Check' the files.",
@@ -231,7 +255,13 @@ function(input, output, session) {
 										  closeOnEsc = TRUE,
 										  closeOnClickOutside = TRUE)
 			
-			### 06, Update UI ----
+			### 07, Update UI ----
+			prog_detail <- "Update UI"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
 			shinyjs::enable("but_check_check")
 			
 		},
@@ -1052,7 +1082,7 @@ function(input, output, session) {
 			prog_detail <- "Import Checked Files..."
 			message(paste0("\n", prog_detail))
 			# Number of increments
-			prog_n <- 6
+			prog_n <- 7
 			prog_sleep <- 0.25
 			
 			## 01, Import ----
@@ -1084,7 +1114,26 @@ function(input, output, session) {
 			# Clean Directory
 			clean_dir(file.path(dn_data, dn_checked))
 			
-			## 03, Unzip ----
+			### 03xx, zip metadata ----
+			prog_detail <- "Metadata File"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			# check for "CASTmetadata.rds"
+			files_unzip <- zip::zip_list(fn_inFile)
+			boo_unzip_metadata_rds <- "CASTmetadata.rds" %in% files_unzip$filename
+			if(boo_unzip_metadata_rds == FALSE) {
+				msg <- paste("Import data is missing 'CASTmetadata.rds'",
+								 "Ensure you are using the check files zip and not raw data.")
+				shinyalert::shinyalert(title = "Set Up Tool",
+											  text = msg,
+											  type = "error")
+				validate(msg)
+			}## boo_metadata_rds
+			
+			## 04, Unzip ----
 			prog_detail <- "Unzip Files"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
@@ -1102,7 +1151,8 @@ function(input, output, session) {
 							 junkpaths = TRUE)
 			
 			
-			## 04, Catalog ----
+			
+			## 05, Catalog ----
 			prog_detail <- "Catalog Files"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
@@ -1160,7 +1210,7 @@ function(input, output, session) {
 			# return list of files
 			zip_contents_checked <- checked_filenames
 			
-			## 05, Update UI ----
+			## 06, Update UI ----
 			prog_detail <- "Update SelectInputs"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
@@ -1283,7 +1333,13 @@ function(input, output, session) {
 			# Enable Buttons
 			shinyjs::enable("but_report_run")
 			
-			## 06, Info Pop Up ----
+			## 07, Info Pop Up ----
+			prog_detail <- "Info Pop Up"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
 			msg <- paste("Checked files uploaded.",
 							 "Select a target site before running the report.",
 							 sep = "\n")
@@ -2021,7 +2077,7 @@ function(input, output, session) {
 						 sep = "\n")
 		shinyalert::shinyalert(title = "Generate Report",
 									  text = msg,
-									  type = "info",
+									  type = "success",
 									  closeOnEsc = TRUE,
 									  closeOnClickOutside = TRUE)
 		

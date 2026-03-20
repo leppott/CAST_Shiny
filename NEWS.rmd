@@ -20,6 +20,13 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 1.0.0.9016 (2026-03-20)
+
+* refactor: Shinyalert for report changed from info to success
+* feature: Add shinyalert for import Check File Inputs
+* feature: Add shinyalert for import Set Up Tool 
+* refactor: Update missing progress bar steps
+
 # CAST_Shiny 1.0.0.9015 (2026-03-19)
 
 * refactor: Add time to end of report alert
