@@ -219,4 +219,71 @@ get_user_input <- function(input_default = tempdir(),
 	}## IF ~ interactive
 }## FUNCTION ~ get_dir
 
-
+# 2026-03-22
+# ideas from CoPilot (several versions) before created own function
+# 
+#' @title Copy and Rebase Files
+#' 
+#' @description Copy files while rebasing directory structure above an anchor folder
+#'
+#' @details This function copies a vector of files from their current locations to a new
+#' directory structure. Everything above the specified `anchor` folder is
+#' replaced with `new_root`, preserving the relative paths beneath the anchor.
+#' Directory paths are normalized to use forward slashes. The destination root
+#' directory is removed and recreated before copying.
+#'
+#' @param files Character vector of file paths to copy.
+#' @param anchor Character scalar. Folder name or path segment to replace in
+#'   each file path.
+#' @param new_root Character scalar. New root directory that will replace the
+#'   portion of the path up to and including `anchor`.
+#'
+#' @return Invisibly returns a character vector of new file paths.
+#'
+#' @examples
+#' \dontrun{
+#' files <- c(
+#'   "/data/projects/A1/raw/2024/file1.csv",
+#'   "/data/projects/A1/raw/2024/sub/file2.txt"
+#' )
+#'
+#' copy_files_rebase_base(
+#'   files     = files,
+#'   anchor    = "/data/projects/A1/raw",
+#'   new_root  = "/mnt/output"
+#' )
+#' }
+#'
+#' @export
+copy_files_rebase_base <- function(files, anchor, new_root) {
+	
+	# normalize paths with forward slash
+	files <- normalizePath(files, winslash = "/", mustWork = TRUE)
+	# not created yet so can't use mustWork
+	anchor <- normalizePath(anchor, winslash = "/")
+	new_root <- normalizePath(new_root, winslash = "/", mustWork = FALSE)
+	
+	# remove and create new_root
+	unlink(new_root, recursive = TRUE)
+	dir.create(new_root)
+	
+	# change dir
+	files_new <- gsub(anchor, new_root, files)
+	
+	# get subdirs
+	files_dirname_new <- sort(unique(dirname(files_new)))
+	
+	
+	
+	# create subdirs
+	## one by one, in order to ensure no errors on missing dir
+	for (i in seq_along(files_dirname_new)) {
+		dir.create(files_dirname_new[i], 
+					  recursive = TRUE,
+					  showWarnings = FALSE)
+	}## FOR ~ i
+	
+	# copy
+	file.copy(files, files_new, overwrite = TRUE)
+	
+}## FUCNTION - rebase copy

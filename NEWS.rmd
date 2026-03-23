@@ -20,6 +20,13 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 1.0.0.9019 (2026-03-23)
+
+* function: Add copy_files_rebase_base() to helper_functions
+* refactor: Modify results zip file creation
+    + Use staging area to retain relative paths for all files
+* refactor: Modify results download to use new file location
+
 # CAST_Shiny 1.0.0.9018 (2026-03-20)
 
 * refactor: Add mouse-over to title on woe summary table

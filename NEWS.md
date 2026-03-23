@@ -4,7 +4,14 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-03-20 14:59:19.22697
+    #> Last Update: 2026-03-23 16:59:57.255204
+
+# CAST_Shiny 1.0.0.9019 (2026-03-23)
+
+- function: Add copy_files_rebase_base() to helper_functions
+- refactor: Modify results zip file creation
+  - Use staging area to retain relative paths for all files
+- refactor: Modify results download to use new file location
 
 # CAST_Shiny 1.0.0.9018 (2026-03-20)
 

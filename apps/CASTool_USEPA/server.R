@@ -1891,17 +1891,47 @@ function(input, output, session) {
 			# 							 "/?"),
 			# 					paste0(basename(dn_results), "/"),
 			# 					gsub("\\\\", "/", fn_zip))
-			# browser()
+
+			# Copy files to new dir
+			## staging folder for zip
+			dn_zip_stage <- "zip_stage_results"
+			path_zip_stage <- file.path(dirname(dn_results), dn_zip_stage)
+			unlink(path_zip_stage, recursive = TRUE) # remove if present
+			dir.create(path_zip_stage)
+			## zip stage dir
+			dn_zip_base <- normalizePath(file.path(dirname(dn_results)))
+			## copy to staging folder
+			copy_files_rebase_base(files = fn_zip,
+										  anchor = normalizePath(dn_results),
+										  new_root = normalizePath(path_zip_stage))
+			
+			# files for zip
+			fn_zip_stage_full <- list.files(path_zip_stage, 
+													  recursive = TRUE,
+													  full.names = TRUE)
+			
+			# build archive paths (paths INSIDE the zip)
+			# remove the folder prefix and leading slash
+			fn_zip_stage_rel <- substring(fn_zip_stage_full, 
+													nchar(path_zip_stage) + 2) 
+			# name each full path with its zip-internal path
+			names(fn_zip_stage_full) <- fn_zip_stage_rel
+			
 			# create zip
 			tic_zip_report <- Sys.time()
-			zip::zip(file.path(dirname(dn_results), 
-									 "report_results.zip"),
-						files = fn_zip,
-						mode = "cherry-pick")
-			
+			# zip::zip(file.path(dirname(dn_results), 
+			# 						 "report_results.zip"),
+			# 			files = fn_zip,
+			# 			mode = "cherry-pick")
 			# Need to modify to *not* use cherry-pick
 			# fails on ":" in "C:" for normalized Paths
-			
+			#
+			# Needs relative Paths and root folder
+			# since from different directories had to use a staging area
+			zip::zip(file.path(path_zip_stage,
+									 "report_results.zip"),
+						files = fn_zip_stage_rel,
+						root = path_zip_stage)
 			toc_zip_report <- Sys.time()
 			msg_time_zip_report <- paste0("Zip, report (sec): ",
 							  round(difftime(toc_zip_report, 
@@ -2115,7 +2145,10 @@ function(input, output, session) {
 			# zip file created when report run
 			#
 			# file for download
-			file.copy(file.path(dirname(dn_results),
+			dn_zip_stage <- "zip_stage_results"
+			path_zip_stage <- file.path(dirname(dn_results), dn_zip_stage)
+			
+			file.copy(file.path(path_zip_stage,
 									  "report_results.zip"), 
 						 fname)
 		}##content~END
