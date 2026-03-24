@@ -4,7 +4,14 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-03-23 16:59:57.255204
+    #> Last Update: 2026-03-24 15:39:38.358202
+
+# CAST_Shiny 1.0.0.9020 (2026-03-24)
+
+- function: Estimate report time
+  - Add timing variables to global
+  - Add estimate to Run Report tab
+  - Add estimate and inputs to report complete shiny alert
 
 # CAST_Shiny 1.0.0.9019 (2026-03-23)
 

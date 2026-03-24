@@ -1321,6 +1321,23 @@ function(input, output, session) {
 				# 								 choices = c("", wshed_var),
 				# 								 selected = NULL)
 				
+				#### Time Est ----
+				# update reactive time est
+
+				# bio_comm
+				time_est_biocomm <- df_user_metadata |>
+					dplyr::filter(Variable == "biocommlist") |>
+					dplyr::pull(Value)
+				time_est_biocomm_num <- length(
+					strsplit(time_est_biocomm, ",")[[1]])
+				react_report_time_est$num_biocomm <- time_est_biocomm_num
+				
+				# stressors
+				df_time_est_chemInfo <- readRDS(
+					file.path(path_check_sk, "data_chemInfo.rds"))
+				time_est_stressor_num <- sum(df_time_est_chemInfo$UseInStressorID, 
+													  na.rm = TRUE)
+				react_report_time_est$num_stressors <- time_est_stressor_num
 			
 			# Enable Buttons
 			shinyjs::enable("but_report_run")
@@ -1633,6 +1650,31 @@ function(input, output, session) {
 	
 	## reactives----
 	react_report_run <- reactiveVal(FALSE)
+	react_report_time_est <- reactiveValues(
+		num_biocomm = NA_real_,
+		num_stressors = NA_real_,
+		total = NA_real_
+	)
+	
+	## Time Est----
+	output$txt_rep_time_est <- renderUI({
+		# reactive values updated in Setup, Import
+
+		# Calc time est
+		time_est <- round(time_est_m_base +
+									(time_est_m_stressor * 
+									 	react_report_time_est$num_biocomm * 
+									 	react_report_time_est$num_stressors),
+								2)
+		# update reactive time est
+		react_report_time_est$total <- time_est
+		
+		htmltools::tags$em(paste0("Report should take approximately ",
+										  time_est,
+		                     	  " minutes to generate based on your data.  ",
+		                     	  "A popup window will appear when the report is ",
+		                     	  "completed."))
+	})
 	
 	## siteid ----
 	### Report
@@ -2091,11 +2133,19 @@ function(input, output, session) {
 						 msg_time_zip_report,
 						 msg_time_zip_wsstress,
 						 "\n",
+						 paste0("Estimated (min): ",
+						 		 react_report_time_est$total),
+						 "\n",
 						 "Components",
 						 "------",
-						 "stressors (n) = #",
-						 "responses (n) = #",
-						 "with stressors = T/F",
+						 paste0("biocomm (n) = ", 
+						 		 react_report_time_est$num_biocomm),
+						 paste0("stressors (n) = ",
+						 		 react_report_time_est$num_stressors),
+						 # paste0("responses (n) = ",
+						 # 		 "#"),
+						 paste0("watershed stressors = ",
+						 		 react_setup_explore()),
 						 sep = "\n")
 		shinyalert::shinyalert(title = "Generate Report",
 									  text = msg,
