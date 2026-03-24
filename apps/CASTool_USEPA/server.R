@@ -1599,8 +1599,9 @@ function(input, output, session) {
 		list(src = path_map,
 			  contentType = if (tolower(ext) == "png") "image/png" else "image/jpeg",
 			  alt = fn_map,
-			  width = 7200 / 10, #orig size /  scale value
-			  height = 4800 / 10)
+			  width = "80%", #7200 / 10, #orig size /  scale value
+			  height = "auto" #4800 / 10
+			  )
 	}, deleteFile = FALSE
 	)## map_sites (new)
 	
@@ -2286,7 +2287,7 @@ function(input, output, session) {
 			  width = 4800 / 10# , #orig size /  scale value
 			  # height = 5400 / 10
 			  )
-	}, deleteFile = FALSE)## map_sites
+	}, deleteFile = FALSE)## 
 	
 	observeEvent(input$helpWSStrFig, {
 		showModal(modalDialog(

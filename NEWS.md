@@ -4,7 +4,12 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-03-24 15:39:38.358202
+    #> Last Update: 2026-03-24 16:12:15.983863
+
+# CAST_Shiny 1.0.0.9021 (2026-03-24)
+
+- refactor: Change clustering image size width on Set Up tab
+  - Change from pixels to percent (80% and auto)
 
 # CAST_Shiny 1.0.0.9020 (2026-03-24)
 
