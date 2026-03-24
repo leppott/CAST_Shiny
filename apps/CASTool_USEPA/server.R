@@ -290,9 +290,8 @@ function(input, output, session) {
 		react_check_outliers()
 	})
 	
-	## Import, Files, present ----
-	output$df_import_files_DT <- DT::renderDT({
-
+	
+	observeEvent(input$fn_input_check_uload, {
 		inFile <- input$fn_input_check_uload
 		
 		# Blank if no data
@@ -305,7 +304,7 @@ function(input, output, session) {
 		fn_import <- sort(list.files(file.path(dn_data, dn_import),
 											  recursive = TRUE,
 											  full.names = FALSE))
-
+		
 		# User, CASTool MetaData
 		path_metadata <- file.path(dn_data, 
 											dn_import, 
@@ -343,13 +342,13 @@ function(input, output, session) {
 		df_user_files_extra <- fn_import[!fn_import %in% 
 														c(fn_default_check_input_cast_metadata,
 														  df_user_files_present)]
-
+		
 		# Populate check boxes for data files present
 		df_user_files_present_fn <- df_user_files |>
 			# only TRUE
 			dplyr::filter(Present == TRUE) |> 
 			dplyr::pull(Variable)
-
+		
 		user_files_alg <- "fn.alg.metrics" %in% df_user_files_present_fn
 		user_files_bmi <- "fn.bmi.metrics" %in% df_user_files_present_fn
 		user_files_fish <- "fn.fish.metrics" %in% df_user_files_present_fn
@@ -372,8 +371,8 @@ function(input, output, session) {
 					dplyr::pull(Value)
 				
 				temp_fp <- file.path(dn_data, 
-							 dn_import, 
-							 temp_fn)
+											dn_import, 
+											temp_fn)
 				
 				if(tools::file_ext(temp_fp) == "csv"){
 					temp_names <- names(read.csv(temp_fp, nrows = 1, header = TRUE))
@@ -390,7 +389,7 @@ function(input, output, session) {
 		df_user_outliers <- df_user_metadata |>
 			dplyr::filter(Variable == "removeOutliers") |>
 			dplyr::pull(Value) 
-
+		
 		choices_chk_check_comm_sel <- choices_chk_check_comm[c(user_files_alg,
 																				 user_files_bmi,
 																				 user_files_fish)]
@@ -417,48 +416,189 @@ function(input, output, session) {
 		
 		### update Reactives----
 		react_chk_check_comm(choices_chk_check_comm[c(user_files_alg,
-																			user_files_bmi,
-																			user_files_fish)])
+																	 user_files_bmi,
+																	 user_files_fish)])
 		react_chk_check_stress(choices_chk_check_stress[c(user_files_meas,
-																			  user_files_model)])
+																		  user_files_model)])
 		# react_chk_check_tol(choices_chk_check_comm_sel[c(user_files_alg_sstv,
 		# 																 user_files_bmi_sstv,
 		# 																 user_files_fish_sstv)])
 		react_chk_check_tol(choices_chk_check_tol_sel)
 		react_check_outliers(df_user_outliers)
-		
-		# Show table
-		# Show text if any "missing"files
-		# Show text if any "extra" files
-
-		DT::datatable(df_user_files,
-						  filter = "top",
-						  caption = "Defines possible input data files, whether they are required, the corresponding file names provided by the user in the metadata, and whether the files were found in the uploaded zipped folder. Rows are shaded based on their value for the “Present” column (blue = true, orange = false). Files are counted as present if they are both listed in the metadata and occur in the uploaded zipped folder. Files are missing if they are listed in the metadata but absent in the uploaded zipped folder. Rows corresponding to files not specified by the user in the metadata are not shaded.",
-						  options = list(
-						  	scrollX=TRUE,
-						  	lengthMenu = c(5, 10, 25, 50, 100),
-						  	autoWidth = TRUE)
-						  ) |>
-			DT::formatStyle("Present",
-								 target = "row",
-								 backgroundColor = DT::styleEqual(
-								 	c(TRUE, FALSE),
-								 	c(color_good, color_bad)
-								 	)
-								 ) |>
-			# bold cells
-			DT::formatStyle("Present",
-								 target = "cell",
-								 fontWeight = DT::styleEqual(
-								 	c(TRUE, FALSE),
-								 	c("normal", "bold")))
-		
-		
-		# return(df_user_files)
-
-	}##expression
-
-	)## df_data_DT
+	})
+	
+	
+	# LCN 3/24/26: to add back in the matching files table, comment out the observeEvent above, uncomment renderDT below and uncomment dataTableOutput in tab_checkfiles.R
+	
+	## Import, Files, present ----
+	# output$df_import_files_DT <- DT::renderDT({
+	# 
+	# 	inFile <- input$fn_input_check_uload
+	# 	
+	# 	# Blank if no data
+	# 	if (is.null(inFile)) {
+	# 		return(NULL)
+	# 	} ## IF ~ is.null(inFile)
+	# 	
+	# 	
+	# 	# List Files
+	# 	fn_import <- sort(list.files(file.path(dn_data, dn_import),
+	# 										  recursive = TRUE,
+	# 										  full.names = FALSE))
+	# 
+	# 	# User, CASTool MetaData
+	# 	path_metadata <- file.path(dn_data, 
+	# 										dn_import, 
+	# 										fn_default_check_input_cast_metadata)
+	# 	req(path_metadata)
+	# 	df_user_metadata <- readxl::read_excel(path_metadata)
+	# 	# "_CASTool_Metadata.xlsx"
+	# 	
+	# 	# User, Region
+	# 	df_user_region <- df_user_metadata |>
+	# 		dplyr::filter(Variable == "region") |>
+	# 		dplyr::pull(Value)
+	# 	
+	# 	# User, Files
+	# 	df_user_files <- df_user_metadata |>
+	# 		# filter for filename
+	# 		dplyr::filter(Domain == "filename") |>
+	# 		# select only some columns
+	# 		dplyr::select(Variable,
+	# 						  Definition,
+	# 						  Required,
+	# 						  Value) |>
+	# 		# Populate if file present
+	# 		dplyr::mutate(Present = 
+	# 						  	dplyr::case_when(is.na(Value) ~ NA,
+	# 						  						  Value %in% fn_import ~ TRUE,
+	# 						  						  .default = FALSE)) 
+	# 	
+	# 	df_user_files_present <- df_user_files |>
+	# 		# only TRUE
+	# 		dplyr::filter(Present == TRUE) |> 
+	# 		dplyr::pull(Value)
+	# 	
+	# 	# user files not listed in MetaData
+	# 	df_user_files_extra <- fn_import[!fn_import %in% 
+	# 													c(fn_default_check_input_cast_metadata,
+	# 													  df_user_files_present)]
+	# 
+	# 	# Populate check boxes for data files present
+	# 	df_user_files_present_fn <- df_user_files |>
+	# 		# only TRUE
+	# 		dplyr::filter(Present == TRUE) |> 
+	# 		dplyr::pull(Variable)
+	# 
+	# 	user_files_alg <- "fn.alg.metrics" %in% df_user_files_present_fn
+	# 	user_files_bmi <- "fn.bmi.metrics" %in% df_user_files_present_fn
+	# 	user_files_fish <- "fn.fish.metrics" %in% df_user_files_present_fn
+	# 	user_files_meas <- "fn.meas.info" %in% df_user_files_present_fn
+	# 	user_files_model <- "fn.model.info" %in% df_user_files_present_fn
+	# 	user_files_alg_sstv <- "fn.alg.MT" %in% df_user_files_present_fn
+	# 	user_files_bmi_sstv <- "fn.bmi.MT" %in% df_user_files_present_fn
+	# 	user_files_fish_sstv <- "fn.fish.MT" %in% df_user_files_present_fn
+	# 	
+	# 	# Check that sstv files actually contain SSTVs
+	# 	sstv_bool_vec <- c(user_files_alg_sstv, user_files_bmi_sstv, user_files_fish_sstv)
+	# 	names(sstv_bool_vec) <- c("alg", "bmi", "fish")
+	# 	
+	# 	for(i in 1:length(sstv_bool_vec)){
+	# 		if(sstv_bool_vec[i]==FALSE){
+	# 			next
+	# 		} else{
+	# 			temp_fn <- df_user_metadata |>
+	# 				dplyr::filter(Variable == paste("fn", names(sstv_bool_vec)[i], "MT", sep = ".")) |>
+	# 				dplyr::pull(Value)
+	# 			
+	# 			temp_fp <- file.path(dn_data, 
+	# 						 dn_import, 
+	# 						 temp_fn)
+	# 			
+	# 			if(tools::file_ext(temp_fp) == "csv"){
+	# 				temp_names <- names(read.csv(temp_fp, nrows = 1, header = TRUE))
+	# 			}
+	# 			if(tools::file_ext(temp_fp) == "xlsx"){
+	# 				temp_names <- names(readxl::read_excel(temp_fp, nrows = 1, header = TRUE))
+	# 			}
+	# 			if(length(setdiff(temp_names, "TaxonID")) == 0 ){
+	# 				sstv_bool_vec[i] <- FALSE
+	# 			} 
+	# 		}
+	# 	}
+	# 	
+	# 	df_user_outliers <- df_user_metadata |>
+	# 		dplyr::filter(Variable == "removeOutliers") |>
+	# 		dplyr::pull(Value) 
+	# 
+	# 	choices_chk_check_comm_sel <- choices_chk_check_comm[c(user_files_alg,
+	# 																			 user_files_bmi,
+	# 																			 user_files_fish)]
+	# 	choices_chk_check_stress_sel <- choices_chk_check_stress[c(user_files_meas,
+	# 																				  user_files_model)]
+	# 	#choices_chk_check_tol_sel <- choices_chk_check_comm_sel
+	# 	if(sum(sstv_bool_vec) == 0){
+	# 		choices_chk_check_tol_sel <- "None"
+	# 	} else{
+	# 		choices_chk_check_tol_sel <- choices_chk_check_comm[unname(sstv_bool_vec)]
+	# 	}
+	# 	
+	# 	
+	# 	# update boxes
+	# 	shiny::updateCheckboxGroupInput(session,
+	# 											  "chk_check_comm",
+	# 											  selected = choices_chk_check_comm_sel)
+	# 	shiny::updateCheckboxGroupInput(session,
+	# 											  "chk_check_stress",
+	# 											  selected = choices_chk_check_stress_sel)
+	# 	shiny::updateCheckboxGroupInput(session,
+	# 											  "chk_check_tol",
+	# 											  selected = choices_chk_check_tol_sel)
+	# 	
+	# 	### update Reactives----
+	# 	react_chk_check_comm(choices_chk_check_comm[c(user_files_alg,
+	# 																		user_files_bmi,
+	# 																		user_files_fish)])
+	# 	react_chk_check_stress(choices_chk_check_stress[c(user_files_meas,
+	# 																		  user_files_model)])
+	# 	# react_chk_check_tol(choices_chk_check_comm_sel[c(user_files_alg_sstv,
+	# 	# 																 user_files_bmi_sstv,
+	# 	# 																 user_files_fish_sstv)])
+	# 	react_chk_check_tol(choices_chk_check_tol_sel)
+	# 	react_check_outliers(df_user_outliers)
+	# 	
+	# 	# Show table
+	# 	# Show text if any "missing"files
+	# 	# Show text if any "extra" files
+	# 
+	# 	DT::datatable(df_user_files,
+	# 					  filter = "top",
+	# 					  caption = "Defines possible input data files, whether they are required, the corresponding file names provided by the user in the metadata, and whether the files were found in the uploaded zipped folder. Rows are shaded based on their value for the “Present” column (blue = true, orange = false). Files are counted as present if they are both listed in the metadata and occur in the uploaded zipped folder. Files are missing if they are listed in the metadata but absent in the uploaded zipped folder. Rows corresponding to files not specified by the user in the metadata are not shaded.",
+	# 					  options = list(
+	# 					  	scrollX=TRUE,
+	# 					  	lengthMenu = c(5, 10, 25, 50, 100),
+	# 					  	autoWidth = TRUE)
+	# 					  ) |>
+	# 		DT::formatStyle("Present",
+	# 							 target = "row",
+	# 							 backgroundColor = DT::styleEqual(
+	# 							 	c(TRUE, FALSE),
+	# 							 	c(color_good, color_bad)
+	# 							 	)
+	# 							 ) |>
+	# 		# bold cells
+	# 		DT::formatStyle("Present",
+	# 							 target = "cell",
+	# 							 fontWeight = DT::styleEqual(
+	# 							 	c(TRUE, FALSE),
+	# 							 	c("normal", "bold")))
+	# 	
+	# 	
+	# 	# return(df_user_files)
+	# 
+	# }##expression
+	# 
+	# )## df_data_DT
 	
 	
 	## Import, Files, missing ----

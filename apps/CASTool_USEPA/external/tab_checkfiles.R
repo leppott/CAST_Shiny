@@ -47,8 +47,8 @@ function() {
 								fn_default_check_input_cast_metadata,
 								".'")))),
 					# table for imported files
-					h4("Matching files"),
-					DT::dataTableOutput("df_import_files_DT"),
+					# h4("Matching files"),
+					# DT::dataTableOutput("df_import_files_DT"),
 					h4("Missing files"),
 					p(em("Files included in the metadata but not present in the uploaded zipped folder.")),
 					div(style = "margin-bottom: 20px", pre(textOutput("txt_import_files_missing"))),
