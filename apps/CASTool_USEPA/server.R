@@ -650,7 +650,7 @@ function(input, output, session) {
 			# df_targets <- data.frame(TargetSiteID = input$si_checked_sites_targ)
 			path_meta <- file.path(in.dir, fn_default_check_input_cast_metadata)
 			df_meta <- readxl::read_excel(path_meta,
-													sheet = "Sheet1",
+													sheet = 1,
 													skip = 0)
 			fn_targets <- df_meta |>
 				dplyr::filter(Variable == "fn.targets") |>
@@ -847,7 +847,7 @@ function(input, output, session) {
 		} ## IF ~ !file.exits(path_meta)
 		
 		df_meta <- readxl::read_excel(path_meta,
-												sheet = "Sheet1",
+												sheet = 1,
 												skip = 0)
 		region <- df_meta |>
 			dplyr::filter(Variable == "region") |>
@@ -857,7 +857,7 @@ function(input, output, session) {
 										region,
 										dn_checked_sk)
 
-		inFile <- file.path(path_table, "TableOne.tab")
+		inFile <- file.path(path_table, "TableOne.csv") # LCN 3/24/26 changed from "TableOne.tab"
 
 		# Blank if no data
 		if (!file.exists(inFile)) {
@@ -927,7 +927,7 @@ function(input, output, session) {
 		} ## IF ~ !file.exits(path_meta)
 		
 		df_meta <- readxl::read_excel(path_meta,
-												sheet = "Sheet1",
+												sheet = 1,
 												skip = 0)
 		region <- df_meta |>
 			dplyr::filter(Variable == "region") |>
@@ -937,7 +937,7 @@ function(input, output, session) {
 										region,
 										dn_checked_sk)
 		
-		inFile <- file.path(path_table, "TableTwo.tab")
+		inFile <- file.path(path_table, "TableTwo.csv") # LCN 3/24/26 changed from "TableTwo.tab"
 		
 		# Blank if no data
 		if (!file.exists(inFile)) {
@@ -1793,7 +1793,6 @@ function(input, output, session) {
 		dir_rmd <- system.file("rmd", 
 									  package = "CASTfxn")
 		
-		
 		## Skeleton Code ----
 		tic_report <- Sys.time()
 		# code (wrap with progress pop up)
@@ -2417,180 +2416,282 @@ function(input, output, session) {
 	output$elimUI <- renderUI({
 		shiny::tagList(
 			if("BMI" %in% woe_comms()){
+				
 				shiny::tagList(
-					# h4(HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (benthic macroinvertebrates)")),
 					use_bs_popover(),
+					
 					h4(tagList(
-						HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (benthic macroinvertebrates)"),
+						HTML("Stressor(s) eliminated: No paired-stressor response sample at the target site (benthic macroinvertebrates)"),
 						tags$span(icon("info-circle"), 
-									 id = "bmiElimInfo", 
+									 id = "bmiElimNoPairedInfo", 
 									 style = "color:#2fa4e7;") |>
 							bs_embed_popover(title = "Helpful Hints",
-												  content = "Stressors receiving a co-occurrence score of -1 for all target site samples, indicating that the stressor sample values were not elevated relative to unimpaired comparator samples if the stress increases with increasing stressor values (e.g. conductivity) or not low if stress decreases with increasing stressor values (e.g., dissolved oxygen).",
+												  content = "Stressors that were either never measured at the target site or not measured within the user-specified time window from a response sample.",
 												  placement = "right",
 												  trigger = "hover"))),
-					# bsPopover(id="bmiElimInfo", 
-					# 			 title = HTML("<b>Helpful Hints</b>"), 
-					# 			 content = HTML("Stressors receiving a co-occurrence score of -1 for all target site samples, indicating that the stressor sample values were not elevated relative to unimpaired comparator samples if the stress increases with increasing stressor values (e.g. conductivity) or not low if stress decreases with increasing stressor values (e.g., dissolved oxygen)."),
-					# 			 placement = "right", 
-					# 			 trigger = "hover"),
 					
+					pre(textOutput("elim_nopaired_bmi")),
 					
-					pre(textOutput("df_candcause_elim_DT_bmi")),
-					br())
-			}
-			,
+					br(),
+					
+					h4(tagList(
+						HTML("Stressor(s) eliminated: Insufficient paired stressor-response samples across all comparator sites (benthic macroinvertebrates)"),
+						tags$span(icon("info-circle"), 
+									 id = "bmiElimInsuffInfo", 
+									 style = "color:#2fa4e7;") |>
+							bs_embed_popover(title = "Helpful Hints",
+												  content = "Stressors with fewer paired stressor-response samples across all comparator sites than the user-specified sample limit.",
+												  placement = "right",
+												  trigger = "hover"))),
+					
+					pre(textOutput("elim_insuff_bmi")),
+					
+					br(),
+					
+					h4(tagList(
+						HTML("Stressor(s) eliminated: By the comparison of target and unimpaired comparator sample values (benthic macroinvertebrates)"),
+						tags$span(icon("info-circle"), 
+									 id = "bmiElimCoInfo", 
+									 style = "color:#2fa4e7;") |>
+							bs_embed_popover(title = "Helpful Hints",
+												  content = "Stressors eliminated by the co-occurrence line of evidence: all target site samples received a score of -1. For 'increasing' stressors (stress increases with increasing values of stressor, e.g., conductivity), target sample values were not elevated relative to unimpaired, comparator samples. For 'decreasing' stressors (stress decreases with increasing values of stressor, e.g., dissolved oxygen), target sample values were not low relative to unimpaired, comparator samples.",
+												  placement = "right",
+												  trigger = "hover"))),
+					
+					pre(textOutput("elim_co_bmi")),
+					
+					br()
+					
+				)
+				
+			},
+			
 			if("FISH" %in% woe_comms()){
 				shiny::tagList(
-					# h4(HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (fish)")),
 					use_bs_popover(),
-					h4(tagList(
-						HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (fish)"),
-						tags$span(icon("info-circle",
-											style = "color: #2fa4e7",
-											id="fishElimInfo") |>
-							bs_embed_popover(title = "Helpful Hints",
-												  content = "Stressors receiving a co-occurrence score of -1 for all target site samples, indicating that the stressor sample values were not elevated relative to unimpaired comparator samples if the stress increases with increasing stressor values (e.g. conductivity) or not low if stress decreases with increasing stressor values (e.g., dissolved oxygen).",
-												  placement = "right",
-												  trigger = "hover")))),
-					# bsPopover(id="fishElimInfo", 
-					# 			 title = HTML("<b>Helpful Hints</b>"), 
-					# 			 content = HTML("Stressors receiving a co-occurrence score of -1 for all target site samples, indicating that the stressor sample values were not elevated relative to unimpaired comparator samples if the stress increases with increasing stressor values (e.g. conductivity) or not low if stress decreases with increasing stressor values (e.g., dissolved oxygen)."),
-					# 			 placement = "right",
-					# 			 trigger = "hover"),
 					
-					pre(textOutput("df_candcause_elim_DT_fish")),
-					br())
-			}
-			,
+					h4(tagList(
+						HTML("Stressor(s) eliminated: No paired-stressor response sample at the target site (fish)"),
+						tags$span(icon("info-circle"), 
+									 id = "fishElimNoPairedInfo", 
+									 style = "color:#2fa4e7;") |>
+							bs_embed_popover(title = "Helpful Hints",
+												  content = "Stressors that were either never measured at the target site or not measured within the user-specified time window from a response sample.",
+												  placement = "right",
+												  trigger = "hover"))),
+					
+					pre(textOutput("elim_nopaired_fish")),
+					
+					br(),
+					
+					h4(tagList(
+						HTML("Stressor(s) eliminated: Insufficient paired stressor-response samples across all comparator sites (fish)"),
+						tags$span(icon("info-circle"), 
+									 id = "fishElimInsuffInfo", 
+									 style = "color:#2fa4e7;") |>
+							bs_embed_popover(title = "Helpful Hints",
+												  content = "Stressors with fewer paired stressor-response samples across all comparator sites than the user-specified sample limit.",
+												  placement = "right",
+												  trigger = "hover"))),
+					
+					pre(textOutput("elim_insuff_fish")),
+					
+					br(),
+					
+					h4(tagList(
+						HTML("Stressor(s) eliminated: By the comparison of target and unimpaired comparator sample values (fish)"),
+						tags$span(icon("info-circle"), 
+									 id = "fishElimCoInfo", 
+									 style = "color:#2fa4e7;") |>
+							bs_embed_popover(title = "Helpful Hints",
+												  content = "Stressors eliminated by the co-occurrence line of evidence: all target site samples received a score of -1. For 'increasing' stressors (stress increases with increasing values of stressor, e.g., conductivity), target sample values were not elevated relative to unimpaired, comparator samples. For 'decreasing' stressors (stress decreases with increasing values of stressor, e.g., dissolved oxygen), target sample values were not low relative to unimpaired, comparator samples.",
+												  placement = "right",
+												  trigger = "hover"))),
+					
+					pre(textOutput("elim_co_fish")),
+					
+					br()
+					
+				)
+			},
+			
 			if("ALG" %in% woe_comms()){
+				
 				shiny::tagList(
 					use_bs_popover(),
-					# h4(HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (algae)")),
+					
 					h4(tagList(
-						HTML("Stressor(s) not evaluated further due to comparison of <br>target and comparator sample values (algae)"),
-						tags$span(icon("info-circle", 
-											style = "color: #2fa4e7", 
-											id="algElimInfo") |>
-									 	bs_embed_popover(title = "Helpful Hints",
-									 						  content = "",
-									 						  placement = "right",
-									 						  trigger = "hover")))),
-					# bsPopover(id="algElimInfo", 
-					# 			 title = HTML("<b>Helpful Hints</b>"), 
-					# 			 content = HTML("Stressors receiving a co-occurrence score of -1 for all target site samples, indicating that the stressor sample values were not elevated relative to unimpaired comparator samples if the stress increases with increasing stressor values (e.g. conductivity) or not low if stress decreases with increasing stressor values (e.g., dissolved oxygen)."),
-					# 			 placement = "right", 
-					# 			 trigger = "hover"),
-					pre(textOutput("df_candcause_elim_DT_alg")),
-					br())
+						HTML("Stressor(s) eliminated: No paired-stressor response sample at the target site (algae)"),
+						tags$span(icon("info-circle"), 
+									 id = "algElimNoPairedInfo", 
+									 style = "color:#2fa4e7;") |>
+							bs_embed_popover(title = "Helpful Hints",
+												  content = "Stressors that were either never measured at the target site or not measured within the user-specified time window from a response sample.",
+												  placement = "right",
+												  trigger = "hover"))),
+					
+					pre(textOutput("elim_nopaired_alg")),
+					
+					br(),
+					
+					h4(tagList(
+						HTML("Stressor(s) eliminated: Insufficient paired stressor-response samples across all comparator sites (algae)"),
+						tags$span(icon("info-circle"), 
+									 id = "algElimInsuffInfo", 
+									 style = "color:#2fa4e7;") |>
+							bs_embed_popover(title = "Helpful Hints",
+												  content = "Stressors with fewer paired stressor-response samples across all comparator sites than the user-specified sample limit.",
+												  placement = "right",
+												  trigger = "hover"))),
+					
+					pre(textOutput("elim_insuff_alg")),
+					
+					br(),
+					
+					h4(tagList(
+						HTML("Stressor(s) eliminated: By the comparison of target and unimpaired comparator sample values (algae)"),
+						tags$span(icon("info-circle"), 
+									 id = "algElimCoInfo", 
+									 style = "color:#2fa4e7;") |>
+							bs_embed_popover(title = "Helpful Hints",
+												  content = "Stressors eliminated by the co-occurrence line of evidence: all target site samples received a score of -1. For 'increasing' stressors (stress increases with increasing values of stressor, e.g., conductivity), target sample values were not elevated relative to unimpaired, comparator samples. For 'decreasing' stressors (stress decreases with increasing values of stressor, e.g., dissolved oxygen), target sample values were not low relative to unimpaired, comparator samples.",
+												  placement = "right",
+												  trigger = "hover"))),
+					
+					pre(textOutput("elim_co_alg")),
+					
+					br()
+					
+				)	
 			}
 		)
 	})
 	
-	output$df_candcause_elim_DT_bmi <- renderText({
-		
-		# trigger created when save table
+	elimTable <- reactive({
 		req(react_report_run())
-
-		stat_id <- react_report_targetsiteid() #sel_targsite()
-		fn_gaps <- paste0(stat_id, "_BMI_DetectsNotEvalFurther.tab")
+		stat_id <- react_report_targetsiteid()
+		fn_elim <- paste0(stat_id, "_StressorsEliminated.csv")
 		
 		path_table <- file.path(dn_results, 
 										react_setup_region(),
-										stat_id,
-										"BMI",
-										"_WoE")
+										stat_id)
 		
-		inFile <- file.path(path_table, fn_gaps)
+		inFile <- file.path(path_table, fn_elim)
 		
-		# Blank if no data
 		if (!file.exists(inFile)) {
-			return(NULL)
+			#return(NULL)
+			return(data.frame(Stressor = character(), Biocomm = character(), Reason = character(), Label = character()))
 		} ## IF ~ is.null(inFile)
 		
 		# import file
-		dt_elim <- read.delim(inFile,
-									  header = TRUE,
-									 colClasses = "character",
-									  sep = "\t") |> 
-			dplyr::left_join(names_label(), by = c("BMI_NotEvaluated" = "StdParamName")) |> 
-			dplyr::pull(Label) |> 
-			paste(collapse = "\n")
+		dt_elim <- read.csv(inFile) 
 		
 		return(dt_elim)
-
-	}##expression
-	)## df_cc_elim_DT
+	})
 	
-	output$df_candcause_elim_DT_fish <- renderText({
-		
-		# trigger created when save table
+	# BMI eliminated stressors
+	output$elim_nopaired_bmi <- renderText({
 		req(react_report_run())
 		
-		stat_id <- react_report_targetsiteid() # sel_targsite()
-		fn_gaps <- paste0(stat_id, "_FISH_DetectsNotEvalFurther.tab")
-		
-		path_table <- file.path(dn_results, 
-										react_setup_region(),
-										stat_id,
-										"FISH",
-										"_WoE")
-		
-		inFile <- file.path(path_table, fn_gaps)
-		
-		# Blank if no data
-		if (!file.exists(inFile)) {
-			return(NULL)
-		} ## IF ~ is.null(inFile)
-		
-		# import file
-		dt_elim <- read.delim(inFile,
-									 header = TRUE,
-									 colClasses = "character",
-									 sep = "\t") |> 
-			dplyr::left_join(names_label(), by = c("FISH_NotEvaluated" = "StdParamName")) |> 
+		ret <- elimTable() |> 
+			dplyr::filter(Biocomm == "bmi", Reason == "Not measured at target site") |> 
 			dplyr::pull(Label) |> 
 			paste(collapse = "\n")
 		
-		return(dt_elim)
-		
-	}##expression
-	)## df_cc_elim_DT
+		return(ret)
+	})
 	
-	output$df_candcause_elim_DT_alg <- renderText({
-		
-		# trigger created when save table
+	output$elim_insuff_bmi <- renderText({
 		req(react_report_run())
 		
-		stat_id <- react_report_targetsiteid() #sel_targsite()
-		fn_gaps <- paste0(stat_id, "_ALG_DetectsNotEvalFurther.tab")
-		
-		path_table <- file.path(dn_results, 
-										react_setup_region(),
-										stat_id,
-										"ALG",
-										"_WoE")
-		
-		inFile <- file.path(path_table, fn_gaps)
-		
-		# Blank if no data
-		if (!file.exists(inFile)) {
-			return(NULL)
-		} ## IF ~ is.null(inFile)
-		
-		# import file
-		dt_elim <- read.delim(inFile,
-									 header = TRUE,
-									 colClasses = "character",
-									 sep = "\t") |> 
-			dplyr::left_join(names_label(), by = c("ALG_NotEvaluated" = "StdParamName")) |> 
+		ret <- elimTable() |> 
+			dplyr::filter(Biocomm == "bmi", Reason == "Insufficient paired samples") |> 
 			dplyr::pull(Label) |> 
 			paste(collapse = "\n")
 		
-		return(dt_elim)
+		return(ret)
+	})
+	
+	output$elim_co_bmi <- renderText({
+		req(react_report_run())
 		
-	}##expression
-	)## df_cc_elim_DT
+		ret <- elimTable() |> 
+			dplyr::filter(Biocomm == "bmi", Reason == "Co-occurrence") |> 
+			dplyr::pull(Label) |> 
+			paste(collapse = "\n")
+		
+		return(ret)
+	})
+	
+	# Alg eliminated stressors
+	output$elim_nopaired_alg <- renderText({
+		req(react_report_run())
+		
+		ret <- elimTable() |> 
+			dplyr::filter(Biocomm == "alg", Reason == "Not measured at target site") |> 
+			dplyr::pull(Label) |> 
+			paste(collapse = "\n")
+		
+		return(ret)
+	})
+	
+	output$elim_insuff_alg <- renderText({
+		req(react_report_run())
+		
+		ret <- elimTable() |> 
+			dplyr::filter(Biocomm == "alg", Reason == "Insufficient paired samples") |> 
+			dplyr::pull(Label) |> 
+			paste(collapse = "\n")
+		
+		return(ret)
+	})
+	
+	output$elim_co_alg <- renderText({
+		req(react_report_run())
+		
+		ret <- elimTable() |> 
+			dplyr::filter(Biocomm == "alg", Reason == "Co-occurrence") |> 
+			dplyr::pull(Label) |> 
+			paste(collapse = "\n")
+		
+		return(ret)
+	})
+	
+	# Fish eliminated stressors
+	output$elim_nopaired_fish <- renderText({
+		req(react_report_run())
+		
+		ret <- elimTable() |> 
+			dplyr::filter(Biocomm == "fish", Reason == "Not measured at target site") |> 
+			dplyr::pull(Label) |> 
+			paste(collapse = "\n")
+		
+		return(ret)
+	})
+	
+	output$elim_insuff_fish <- renderText({
+		req(react_report_run())
+		
+		ret <- elimTable() |> 
+			dplyr::filter(Biocomm == "fish", Reason == "Insufficient paired samples") |> 
+			dplyr::pull(Label) |> 
+			paste(collapse = "\n")
+		
+		return(ret)
+	})
+	
+	output$elim_co_fish <- renderText({
+		req(react_report_run())
+		
+		ret <- elimTable() |> 
+			dplyr::filter(Biocomm == "fish", Reason == "Co-occurrence") |> 
+			dplyr::pull(Label) |> 
+			paste(collapse = "\n")
+		
+		return(ret)
+	})
+	
+
 	
 	## Table, All ----
 	# output$df_candcause_all_DT <- DT::renderDT({
@@ -2641,7 +2742,8 @@ function(input, output, session) {
 		req(react_report_run())
 
 		stat_id <- react_report_targetsiteid() # sel_targsite()
-		fn_detects <- paste0(stat_id, "_DetectsAll.tab")
+		#fn_detects <- paste0(stat_id, "_DetectsAll.tab")
+		fn_detects <- paste0(stat_id, "_InitialStressors.csv")
 		
 		path_table <- file.path(dn_results, 
 										react_setup_region(),
@@ -2656,10 +2758,12 @@ function(input, output, session) {
 		} ## IF ~ is.null(inFile)
 		
 		# import file
-		dt_all <- read.delim(inFile,
+		#dt_all <- read.delim(inFile,
+		dt_all <- read.csv(inFile,
 									  header = TRUE,
-									  sep = "\t") |> 
-			dplyr::left_join(names_label(), by = c("Detects_All" = "StdParamName")) |> 
+									  #sep = "\t"
+								 ) |> 
+			# dplyr::left_join(names_label(), by = c("Detects_All" = "StdParamName")) |> 
 			dplyr::pull(Label) |> 
 			paste(collapse = "\n")
 		
@@ -2947,11 +3051,12 @@ sketch_summ <- htmltools::withTags(table(
 									stat_id, 
 									dn_bmi, 
 									dn_woe,
-									paste0(stat_id, "_LoESummary.tab"))
+									paste0(stat_id, "_LoESummary.csv"))  # LCN 3/24/26 changed from _LoESummary.tab
 		if (file.exists(fn_data)) {
-			df <- read.table(fn_data, 
+			#df <- read.table(fn_data, 
+			df <- read.csv(fn_data, 
 								  header = TRUE, 
-								  sep = "\t", 
+								  # sep = "\t", 
 								  stringsAsFactors = FALSE) |> 
 				dplyr::select(Stressor, 
 								  RespSampleID, 
@@ -3022,11 +3127,12 @@ sketch_summ <- htmltools::withTags(table(
 									stat_id,
 									dn_bmi, 
 									dn_woe,
-									paste0(stat_id, "_LoEs.tab"))
+									paste0(stat_id, "_LoEs.csv")) # LCN 3/24/26 changed from "_LoEs.tab"
 		if (file.exists(fn_data)) {
-			df <- read.table(fn_data, 
+			#df <- read.table(fn_data, 
+			df <- read.csv(fn_data, 
 								  header = TRUE, 
-								  sep = "\t", 
+								  #sep = "\t", 
 								  stringsAsFactors = FALSE) |> 
 				dplyr::select(-StationID, 
 								  -StressSampleID, 
@@ -3150,11 +3256,12 @@ sketch_summ <- htmltools::withTags(table(
 									stat_id, 
 									dn_fish, 
 									dn_woe,
-									paste0(stat_id, "_LoESummary.tab"))
+									paste0(stat_id, "_LoESummary.csv"))  # LCN 3/24/26 changed from _LoESummary.tab
 		if (file.exists(fn_data)) {
-			df <- read.table(fn_data, 
+			#df <- read.table(fn_data,
+			df <- read.csv(fn_data,
 								  header = TRUE, 
-								  sep = "\t", 
+								  #sep = "\t", 
 								  stringsAsFactors = FALSE)|> 
 				dplyr::select(Stressor, 
 								  RespSampleID, 
@@ -3224,11 +3331,12 @@ sketch_summ <- htmltools::withTags(table(
 									stat_id,
 									dn_fish, 
 									dn_woe,
-									paste0(stat_id, "_LoEs.tab"))
+									paste0(stat_id, "_LoEs.csv")) # LCN 3/24/26 changed from "_LoEs.tab"
 		if (file.exists(fn_data)) {
-			df <- read.table(fn_data, 
+			#df <- read.table(fn_data,
+			df <- read.csv(fn_data, 
 								  header = TRUE, 
-								  sep = "\t", 
+								  #sep = "\t", 
 								  stringsAsFactors = FALSE)|> 
 				dplyr::select(-StationID, 
 								  -StressSampleID, 
@@ -3352,11 +3460,12 @@ sketch_summ <- htmltools::withTags(table(
 									stat_id, 
 									dn_alg, 
 									dn_woe,
-									paste0(stat_id, "_LoESummary.tab"))
+									paste0(stat_id, "_LoESummary.csv")) # LCN 3/24/26 changed from _LoESummary.tab
 		if (file.exists(fn_data)) {
-			df <- read.table(fn_data, 
+			#df <- read.table(fn_data,
+			df <- read.csv(fn_data,
 								  header = TRUE, 
-								  sep = "\t", 
+								  #sep = "\t", 
 								  stringsAsFactors = FALSE)|> 
 				dplyr::select(Stressor,
 								  RespSampleID, 
@@ -3426,11 +3535,12 @@ sketch_summ <- htmltools::withTags(table(
 									stat_id,
 									dn_alg, 
 									dn_woe,
-									paste0(stat_id, "_LoEs.tab"))
+									paste0(stat_id, "_LoEs.csv")) # LCN 3/24/26 changed from "_LoEs.tab"
 		if (file.exists(fn_data)) {
-			df <- read.table(fn_data, 
+			#df <- read.table(fn_data, 
+			df <- read.csv(fn_data, 
 								  header = TRUE, 
-								  sep = "\t", 
+								  #sep = "\t", 
 								  stringsAsFactors = FALSE)|> 
 				dplyr::select(-StationID,
 								  -StressSampleID,
@@ -3578,7 +3688,7 @@ sketch_summ <- htmltools::withTags(table(
 		req(react_report_run())
 		
 		stat_id <- react_report_targetsiteid() # sel_targsite()
-		fn_gaps <- paste0(stat_id, "_datagaps.tab")
+		fn_gaps <- paste0(stat_id, "_datagaps.csv") # LCN 3/24/26 changed from "_datagaps.tab"
 		
 		path_table <- file.path(dn_results, 
 										react_setup_region(),
@@ -3592,9 +3702,11 @@ sketch_summ <- htmltools::withTags(table(
 		} ## IF ~ is.null(inFile)
 		
 		# import file
-		df_table <- read.delim(inFile,
-									  header = TRUE,
-									  sep = "\t") |> 
+		# df_table <- read.delim(inFile,
+		# 							  header = TRUE,
+		# 							  sep = "\t") |> 
+		df_table <- read.csv(inFile,
+										  header = TRUE) |> 
 			dplyr::rename("Function name" = "fxnname",
 							  "Condition" = "condition", 
 							  "Result" = "result",

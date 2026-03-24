@@ -114,6 +114,7 @@ dn_alg       <- "ALG"
 dn_woe       <- "_WoE"
 #### skeleton
 dn_checked_sk <- "_CheckedInputs"
+useBC <- FALSE
 
 # # # Gov chat answer
 # app_name <- "CASTool_USEPA"
