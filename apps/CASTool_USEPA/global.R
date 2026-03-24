@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "1.0.0.9019"
+pkg_version <- "1.0.0.9021"
 
 # Packages ----
 library(shiny)
@@ -202,3 +202,7 @@ url_github_castshiny <- "https://raw.githubusercontent.com/leppott/CAST_Shiny/ma
 # WSStressors ----
 # fn_wsstressors <- file.path("www", "CASTool_WSStressors.csv")
 # df_wsstressors <- read.csv(fn_wsstressors)
+
+# Time Estimate ----
+time_est_m_base <- 1.79
+time_est_m_stressor <- 0.13

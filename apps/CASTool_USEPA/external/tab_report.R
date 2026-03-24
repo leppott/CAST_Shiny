@@ -31,7 +31,8 @@ function() {
 								 shinyBS::bsTooltip(id = "but_report_run",
 								 						 title = paste0("Disabled until checked files uploaded."),
 								 						 placement = "right"),
-								 p(em("Report should take approximately 5 minutes to generate for every biological community analyzed. A popup window will appear when the report is completed.")),
+								 # p(em("Report should take approximately 5 minutes to generate for every biological community analyzed. A popup window will appear when the report is completed.")),
+								 htmlOutput("txt_rep_time_est"),
 								 br(),
 								 hr()
 								 )
