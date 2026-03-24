@@ -1,7 +1,7 @@
 # Check Files
 
 function() {
-	tabPanel("Check File Inputs",
+	tabPanel("Upload and Check Data",
 				tags$head(tags$style(HTML("
 				  .pill {
 				    background: #f5f5f5;

@@ -2600,6 +2600,12 @@ function(input, output, session) {
 					
 					pre(textOutput("elim_co_bmi")),
 					
+					br(),
+					
+					h4("Stressor(s) remaining"),
+					
+					pre(textOutput("remain_bmi")),
+					
 					br()
 					
 				)
@@ -2650,6 +2656,12 @@ function(input, output, session) {
 					
 					pre(textOutput("elim_co_fish")),
 					
+					br(),
+					
+					h4("Stressor(s) remaining"),
+					
+					pre(textOutput("remain_fish")),
+					
 					br()
 					
 				)
@@ -2699,6 +2711,12 @@ function(input, output, session) {
 												  trigger = "hover"))),
 					
 					pre(textOutput("elim_co_alg")),
+					
+					br(),
+					
+					h4("Stressor(s) remaining"),
+					
+					pre(textOutput("remain_alg")),
 					
 					br()
 					
@@ -2831,6 +2849,31 @@ function(input, output, session) {
 		return(ret)
 	})
 	
+	# remaining stressors
+	
+	output$remain_bmi <- renderText({
+		rm_bmi <- elimTable() |> 
+			dplyr::filter(Biocomm == "bmi") |> 
+			dplyr::pull(Label)
+		
+		setdiff(df_initialStressors(), rm_bmi) |> paste(collapse = "\n")
+	})
+	
+	output$remain_alg <- renderText({
+		rm_alg <- elimTable() |> 
+			dplyr::filter(Biocomm == "alg") |> 
+			dplyr::pull(Label)
+		
+		setdiff(df_initialStressors(), rm_alg) |> paste(collapse = "\n")
+	})
+	
+	output$remain_fish <- renderText({
+		rm_fish <- elimTable() |> 
+			dplyr::filter(Biocomm == "fish") |> 
+			dplyr::pull(Label)
+		
+		setdiff(df_initialStressors(), rm_fish) |> paste(collapse = "\n")
+	})
 
 	
 	## Table, All ----
@@ -2876,13 +2919,12 @@ function(input, output, session) {
 	# }##expression
 	# )## df_cc_all_DT
 	
-	output$df_candcause_all_DT <- renderText({
-		
+	df_initialStressors <- reactive({
 		# trigger created when save table
 		req(react_report_run())
-
+		
 		stat_id <- react_report_targetsiteid() # sel_targsite()
-		#fn_detects <- paste0(stat_id, "_DetectsAll.tab")
+		
 		fn_detects <- paste0(stat_id, "_InitialStressors.csv")
 		
 		path_table <- file.path(dn_results, 
@@ -2898,19 +2940,57 @@ function(input, output, session) {
 		} ## IF ~ is.null(inFile)
 		
 		# import file
-		#dt_all <- read.delim(inFile,
+
 		dt_all <- read.csv(inFile,
-									  header = TRUE,
-									  #sep = "\t"
-								 ) |> 
-			# dplyr::left_join(names_label(), by = c("Detects_All" = "StdParamName")) |> 
-			dplyr::pull(Label) |> 
-			paste(collapse = "\n")
+								 header = TRUE) |> 
+			dplyr::pull(Label)
 		
 		return(dt_all)
 		
+	})
+	
+	output$df_candcause_all_DT <- renderText({
+		df_initialStressors() |> 
+			paste(collapse = "\n")
+		
 	}##expression
 	)## df_cc_all_DT
+	
+	# output$df_candcause_all_DT <- renderText({
+	# 	
+	# 	# trigger created when save table
+	# 	req(react_report_run())
+	# 	
+	# 	stat_id <- react_report_targetsiteid() # sel_targsite()
+	# 	#fn_detects <- paste0(stat_id, "_DetectsAll.tab")
+	# 	fn_detects <- paste0(stat_id, "_InitialStressors.csv")
+	# 	
+	# 	path_table <- file.path(dn_results, 
+	# 									react_setup_region(),
+	# 									stat_id
+	# 	)
+	# 	
+	# 	inFile <- file.path(path_table, fn_detects)
+	# 	
+	# 	# Blank if no data
+	# 	if (!file.exists(inFile)) {
+	# 		return(NULL)
+	# 	} ## IF ~ is.null(inFile)
+	# 	
+	# 	# import file
+	# 	#dt_all <- read.delim(inFile,
+	# 	dt_all <- read.csv(inFile,
+	# 							 header = TRUE,
+	# 							 #sep = "\t"
+	# 	) |> 
+	# 		# dplyr::left_join(names_label(), by = c("Detects_All" = "StdParamName")) |> 
+	# 		dplyr::pull(Label) |> 
+	# 		paste(collapse = "\n")
+	# 	
+	# 	return(dt_all)
+	# 	
+	# }##expression
+	# )## df_cc_all_DT
 	
 
 	
