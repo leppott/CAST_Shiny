@@ -107,7 +107,7 @@ function() {
 									 p(tagList(
 									 	strong("Exclude outliers: "),
 									 	icon("info-circle", 
-									 		  style = "color: #2fa4e7", 
+									 		  style = "color: #67c1f5", 
 									 		  id="outlierInfo") |>
 									 		bs_embed_popover(
 									 			title = "Helpful Hints",
@@ -130,6 +130,28 @@ function() {
 								 # 				 selected = "Yes"
 								 # )
 								 ),
+					fluidRow(
+						column(6,
+								 
+								 p(tagList(
+								 	strong("Explore watershed stressor data: "),
+								 	icon("info-circle", 
+								 		  style = "color: #67c1f5", 
+								 		  id="wsStressorInfo") |>
+								 		bs_embed_popover(title = "Helpful Hints",
+								 							  content = "To modify, change the exploreWSStressor parameter in '_CASTool_Metadata.xlsx'.",
+								 							  placement = "right",
+								 							  trigger = "hover"))),
+								 # bsPopover(id="wsStressorInfo", 
+								 # 			 title = HTML("<b>Helpful Hints</b>"), 
+								 # 			 content = HTML("To modify, change the exploreWSStressor parameter in _CASTool_Metadata.xlsx."),
+								 # 			 placement = "right", 
+								 # 			 trigger = "hover"),
+								 
+								 
+								 div(class = "pill", textOutput("txt_setup_explore"))),
+						
+					),
 					#),## fluidRow
 					
 					# 

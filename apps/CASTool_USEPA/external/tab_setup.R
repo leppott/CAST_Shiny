@@ -26,44 +26,49 @@ function() {
 					# 						 placement = "right"),
 					# doesn't work on fileinput
 					br(),
-					fluidRow(
-						# width = 12
-						column(4,
-								 
-								 p(tagList(
-								 	strong("Explore watershed stressor data: "),
-								 	icon("info-circle", 
-								 		  style = "color: #2fa4e7", 
-								 		  id="wsStressorInfo") |>
-								 		bs_embed_popover(title = "Helpful Hints",
-								 							  content = "To modify, change the exploreWSStressor parameter in '_CASTool_Metadata.xlsx'.",
-								 							  placement = "right",
-								 							  trigger = "hover"))),
-								 # bsPopover(id="wsStressorInfo", 
-								 # 			 title = HTML("<b>Helpful Hints</b>"), 
-								 # 			 content = HTML("To modify, change the exploreWSStressor parameter in _CASTool_Metadata.xlsx."),
-								 # 			 placement = "right", 
-								 # 			 trigger = "hover"),
-								 
-								 
-								 div(class = "pill", textOutput("txt_setup_explore")),
-								 br(),
-								 selectInput("si_checked_sites_targ",
-								 				"Select target site",
-								 				choices = NULL,
-								 				multiple = FALSE),
-								 hr()),
-								 # h2("testing"),
-								 # p("state of target site"),
-								 # p(textOutput("txt_target_site_state")),
-								 # br(),
-								 # bsButton("but_setup_cluster_laura",
-								 # 			"Get Clusters (Laura)")
-								#  radioButtons("rad_setup_explore",
-								#  				 "Explore watershed stressor data",
-								#  				 choices = c("Yes", "No"),
-								#  				 selected = "No")
-								 ),
+					selectInput("si_checked_sites_targ",
+									"Select target site",
+									choices = NULL,
+									multiple = FALSE),
+					hr(),
+					# fluidRow(
+					# 	# width = 12
+					# 	column(4,
+					# 			 
+					# 			 p(tagList(
+					# 			 	strong("Explore watershed stressor data: "),
+					# 			 	icon("info-circle", 
+					# 			 		  style = "color: #67c1f5", 
+					# 			 		  id="wsStressorInfo") |>
+					# 			 		bs_embed_popover(title = "Helpful Hints",
+					# 			 							  content = "To modify, change the exploreWSStressor parameter in '_CASTool_Metadata.xlsx'.",
+					# 			 							  placement = "right",
+					# 			 							  trigger = "hover"))),
+					# 			 # bsPopover(id="wsStressorInfo", 
+					# 			 # 			 title = HTML("<b>Helpful Hints</b>"), 
+					# 			 # 			 content = HTML("To modify, change the exploreWSStressor parameter in _CASTool_Metadata.xlsx."),
+					# 			 # 			 placement = "right", 
+					# 			 # 			 trigger = "hover"),
+					# 			 
+					# 			 
+					# 			 div(class = "pill", textOutput("txt_setup_explore")),
+					# 			 br(),
+					# 			 selectInput("si_checked_sites_targ",
+					# 			 				"Select target site",
+					# 			 				choices = NULL,
+					# 			 				multiple = FALSE),
+					# 			 hr()),
+					# 			 # h2("testing"),
+					# 			 # p("state of target site"),
+					# 			 # p(textOutput("txt_target_site_state")),
+					# 			 # br(),
+					# 			 # bsButton("but_setup_cluster_laura",
+					# 			 # 			"Get Clusters (Laura)")
+					# 			#  radioButtons("rad_setup_explore",
+					# 			#  				 "Explore watershed stressor data",
+					# 			#  				 choices = c("Yes", "No"),
+					# 			#  				 selected = "No")
+					# 			 ),
 						# column(4,
 						# 		 # radioButtons("rad_setup_assign",
 						# 		 # 				 "Comparator assignment method",

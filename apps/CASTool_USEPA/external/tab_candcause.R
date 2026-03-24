@@ -12,7 +12,7 @@ function() {
 					br(),
 					
 					h4(tagList("User-specified thresholds for evaluating specific candidate causes",
-								 actionLink("helpCandCause", label = NULL, icon = icon("circle-info"), class = "help-btn"))
+								 actionLink("helpCandCause", label = NULL, icon = icon("question-circle", class = "fas"), class = "help-btn"))
 					),
 					
 					textOutput("txt_candcause_thresh_ph"),
@@ -23,7 +23,7 @@ function() {
 					h4(tagList(
 						"Stressor(s) initially evaluated",
 						icon("info-circle", 
-							  style = "color: #2fa4e7", 
+							  style = "color: #67c1f5", 
 							  id="stressorInitInfo") |>
 							bs_embed_popover(title = "Helpful Hints",
 												  content = "Stressors marked for inclusion in the stressor metadata (UseInStressorID) and present in the stressor data.",

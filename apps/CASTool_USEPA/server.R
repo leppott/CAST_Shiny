@@ -273,6 +273,7 @@ function(input, output, session) {
 	react_chk_check_stress <- reactiveVal("..No file uploaded..")
 	react_chk_check_tol    <- reactiveVal("..No file uploaded..")
 	react_check_outliers   <- reactiveVal("..No file uploaded..")
+	react_setup_explore <- reactiveVal("..No file uploaded..")
 	
 	output$txt_chk_check_comm  <- renderText({
 		react_chk_check_comm()
@@ -290,6 +291,10 @@ function(input, output, session) {
 		react_check_outliers()
 	})
 	
+	# WS stressors add
+	output$txt_setup_explore <- renderText({
+		react_setup_explore()
+	})
 	
 	observeEvent(input$fn_input_check_uload, {
 		inFile <- input$fn_input_check_uload
@@ -390,6 +395,10 @@ function(input, output, session) {
 			dplyr::filter(Variable == "removeOutliers") |>
 			dplyr::pull(Value) 
 		
+		meta_explore_wsstressor_val <- df_user_metadata |>
+			dplyr::filter(Variable == "exploreWSStressor") |>
+			dplyr::pull(Value)
+		
 		choices_chk_check_comm_sel <- choices_chk_check_comm[c(user_files_alg,
 																				 user_files_bmi,
 																				 user_files_fish)]
@@ -425,6 +434,7 @@ function(input, output, session) {
 		# 																 user_files_fish_sstv)])
 		react_chk_check_tol(choices_chk_check_tol_sel)
 		react_check_outliers(df_user_outliers)
+		react_setup_explore(meta_explore_wsstressor_val)
 	})
 	
 	
@@ -1163,13 +1173,13 @@ function(input, output, session) {
 	
 	## Set Up, Reactives ----
 	sel_targsite <- reactive(input$si_checked_sites_targ)
-	react_setup_explore <- reactiveVal("..No file uploaded..")
+	# react_setup_explore <- reactiveVal("..No file uploaded..")
 	react_setup_region <- reactiveVal(NULL) # triggers once
 	react_setup_format <- reactiveVal("..No file uploaded..")
 	
-	output$txt_setup_explore <- renderText({
-		react_setup_explore()
-	})
+	# output$txt_setup_explore <- renderText({
+	# 	react_setup_explore()
+	# })
 	
 	output$txt_setup_format <- renderText({
 		react_setup_format()
@@ -1386,14 +1396,14 @@ function(input, output, session) {
 			### update Reactives----
 			
 			#### explore_wsstressor_val
-			meta_explore_wsstressor_val <- df_user_metadata |>
-				dplyr::filter(Variable == "exploreWSStressor") |>
-				dplyr::pull(Value)
-			# if(meta_explore_wsstressor_val %in% c(TRUE, FALSE)) {
-			# 	# shiny::updateRadioButtons(session,
-			# 	# 						 "rad_setup_explore",
-			# 	# 						 selected = meta_explore_wsstressor_val)
-				react_setup_explore(meta_explore_wsstressor_val)
+			# meta_explore_wsstressor_val <- df_user_metadata |>
+			# 	dplyr::filter(Variable == "exploreWSStressor") |>
+			# 	dplyr::pull(Value)
+			# # if(meta_explore_wsstressor_val %in% c(TRUE, FALSE)) {
+			# # 	# shiny::updateRadioButtons(session,
+			# # 	# 						 "rad_setup_explore",
+			# # 	# 						 selected = meta_explore_wsstressor_val)
+			# 	react_setup_explore(meta_explore_wsstressor_val)
 			# } else {
 			# 	# Shiny alert - bad input
 			# }## IF ~ explore_wsstressor_val
@@ -2564,7 +2574,7 @@ function(input, output, session) {
 						HTML("Stressor(s) eliminated: No paired-stressor response sample at the target site (benthic macroinvertebrates)"),
 						tags$span(icon("info-circle"), 
 									 id = "bmiElimNoPairedInfo", 
-									 style = "color:#2fa4e7;") |>
+									 style = "color:#67c1f5;") |>
 							bs_embed_popover(title = "Helpful Hints",
 												  content = "Stressors that were either never measured at the target site or not measured within the user-specified time window from a response sample.",
 												  placement = "right",
@@ -2578,7 +2588,7 @@ function(input, output, session) {
 						HTML("Stressor(s) eliminated: Insufficient paired stressor-response samples across all comparator sites (benthic macroinvertebrates)"),
 						tags$span(icon("info-circle"), 
 									 id = "bmiElimInsuffInfo", 
-									 style = "color:#2fa4e7;") |>
+									 style = "color:#67c1f5;") |>
 							bs_embed_popover(title = "Helpful Hints",
 												  content = "Stressors with fewer paired stressor-response samples across all comparator sites than the user-specified sample limit.",
 												  placement = "right",
@@ -2592,7 +2602,7 @@ function(input, output, session) {
 						HTML("Stressor(s) eliminated: By the comparison of target and unimpaired comparator sample values (benthic macroinvertebrates)"),
 						tags$span(icon("info-circle"), 
 									 id = "bmiElimCoInfo", 
-									 style = "color:#2fa4e7;") |>
+									 style = "color:#67c1f5;") |>
 							bs_embed_popover(title = "Helpful Hints",
 												  content = "Stressors eliminated by the co-occurrence line of evidence: all target site samples received a score of -1. For 'increasing' stressors (stress increases with increasing values of stressor, e.g., conductivity), target sample values were not elevated relative to unimpaired, comparator samples. For 'decreasing' stressors (stress decreases with increasing values of stressor, e.g., dissolved oxygen), target sample values were not low relative to unimpaired, comparator samples.",
 												  placement = "right",
@@ -2620,7 +2630,7 @@ function(input, output, session) {
 						HTML("Stressor(s) eliminated: No paired-stressor response sample at the target site (fish)"),
 						tags$span(icon("info-circle"), 
 									 id = "fishElimNoPairedInfo", 
-									 style = "color:#2fa4e7;") |>
+									 style = "color:#67c1f5;") |>
 							bs_embed_popover(title = "Helpful Hints",
 												  content = "Stressors that were either never measured at the target site or not measured within the user-specified time window from a response sample.",
 												  placement = "right",
@@ -2634,7 +2644,7 @@ function(input, output, session) {
 						HTML("Stressor(s) eliminated: Insufficient paired stressor-response samples across all comparator sites (fish)"),
 						tags$span(icon("info-circle"), 
 									 id = "fishElimInsuffInfo", 
-									 style = "color:#2fa4e7;") |>
+									 style = "color:#67c1f5;") |>
 							bs_embed_popover(title = "Helpful Hints",
 												  content = "Stressors with fewer paired stressor-response samples across all comparator sites than the user-specified sample limit.",
 												  placement = "right",
@@ -2648,7 +2658,7 @@ function(input, output, session) {
 						HTML("Stressor(s) eliminated: By the comparison of target and unimpaired comparator sample values (fish)"),
 						tags$span(icon("info-circle"), 
 									 id = "fishElimCoInfo", 
-									 style = "color:#2fa4e7;") |>
+									 style = "color:#67c1f5;") |>
 							bs_embed_popover(title = "Helpful Hints",
 												  content = "Stressors eliminated by the co-occurrence line of evidence: all target site samples received a score of -1. For 'increasing' stressors (stress increases with increasing values of stressor, e.g., conductivity), target sample values were not elevated relative to unimpaired, comparator samples. For 'decreasing' stressors (stress decreases with increasing values of stressor, e.g., dissolved oxygen), target sample values were not low relative to unimpaired, comparator samples.",
 												  placement = "right",
@@ -2676,7 +2686,7 @@ function(input, output, session) {
 						HTML("Stressor(s) eliminated: No paired-stressor response sample at the target site (algae)"),
 						tags$span(icon("info-circle"), 
 									 id = "algElimNoPairedInfo", 
-									 style = "color:#2fa4e7;") |>
+									 style = "color:#67c1f5;") |>
 							bs_embed_popover(title = "Helpful Hints",
 												  content = "Stressors that were either never measured at the target site or not measured within the user-specified time window from a response sample.",
 												  placement = "right",
@@ -2690,7 +2700,7 @@ function(input, output, session) {
 						HTML("Stressor(s) eliminated: Insufficient paired stressor-response samples across all comparator sites (algae)"),
 						tags$span(icon("info-circle"), 
 									 id = "algElimInsuffInfo", 
-									 style = "color:#2fa4e7;") |>
+									 style = "color:#67c1f5;") |>
 							bs_embed_popover(title = "Helpful Hints",
 												  content = "Stressors with fewer paired stressor-response samples across all comparator sites than the user-specified sample limit.",
 												  placement = "right",
@@ -2704,7 +2714,7 @@ function(input, output, session) {
 						HTML("Stressor(s) eliminated: By the comparison of target and unimpaired comparator sample values (algae)"),
 						tags$span(icon("info-circle"), 
 									 id = "algElimCoInfo", 
-									 style = "color:#2fa4e7;") |>
+									 style = "color:#67c1f5;") |>
 							bs_embed_popover(title = "Helpful Hints",
 												  content = "Stressors eliminated by the co-occurrence line of evidence: all target site samples received a score of -1. For 'increasing' stressors (stress increases with increasing values of stressor, e.g., conductivity), target sample values were not elevated relative to unimpaired, comparator samples. For 'decreasing' stressors (stress decreases with increasing values of stressor, e.g., dissolved oxygen), target sample values were not low relative to unimpaired, comparator samples.",
 												  placement = "right",
@@ -3010,7 +3020,7 @@ output$woe_tab_ui <- renderUI({
 				h3(tagList(
 					"Biological index distributions",
 					icon("info-circle", 
-						  style = "color: #2fa4e7", 
+						  style = "color: #67c1f5", 
 						  id="bmiIndInfo") |>
 						bs_embed_popover(title = "Helpful Hints",
 											  content = "Boxplots depicting the distribution of benthic macroinvertebrate index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds).",
@@ -3031,7 +3041,7 @@ output$woe_tab_ui <- renderUI({
 				h3(tagList(
 					"Weight of evidence table",
 					icon("info-circle", 
-						  style = "color: #2fa4e7", 
+						  style = "color: #67c1f5", 
 						  id="bmiWOEInfo") |>
 						bs_embed_popover(title = "Helpful Hints",
 											  content = "Line of evidence scores assigned to each benthic macroinvertebrate sample for each evaluated stressor.",
@@ -3049,7 +3059,7 @@ output$woe_tab_ui <- renderUI({
 				h3(tagList(
 					"Lines of evidence summary",
 					icon("info-circle", 
-						  style = "color: #2fa4e7", 
+						  style = "color: #67c1f5", 
 						  id="bmiWOESummInfo") |>
 						bs_embed_popover(title = "Helpful Hints",
 											  content = "Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each benthic macroinvertebrate sample and each evaluated stressor.",
@@ -3082,7 +3092,7 @@ output$woe_tab_ui <- renderUI({
 				h3(tagList(
 					"Biological index distributions",
 					icon("info-circle", 
-						  style = "color: #2fa4e7", 
+						  style = "color: #67c1f5", 
 						  id="fishIndInfo") |>
 						bs_embed_popover(title = "Helpful Hints",
 											  content = "Boxplots depicting the distribution of fish index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds).",
@@ -3102,7 +3112,7 @@ output$woe_tab_ui <- renderUI({
 				h3(tagList(
 					"Weight of evidence table",
 					icon("info-circle", 
-						  style = "color: #2fa4e7", 
+						  style = "color: #67c1f5", 
 						  id="fishWOEInfo") |>
 						  	bs_embed_popover(title = "Helpful Hints",
 						  						  content = "Line of evidence scores assigned to each fish sample for each evaluated stressor.",
@@ -3120,7 +3130,7 @@ output$woe_tab_ui <- renderUI({
 				h3(tagList(
 					"Lines of evidence summary",
 					icon("info-circle", 
-						  style = "color: #2fa4e7", 
+						  style = "color: #67c1f5", 
 						  id="fishWOESummInfo") |>
 						bs_embed_popover(title = "Helpful Hints",
 											  content = "Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each fish sample and each evaluated stressor.",
@@ -3153,7 +3163,7 @@ output$woe_tab_ui <- renderUI({
 				h3(tagList(
 					"Biological index distributions",
 					icon("info-circle", 
-						  style = "color: #2fa4e7", 
+						  style = "color: #67c1f5", 
 						  id="algIndInfo") |>
 						bs_embed_popover(title = "Helpful Hints",
 											  content = "Boxplots depicting the distribution of algae index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds).",
@@ -3173,7 +3183,7 @@ output$woe_tab_ui <- renderUI({
 				h3(tagList(
 					"Weight of evidence table",
 					icon("info-circle", 
-						  style = "color: #2fa4e7", 
+						  style = "color: #67c1f5", 
 						  id="algWOEInfo") |>
 						bs_embed_popover(title = "Helpful Hints",
 											  content = "Line of evidence scores assigned to each algae sample for each evaluated stressor.",
@@ -3191,7 +3201,7 @@ output$woe_tab_ui <- renderUI({
 				h3(tagList(
 					"Lines of evidence summary",
 					icon("info-circle", 
-						  style = "color: #2fa4e7", 
+						  style = "color: #67c1f5", 
 						  id="algWOESummInfo") |>
 						bs_embed_popover(title = "Helpful Hints",
 											  content = "Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each algae sample and each evaluated stressor.",
