@@ -27,7 +27,7 @@ function() {
 								p(tagList(
 									strong("Reaches to display: "),
 									icon("info-circle", 
-										  style = "color: #2fa4e7", 
+										  style = "color: #67c1f5", 
 										  id="reachesInfo") |>
 										bs_embed_popover(title = "Helpful Hints",
 															  content = "To modify, change the useAllCompReaches parameter in '_CASTool_Metadata.xlsx'.",
@@ -56,7 +56,7 @@ function() {
 								 p(tagList(strong("Watershed stressor figure"),
 								 			 actionLink("helpWSStrFig", 
 								 			 			  label = NULL, 
-								 			 			  icon = icon("circle-info"), 
+								 			 			  icon = icon("question-circle", class = "fas"), 
 								 			 			  class = "help-btn"))
 								   ),
 								 imageOutput("plot_wshed", # size set in plot_wshed

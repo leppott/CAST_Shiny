@@ -17,9 +17,9 @@ navbarPage("CASTool",
 			  tab_code_checkfiles(),
 			  tab_code_setup(),
 			  tab_code_report(),
-			  tab_code_wshedstress(),
 			  tab_code_candcause(),
 			  tab_code_woesumm(),
 			  tab_code_stresssumm(),
-			  tab_code_gaps()
+			  tab_code_wshedstress(),
+			  tab_code_gaps(),
 )## navbarPage ~ END

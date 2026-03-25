@@ -1,7 +1,7 @@
 # Check Files
 
 function() {
-	tabPanel("Check File Inputs",
+	tabPanel("Upload and Check Data",
 				tags$head(tags$style(HTML("
 				  .pill {
 				    background: #f5f5f5;
@@ -47,8 +47,8 @@ function() {
 								fn_default_check_input_cast_metadata,
 								".'")))),
 					# table for imported files
-					h4("Matching files"),
-					DT::dataTableOutput("df_import_files_DT"),
+					# h4("Matching files"),
+					# DT::dataTableOutput("df_import_files_DT"),
 					h4("Missing files"),
 					p(em("Files included in the metadata but not present in the uploaded zipped folder.")),
 					div(style = "margin-bottom: 20px", pre(textOutput("txt_import_files_missing"))),
@@ -107,7 +107,7 @@ function() {
 									 p(tagList(
 									 	strong("Exclude outliers: "),
 									 	icon("info-circle", 
-									 		  style = "color: #2fa4e7", 
+									 		  style = "color: #67c1f5", 
 									 		  id="outlierInfo") |>
 									 		bs_embed_popover(
 									 			title = "Helpful Hints",
@@ -130,6 +130,28 @@ function() {
 								 # 				 selected = "Yes"
 								 # )
 								 ),
+					fluidRow(
+						column(6,
+								 
+								 p(tagList(
+								 	strong("Explore watershed stressor data: "),
+								 	icon("info-circle", 
+								 		  style = "color: #67c1f5", 
+								 		  id="wsStressorInfo") |>
+								 		bs_embed_popover(title = "Helpful Hints",
+								 							  content = "To modify, change the exploreWSStressor parameter in '_CASTool_Metadata.xlsx'.",
+								 							  placement = "right",
+								 							  trigger = "hover"))),
+								 # bsPopover(id="wsStressorInfo", 
+								 # 			 title = HTML("<b>Helpful Hints</b>"), 
+								 # 			 content = HTML("To modify, change the exploreWSStressor parameter in _CASTool_Metadata.xlsx."),
+								 # 			 placement = "right", 
+								 # 			 trigger = "hover"),
+								 
+								 
+								 div(class = "pill", textOutput("txt_setup_explore"))),
+						
+					),
 					#),## fluidRow
 					
 					# 
