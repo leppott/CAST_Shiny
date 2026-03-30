@@ -933,8 +933,12 @@ function(input, output, session) {
 			fn_4zip_rds <- list.files(path = path_4zip_rds,
 										 full.names = TRUE)
 										 # pattern = "\\.rds$") # use all files
-			
-			fn_4zip <- c(fn_4zip_rds, fn_4zip_extra)
+         # add potential problem filepath
+			fn_4zip_ppfp <- list.files(path = file.path(out.dir,
+																	  region),
+												full.names = TRUE, 
+												pattern = "^Potential_Problem_FilePath.csv$")
+			fn_4zip <- c(fn_4zip_rds, fn_4zip_extra, fn_4zip_ppfp)
 			
 			# zip::zip(file.path(getwd(), dn_data, "check_rds.zip"), 
 			zip::zip(file.path(dn_data, "check_rds.zip"), 

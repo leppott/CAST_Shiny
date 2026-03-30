@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-03-30 16:27:22.133795
+    #> Last Update: 2026-03-30 17:08:12.931967
+
+# CAST_Shiny 1.0.0.9024 (2026-03-30)
+
+- refactor: Add potential problem filepath csv to check files
 
 # CAST_Shiny 1.0.0.9023 (2026-03-30)
 
