@@ -272,7 +272,7 @@ function(input, output, session) {
 	react_chk_check_stress <- reactiveVal("..No file uploaded..")
 	react_chk_check_tol    <- reactiveVal("..No file uploaded..")
 	react_check_outliers   <- reactiveVal("..No file uploaded..")
-	react_setup_explore <- reactiveVal("..No file uploaded..")
+	react_setup_explore    <- reactiveVal("..No file uploaded..")
 	
 	output$txt_chk_check_comm  <- renderText({
 		react_chk_check_comm()
@@ -393,7 +393,7 @@ function(input, output, session) {
 		df_user_outliers <- df_user_metadata |>
 			dplyr::filter(Variable == "removeOutliers") |>
 			dplyr::pull(Value) 
-		
+	
 		meta_explore_wsstressor_val <- df_user_metadata |>
 			dplyr::filter(Variable == "exploreWSStressor") |>
 			dplyr::pull(Value)
@@ -1393,26 +1393,29 @@ function(input, output, session) {
 											 selected = NULL)
 	
 			### update Reactives----
-			
+		
 			#### explore_wsstressor_val
-			# meta_explore_wsstressor_val <- df_user_metadata |>
-			# 	dplyr::filter(Variable == "exploreWSStressor") |>
-			# 	dplyr::pull(Value)
+			meta_explore_wsstressor_val <- df_user_metadata |>
+				dplyr::filter(Variable == "exploreWSStressor") |>
+				dplyr::pull(Value)
 			# # if(meta_explore_wsstressor_val %in% c(TRUE, FALSE)) {
 			# # 	# shiny::updateRadioButtons(session,
 			# # 	# 						 "rad_setup_explore",
 			# # 	# 						 selected = meta_explore_wsstressor_val)
-			# 	react_setup_explore(meta_explore_wsstressor_val)
+				react_setup_explore(meta_explore_wsstressor_val)
 			# } else {
 			# 	# Shiny alert - bad input
 			# }## IF ~ explore_wsstressor_val
+				# 20200330, turn back on, waw "..No File Uploaded.."
 				
 				if (react_setup_explore() == "TRUE") {
 					showTab(inputId = "navbar",
 							  target = "tab_wshedstress")
+					react_report_time_est$ws_stressors <- 1
 				} else {
 					hideTab(inputId = "navbar",
 							  target = "tab_wshedstress")
+					react_report_time_est$ws_stressors <- 0
 				}## IF
 				
 				#### region, reactive
@@ -1803,6 +1806,7 @@ function(input, output, session) {
 	react_report_time_est <- reactiveValues(
 		num_biocomm = NA_real_,
 		num_stressors = NA_real_,
+		ws_stressors = NA_real_,
 		total = NA_real_
 	)
 	
@@ -1811,10 +1815,11 @@ function(input, output, session) {
 		# reactive values updated in Setup, Import
 
 		# Calc time est
-		time_est <- round(time_est_m_base +
-									(time_est_m_stressor * 
-									 	react_report_time_est$num_biocomm * 
-									 	react_report_time_est$num_stressors),
+		time_est <- round(
+			time_est_base_int +
+			(time_est_x_biocomm * react_report_time_est$num_biocomm) +
+			(time_est_y_numstress * react_report_time_est$num_stressors) +
+			(time_est_z_wsstress * react_report_time_est$ws_stressors),
 								2)
 		# update reactive time est
 		react_report_time_est$total <- time_est
@@ -2018,7 +2023,7 @@ function(input, output, session) {
 			prog_detail <- "Clean Up..."
 			message(paste0("\n", prog_detail))
 			# Number of increments
-			prog_n <- 5
+			prog_n <- 8
 			prog_sleep <- 0.25
 			
 			### 01, Enabled buttons ----
@@ -2226,7 +2231,7 @@ function(input, output, session) {
 			}## exists ~ data_stressorinfoWS
 			
 			## 07, Target Site Status----
-			prog_detail <- "06, Target Site Status"
+			prog_detail <- "07, Target Site Status"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
 			incProgress(1/prog_n, detail = prog_detail)
@@ -2249,7 +2254,26 @@ function(input, output, session) {
 												reason = "no status file")
 			}## file.exists
 			
+			## 08, Num Reponses----
+			prog_detail <- "08, Number Responses"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
 			
+			## read responses
+			react_report_time_est_num_responses <- NA
+			# read file
+			fn_responses <- file.path(dn_results,
+											  react_setup_region(),
+											  stat_id,
+											  paste0(stat_id, "_Responses.csv"))
+			if(file.exists(fn_responses)) {
+				df_responses <- read.csv(fn_responses)
+				react_report_time_est_num_responses <- nrow(df_responses)
+			} else {
+				react_report_time_est_num_responses <- NA
+			}## IF ~ file exists ~ fn_responses
 			
 			
 			
@@ -2291,8 +2315,8 @@ function(input, output, session) {
 						 		 react_report_time_est$num_biocomm),
 						 paste0("stressors (n) = ",
 						 		 react_report_time_est$num_stressors),
-						 # paste0("responses (n) = ",
-						 # 		 "#"),
+						 paste0("responses (n) = ",
+						 		 react_report_time_est_num_responses),
 						 paste0("watershed stressors = ",
 						 		 react_setup_explore()),
 						 sep = "\n")
@@ -2498,6 +2522,37 @@ function(input, output, session) {
 		}##content~END
 		#, contentType = "application/zip"
 	)##download ~ check files
+	
+	## WS Stress Meta ----
+	output$ws_stress_meta <- DT::renderDT({
+		req(react_report_run())
+		
+		df_ws_meta <- CASToolHelperPckg::getWSStressorInfo() |> 
+			dplyr::group_by(StreamCatVar, Label) |> 
+			dplyr::mutate(Year = paste(min(Year), max(Year), sep = " - ")) |> 
+			dplyr::distinct(Label, Year, DataSource) |> 
+			dplyr::ungroup() |> 
+			dplyr::select(-StreamCatVar) |> 
+			dplyr::mutate(Year = dplyr::case_when(
+				Year == "NA - NA" ~ NA, 
+				TRUE ~ Year
+			)) |> 
+			dplyr::rename("Variable" = "Label",
+							  "Data Source" = "DataSource")
+		
+		DT::datatable(
+			df_ws_meta,
+			options = list(
+				scrollX = TRUE,
+				pageLength = 5,
+				lengthMenu = c(5, 10, 25, 50, 100, 1000),
+				autoWidth = TRUE
+			), 
+			rownames = FALSE,
+			filter = "top"
+		)
+	})
+	
 	
 # CAND CAUSE ----
 	

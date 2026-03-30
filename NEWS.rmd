@@ -20,6 +20,12 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 1.0.0.9023 (2026-03-30)
+
+* refactor: Add metadata info to WS Stressor tab
+* recactor: Update report complete timing estimate
+* fix: Turn on ws stressor variable so tab will be visible
+
 # CAST_Shiny 1.0.0.9022 (2026-03-27)
 
 * docs: Revise package list in DESCRIPTION to match global after

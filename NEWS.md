@@ -4,7 +4,13 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-03-27 13:38:19.875251
+    #> Last Update: 2026-03-30 16:27:22.133795
+
+# CAST_Shiny 1.0.0.9023 (2026-03-30)
+
+- refactor: Add metadata info to WS Stressor tab
+- recactor: Update report complete timing estimate
+- fix: Turn on ws stressor variable so tab will be visible
 
 # CAST_Shiny 1.0.0.9022 (2026-03-27)
 

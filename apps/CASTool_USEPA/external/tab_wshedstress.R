@@ -67,7 +67,14 @@ function() {
 				fluidRow(
 					column(12, 
 							 p(strong("Table of watershed stressor variables elevated at the target reach")),
-							 DT::dataTableOutput("ws_stress_high")))
+							 DT::dataTableOutput("ws_stress_high"))), 
+				fluidRow(
+					column(12,
+							 p(strong("Watershed stressor metadata")),
+							 DT::dataTableOutput("ws_stress_meta")
+							 )
+					
+				)
 					
 				#			)## mainPanel
 				)## tabPanel

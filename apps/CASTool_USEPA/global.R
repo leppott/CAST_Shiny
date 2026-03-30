@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "1.0.0.9022"
+pkg_version <- "1.0.0.9023"
 
 # Packages ----
 library(shiny)
@@ -216,5 +216,7 @@ url_github_castshiny <- "https://raw.githubusercontent.com/leppott/CAST_Shiny/ma
 # df_wsstressors <- read.csv(fn_wsstressors)
 
 # Time Estimate ----
-time_est_m_base <- 1.79
-time_est_m_stressor <- 0.13
+time_est_base_int <- 15.4
+time_est_x_biocomm <- 0.244
+time_est_y_numstress <- -0.539
+time_est_z_wsstress <- 3.71
