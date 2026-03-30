@@ -24,7 +24,6 @@ function(input, output, session) {
 											paste0(app_name, "_", 
 													 session$token))
 	# have BASE_DIR in GLOBAL
-	
 	dn_data     <- file.path(base_session_dir, "Data")
 	dn_results  <- file.path(base_session_dir, "Results")
 	dn_rmd_html <- file.path(base_session_dir, "RMD_HTML")
@@ -1991,7 +1990,7 @@ function(input, output, session) {
 		# code (wrap with progress pop up)
 		shiny::withProgress({
 			
-			# browser()
+			 # browser()
 			# 	cat("debug here")
 			# 	
 			# # debugging

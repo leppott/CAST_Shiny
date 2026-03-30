@@ -1,7 +1,7 @@
 Package: CAST_Shiny
 Title: Shiny App for CASTfxn package
 Description: Shiny app (CASTool) to create web app for CAST process.
-Version: 1.0.0.9021
+Version: 1.0.0.9022
 Authors@R: c(
   person("Erik W.", "Leppo", email="Erik.Leppo@tetratech.com", role=c("aut","cre")),
   person("Ann","Roseberry Lincoln", role="aut"),
@@ -14,21 +14,31 @@ URL: https://github.com/leppott/CAST_Shiny/
 BugReports: https://github.com/leppott/CAST_Shiny/issues
 Imports: 
   CASTfxn,
+  CASToolHelperPckg,
   shiny,
   shinyalert,
   shinyjs,
   shinyBS,
   shinydashboard,
-  knitr,
-  DT,
+  shinyalert,
+  shinycssloaders,
   bsplus,
-  CASToolClusterPckg,
-  CASToolWSStressorPckg,
-  CASToolBaseDataPckg.
-  sf,
+  knitr,
   kableExtra,
-  shinycssloaders
+  DT,
+  sf,
+  sfarrow,
+  aws.s3
 Suggests:
     rmarkdown,
+	 dplyr,
+    tidyr,
+    stringr,
+    readxl,
+    htmltools,
+    maps,
+    data.table,
+    devtools,
+    pak
 LazyData: true
 RoxygenNote: 7.3.3

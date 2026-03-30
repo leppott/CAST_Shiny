@@ -4,7 +4,17 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-03-24 16:12:15.983863
+    #> Last Update: 2026-03-27 13:38:19.875251
+
+# CAST_Shiny 1.0.0.9022 (2026-03-27)
+
+- docs: Revise package list in DESCRIPTION to match global after
+  revisions to skeleton code
+- refactor: Add extra steps to Report progress bar
+  - Add each biocomm, was assuming only 1
+- refactor: Report complete alert
+  - Update timing
+  - Add number of responses
 
 # CAST_Shiny 1.0.0.9021 (2026-03-24)
 

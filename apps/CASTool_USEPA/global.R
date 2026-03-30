@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "1.0.0.9021"
+pkg_version <- "1.0.0.9022"
 
 # Packages ----
 library(shiny)
@@ -17,12 +17,24 @@ library(DT)      # nice tables
 library(bsplus)  # tooltips
 # CASTool pkgs
 library(CASTfxn)
-library(CASToolClusterPckg) 
-library(CASToolWSStressorPckg)
+library(CASToolHelperPckg)
 library(sf)
-library(CASToolBaseDataPckg)
 library(kableExtra)
 library(shinycssloaders) # withSpinner
+library(sfarrow)
+library(aws.s3)
+# other
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(htmltools)
+library(maps)
+library(readxl)
+library(rmarkdown)
+library(shinyalert)
+library(data.table)
+library(devtools)
+library(pak)
 
 # library(zip)	  # use `utils` as `zip` pkg doesn't work on ShinyApps.io
 
