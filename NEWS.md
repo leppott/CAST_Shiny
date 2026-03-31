@@ -4,7 +4,13 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-03-31 10:01:37.274978
+    #> Last Update: 2026-03-31 11:19:17.070348
+
+# CAST_Shiny 1.0.0.9026 (2026-03-31)
+
+- docs: Add missing packages needed for ShinyApps.io
+  - DESCRIPTION
+  - global.R
 
 # CAST_Shiny 1.0.0.9025 (2026-03-31)
 

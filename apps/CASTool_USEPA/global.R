@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "1.0.0.9025"
+pkg_version <- "1.0.0.9026"
 
 # Packages ----
 library(shiny)
@@ -38,6 +38,23 @@ library(shinyalert)
 library(data.table)
 library(devtools)
 library(pak)
+# more
+library(ggmap)
+library(ggplot2)
+library(ggrepel)
+library(grDevices)
+library(grid)
+library(gridExtra)
+library(here)
+library(leaflet)
+library(lubridate)
+library(purrr)
+library(rsconnect)
+library(shinyFiles)
+library(sp)
+library(tools)
+library(viridis)
+library(zip)
 
 # library(zip)	  # use `utils` as `zip` pkg doesn't work on ShinyApps.io
 
