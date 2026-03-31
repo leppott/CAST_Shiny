@@ -744,6 +744,7 @@ function(input, output, session) {
 	## boo to indicate check qctables files saved
 	check_qctable_1_save <- reactiveVal(FALSE)
 	check_qctable_2_save <- reactiveVal(FALSE)
+	check_problem_paths <- reactiveVal(0)
 	
 	observeEvent(input$but_check_check, {
 		shiny::withProgress({
@@ -752,7 +753,7 @@ function(input, output, session) {
 			prog_detail <- "Check Files..."
 			message(paste0("\n", prog_detail))
 			# Number of increments
-			prog_n <- 5
+			prog_n <- 7
 			prog_sleep <- 0.25
 			
 			# QC, missing files
@@ -941,7 +942,21 @@ function(input, output, session) {
 						fn_4zip,
 						mode = "cherry-pick")
 			
-			### 05, Update UI----
+			### 05, Problem Paths ----
+			prog_detail <- "Problem Paths"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			# read file
+			if(file.exists(fn_4zip_ppfp)) {
+				# check file contents
+				df_pp <- read.csv(fn_4zip_ppfp)
+				check_problem_paths(nrow(df_pp))
+			}## IF ~ file.exists ~ ppfp
+			
+			### 06, Update UI----
 			prog_detail <- "Update UI"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
@@ -952,17 +967,29 @@ function(input, output, session) {
 			shinyjs::enable("but_check_dload_qctables")
 			shinyjs::enable("but_check_dload_rds")
 			
-			### 06, Info Pop Up ----
+			### 07, Info Pop Up ----
 			prog_detail <- "Inform User"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
 			incProgress(1/prog_n, detail = prog_detail)
 			Sys.sleep(prog_sleep)
 			
-			msg <- paste("File checks are complete.",
-							 "(Optionally) download file check tables to refer to issues identified in the input data.",
-							 "Once you have corrected and re-uploaded the input data, download the checked files zipped folder for use in the next step of the CASTool beginning on the Set Up Tool tab.",
-							 sep = "\n\n")
+			# shiny alert
+			if(check_problem_paths() > 0) {
+				msg <- paste("File checks are complete.",
+								 paste0("Some paths (n = ",
+										  check_problem_paths(),
+										  " ) could be too long and problematic."),
+								 "Check file 'Potential_Problem_FilePath.csv' in the zip download.",
+								 "Shorten any identified variable names and re-CHECK files.",
+								 sep = "\n\n")
+			} else {
+				msg <- paste("File checks are complete.",
+								 "(Optionally) download file check tables to refer to issues identified in the input data.",
+								 "Once you have corrected and re-uploaded the input data, download the checked files zipped folder for use in the next step of the CASTool beginning on the Set Up Tool tab.",
+								 sep = "\n\n")
+			}## IF ~ check_problem_paths
+			
 			shinyalert::shinyalert(title = "Check Files",
 										  text = msg,
 										  type = "info",

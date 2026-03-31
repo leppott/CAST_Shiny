@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-03-31 11:19:17.070348
+    #> Last Update: 2026-03-31 12:32:26.198321
+
+# CAST_Shiny 1.0.0.9027 (2026-03-31)
+
+- feature: Add pop up if have problem paths in CHECK FILES
 
 # CAST_Shiny 1.0.0.9026 (2026-03-31)
 
