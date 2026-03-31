@@ -4,7 +4,11 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-03-30 17:08:12.931967
+    #> Last Update: 2026-03-31 10:01:37.274978
+
+# CAST_Shiny 1.0.0.9025 (2026-03-31)
+
+- docs: Post-merge version number update
 
 # CAST_Shiny 1.0.0.9024 (2026-03-30)
 
