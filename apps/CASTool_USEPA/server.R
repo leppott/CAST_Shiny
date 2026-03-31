@@ -244,10 +244,11 @@ function(input, output, session) {
 			incProgress(1/prog_n, detail = prog_detail)
 			Sys.sleep(prog_sleep)
 			
-			msg <- paste("Import of files is complete.\n",
-							 "'Verify' all files are included.",
-							 "Then 'Check' the files.",
-							 sep = "\n")
+			msg <- paste("File import is complete.",
+							 "Review Missing files and Extra files boxes below to confirm that all intended files were uploaded and recognized by the CASTool.",
+							 "Then select the Check input files button to run checks on file formatting and matchups between paired files.",
+							 "Correct any identified issues in the input data files, then upload a zipped folder with the corrected files.","Repeat the above steps until there are no issues, then select the Download checked data button to download the zipped folder required for the next step of the CASTool on the Set Up Tool tab.",
+							 sep = "\n\n")
 			shinyalert::shinyalert(title = "Import Files",
 										  text = msg,
 										  type = "info",
@@ -288,11 +289,6 @@ function(input, output, session) {
 	
 	output$txt_check_outliers <- renderText({
 		react_check_outliers()
-	})
-	
-	# WS stressors add
-	output$txt_setup_explore <- renderText({
-		react_setup_explore()
 	})
 	
 	observeEvent(input$fn_input_check_uload, {
@@ -433,7 +429,7 @@ function(input, output, session) {
 		# 																 user_files_fish_sstv)])
 		react_chk_check_tol(choices_chk_check_tol_sel)
 		react_check_outliers(df_user_outliers)
-		react_setup_explore(meta_explore_wsstressor_val)
+
 	})
 	
 	
@@ -963,10 +959,10 @@ function(input, output, session) {
 			incProgress(1/prog_n, detail = prog_detail)
 			Sys.sleep(prog_sleep)
 			
-			msg <- paste("Checking of files is complete.",
-							 "Download QC tables 1 and 2 (if needed).",
-							 "Then download checked files (RDS) for use in 'Set Up'.",
-							 sep = "\n")
+			msg <- paste("File checks are complete.",
+							 "(Optionally) download file check tables to refer to issues identified in the input data.",
+							 "Once you have corrected and re-uploaded the input data, download the checked files zipped folder for use in the next step of the CASTool beginning on the Set Up Tool tab.",
+							 sep = "\n\n")
 			shinyalert::shinyalert(title = "Check Files",
 										  text = msg,
 										  type = "info",
@@ -1153,6 +1149,9 @@ function(input, output, session) {
 		#, contentType = "application/zip"
 	)##download ~ check files
 	
+	but_check_msg <- reactiveVal("")
+	
+	output$but_check_msg <- renderText(but_check_msg())
 	
 	## b_dload_check_RDS ----
 	output$but_check_dload_rds <- shiny::downloadHandler(
@@ -1163,10 +1162,13 @@ function(input, output, session) {
 		} ,
 		content = function(fname) {
 			file.copy(file.path(dn_data, "check_rds.zip"), fname)
+			
+			but_check_msg("If there are no remaining issues with the input data, proceed to the Set Up Tool tab to upload the folder downloaded above.")
+			
+			shinyjs::runjs("$('html, body').animate({scrollTop: $(document).height()},2000)")
 		}##content~END
 		#, contentType = "application/zip"
 	)##download ~ check files
-	
 	
 	
 # SET UP ----
@@ -1176,9 +1178,11 @@ function(input, output, session) {
 	
 	## Set Up, Reactives ----
 	sel_targsite <- reactive(input$si_checked_sites_targ)
-	# react_setup_explore <- reactiveVal("..No file uploaded..")
+
 	react_setup_region <- reactiveVal(NULL) # triggers once
 	react_setup_format <- reactiveVal("..No file uploaded..")
+	react_setup_explore <- reactiveVal("..No file uploaded..")
+	
 	
 	# output$txt_setup_explore <- renderText({
 	# 	react_setup_explore()
@@ -1187,6 +1191,32 @@ function(input, output, session) {
 	output$txt_setup_format <- renderText({
 		react_setup_format()
 	})
+	
+	# WS stressors add
+	output$txt_setup_explore <- renderText({
+		react_setup_explore()
+	})
+	
+	observeEvent(input$clusterFig, {
+		showModal(modalDialog(
+			title = "CASTool Clustering Comparator Assignment Method",
+			"The CASTool provides a built-in method of assigning comparator sites to a target site. Comparator assignments using this method do not change with data inputs from users. The CASTool method clusters stream reaches based on the similarity of non-anthropogenic factors including streamflow, lithology, and climate, leveraging data from the EPA StreamCat and  NHDPlusV2 datasets. This method generates comparator assignments with one through five clusters, and assigns a default number of clusters based on the maximum number of clusters that each contain at least 20% of total stream reaches within the analysis region. Users analyzing an entire state can direct the CASTool to use the built-in comparator assignment method by setting the helperImport parameter in the _CASTool_metadata.xlsx to TRUE. Users can then select any number of clusters one through five, or the default number of clusters identified by the algorithm, using the clusterNumber parameter. Users analyzing a custom region can generate CASTool clustering algorithm outputs by working through the clustering module (to be built) in the application and including the outputs in the uploaded data input files. For any analysis region, users can provide comparator assignments using a different method by modifying _CASTool_metadata.xlsx parameters and including the required input files in the uploaded folder. See the User Guide for additional details and instructions.",
+			easyClose = TRUE,
+			footer = modalButton("Close")
+		))
+	})
+	
+	
+	output$si_selected_text <- renderText({
+		# The expression here is reactive; it updates when input$text_input_id changes
+		if (is.null(sel_targsite()) | sel_targsite() == "") {
+			txt_out <- ""
+		} else {
+			txt_out <- paste0(sel_targsite(), " selected. Proceed to the Run Report tab to run the CASTool analyses.")
+		}## IF
+		txt_out
+	})
+	
 	
 	## Set Up, SiteID, Selected and Report different ----
 	observeEvent(input$si_checked_sites_targ, {
@@ -1270,8 +1300,8 @@ function(input, output, session) {
 			files_unzip <- zip::zip_list(fn_inFile)
 			boo_unzip_metadata_rds <- "CASTmetadata.rds" %in% files_unzip$filename
 			if(boo_unzip_metadata_rds == FALSE) {
-				msg <- paste("Import data is missing 'CASTmetadata.rds'",
-								 "Ensure you are using the check files zip and not raw data.")
+				msg <- paste("Import data is missing 'CASTmetadata.rds'.",
+								 "Ensure you are using the check files zipped folder generated by the Upload and Check Data tab not raw data.", sep = '\n\n')
 				shinyalert::shinyalert(title = "Set Up Tool",
 											  text = msg,
 											  type = "error")
@@ -1432,6 +1462,20 @@ function(input, output, session) {
 					toupper()
 				react_setup_format(meta_setup_format)
 				
+				### 
+				meta_explore_wsstressor_val <- df_user_metadata |>
+					dplyr::filter(Variable == "exploreWSStressor") |>
+					dplyr::pull(Value)
+				react_setup_explore(meta_explore_wsstressor_val)
+				
+				if (react_setup_explore() == "TRUE") {
+					showTab(inputId = "navbar",
+							  target = "tab_wshedstress")
+				} else {
+					hideTab(inputId = "navbar",
+							  target = "tab_wshedstress")
+				}## IF
+				
 				#### cand cause
 				##### ph lo
 				meta_lim_ph_lo <- df_user_metadata |>
@@ -1506,8 +1550,8 @@ function(input, output, session) {
 			Sys.sleep(prog_sleep)
 			
 			msg <- paste("Checked files uploaded.",
-							 "Select a target site before running the report.",
-							 sep = "\n")
+							 "Select a target site before proceding to the Run Report tab to generate the report.",
+							 sep = "\n\n")
 			shinyalert::shinyalert(title = "Set Up",
 										  text = msg,
 										  type = "info",
@@ -1697,6 +1741,7 @@ function(input, output, session) {
 		path_map
 
 	})## path_img_abiotic
+	
 	
 	# path_img_abiotic <- reactive({
 	# 
@@ -2292,7 +2337,7 @@ function(input, output, session) {
 											  		  2))
 		
 		#### Info Pop Up ----
-		msg <- paste("Creation of report is complete.", 
+		msg <- paste("Creation of the report is complete. Select the Download report and supplemental files button to save CASTool outputs. To explore report outputs within the application interface, select 'Yes' under Show report summary tabs and proceed to the additional tabs at the top of the screen.", 
 						 "\n",
 						 "Status",
 						 "------",
@@ -2332,6 +2377,21 @@ function(input, output, session) {
 		
 	})## oE ~ Report
 	
+	# output$txt_rep_siteid_gaps <- renderText({
+	# 	# The expression here is reactive; it updates when input$text_input_id changes
+	# 	if (is.null(react_report_targetsiteid()) | 
+	# 		 react_report_targetsiteid() == "") {
+	# 		txt_siteid <- "..No target site selected.."
+	# 	} else {
+	# 		txt_siteid <- react_report_targetsiteid()
+	# 	}## IF
+	# 	#paste0("Target Site: ", txt_siteid)
+	# 	txt_siteid
+	# })
+	
+	report_tab_msg <- reactiveVal("")
+	
+	output$report_tab_msg <- renderText(report_tab_msg())
 	
 	
 	# unhide report tabs ----
@@ -2345,6 +2405,8 @@ function(input, output, session) {
 					  target = "tab_stresssumm")
 			showTab(inputId = "navbar",
 					  target = "tab_gaps")
+			
+			report_tab_msg("Proceed to the additional tabs at the top of the screen to review report outputs in the application interface.")
 		} else {
 			hideTab(inputId = "navbar",
 					  target = "tab_candcause")
@@ -2354,6 +2416,8 @@ function(input, output, session) {
 					  target = "tab_stresssumm")
 			hideTab(inputId = "navbar",
 					  target = "tab_gaps")
+			
+			report_tab_msg("")
 		}## IF
 		
 		
@@ -3132,7 +3196,7 @@ output$woe_tab_ui <- renderUI({
 						  style = "color: #67c1f5", 
 						  id="bmiIndInfo") |>
 						bs_embed_popover(title = "Helpful Hints",
-											  content = "Boxplots depicting the distribution of benthic macroinvertebrate index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds).",
+											  content = "Boxplots depicting the distribution of benthic macroinvertebrate index scores for sites inside and outside the case. Points represent index values with colors and shapes depicting reference and degraded status. Reference status is designated by the user in the Sites data input file and does not depend on the stressor or response data. Degraded status is assigned by comparing the index value in the response data to the user-designated threshold for impairment. Accordingly, a sample from a designated reference site could be degraded.",
 											  placement = "right",
 											  trigger = "hover"))),
 				# bsPopover(id="bmiIndInfo", 
@@ -3153,7 +3217,7 @@ output$woe_tab_ui <- renderUI({
 						  style = "color: #67c1f5", 
 						  id="bmiWOEInfo") |>
 						bs_embed_popover(title = "Helpful Hints",
-											  content = "Line of evidence scores assigned to each benthic macroinvertebrate sample for each evaluated stressor.",
+											  content = "Line of evidence scores assigned to each benthic macroinvertebrate sample for each evaluated stressor. The table can be filtered by stressor, sample ID, or sample date using the search bar and can be sorted using the sort icons adjacent to each column.",
 											  placement = "right",
 											  trigger = "hover"))),
 				# bsPopover(id="bmiWOEInfo", 
@@ -3171,7 +3235,7 @@ output$woe_tab_ui <- renderUI({
 						  style = "color: #67c1f5", 
 						  id="bmiWOESummInfo") |>
 						bs_embed_popover(title = "Helpful Hints",
-											  content = "Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each benthic macroinvertebrate sample and each evaluated stressor.",
+											  content = "Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each benthic macroinvertebrate sample and each evaluated stressor. Scores for each line of evidence are displayed in the weight of evidence table above.",
 											  placement = "right",
 											  trigger = "hover"))),
 				# bsPopover(id="bmiWOESummInfo", 
@@ -3204,7 +3268,7 @@ output$woe_tab_ui <- renderUI({
 						  style = "color: #67c1f5", 
 						  id="fishIndInfo") |>
 						bs_embed_popover(title = "Helpful Hints",
-											  content = "Boxplots depicting the distribution of fish index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds).",
+											  content = "Boxplots depicting the distribution of fish index scores for sites inside and outside the case. Points represent index values with colors and shapes depicting reference and degraded status. Reference status is designated by the user in the Sites data input file and does not depend on the stressor or response data. Degraded status is assigned by comparing the index value in the response data to the user-designated threshold for impairment. Accordingly, a sample from a designated reference site could be degraded.",
 											  placement = "right",
 											  trigger = "hover"))),
 				# bsPopover(id="fishIndInfo", 
@@ -3224,7 +3288,7 @@ output$woe_tab_ui <- renderUI({
 						  style = "color: #67c1f5", 
 						  id="fishWOEInfo") |>
 						  	bs_embed_popover(title = "Helpful Hints",
-						  						  content = "Line of evidence scores assigned to each fish sample for each evaluated stressor.",
+						  						  content = "Line of evidence scores assigned to each fish sample for each evaluated stressor. The table can be filtered by stressor, sample ID, or sample date using the search bar and can be sorted using the sort icons adjacent to each column.",
 						  						  placement = "right",
 						  						  trigger = "hover"))),
 				# bsPopover(id="fishWOEInfo", 
@@ -3242,7 +3306,7 @@ output$woe_tab_ui <- renderUI({
 						  style = "color: #67c1f5", 
 						  id="fishWOESummInfo") |>
 						bs_embed_popover(title = "Helpful Hints",
-											  content = "Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each fish sample and each evaluated stressor.",
+											  content = "Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each fish sample and each evaluated stressor. Scores for each line of evidence are displayed in the weight of evidence table above.",
 											  placement = "right",
 											  trigger = "hover"))),
 				# bsPopover(id="fishWOESummInfo", 
@@ -3275,7 +3339,7 @@ output$woe_tab_ui <- renderUI({
 						  style = "color: #67c1f5", 
 						  id="algIndInfo") |>
 						bs_embed_popover(title = "Helpful Hints",
-											  content = "Boxplots depicting the distribution of algae index scores for sites in the same (inside the case) and in a different cluster (outside the case) as the target site. Points represent index values with colors and shapes depicting reference and degraded status (i.e., whether index values exceed user-specified thresholds).",
+											  content = "Boxplots depicting the distribution of algae index scores for sites inside and outside the case. Points represent index values with colors and shapes depicting reference and degraded status. Reference status is designated by the user in the Sites data input file and does not depend on the stressor or response data. Degraded status is assigned by comparing the index value in the response data to the user-designated threshold for impairment. Accordingly, a sample from a designated reference site could be degraded.",
 											  placement = "right",
 											  trigger = "hover"))),
 				# bsPopover(id="algIndInfo", 
@@ -3295,7 +3359,7 @@ output$woe_tab_ui <- renderUI({
 						  style = "color: #67c1f5", 
 						  id="algWOEInfo") |>
 						bs_embed_popover(title = "Helpful Hints",
-											  content = "Line of evidence scores assigned to each algae sample for each evaluated stressor.",
+											  content = "Line of evidence scores assigned to each algae sample for each evaluated stressor. The table can be filtered by stressor, sample ID, or sample date using the search bar and can be sorted using the sort icons adjacent to each column.",
 											  placement = "right",
 											  trigger = "hover"))),
 				# bsPopover(id="algWOEInfo", 
@@ -3313,7 +3377,7 @@ output$woe_tab_ui <- renderUI({
 						  style = "color: #67c1f5", 
 						  id="algWOESummInfo") |>
 						bs_embed_popover(title = "Helpful Hints",
-											  content = "Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each algae sample and each evaluated stressor.",
+											  content = "Summary of the number of lines evidence supporting, refuting, indeterminate, or not evaluated for each algae sample and each evaluated stressor. Scores for each line of evidence are displayed in the weight of evidence table above.",
 											  placement = "right",
 											  trigger = "hover"))),
 				# bsPopover(id="algWOESummInfo", 
@@ -3340,30 +3404,29 @@ output$woe_tab_ui <- renderUI({
 
 # WOE SUMM ---- 
 
-sketch <- htmltools::withTags(table(
-	class = 'display',
-	thead(
-		tr(
-			th(rowspan = 3, shiny::HTML("<span title='Stressors being evaluated'>Stressor</span>")),
-			th(rowspan = 3, shiny::HTML("<span title='Biological response sample identifier'>Response Sample ID</span>")),
-			th(rowspan = 3, shiny::HTML("<span title='Sampling date for biological response'>Response Sample Date</span>")),
-			th(colspan = 7, shiny::HTML("<span title='Weight of Evidence lines inside the case group'>Inside-the-Case</span>")),
-			th(rowspan = 3, ''),
-			th(rowspan = 1, shiny::HTML("<span title='Weight of Evidence outside the case group'>Outside the Case</span>"))
-		),
-		tr(
-			th(rowspan = 2, shiny::HTML("<span title='Co-occurrence: coincidence of stressor elevation with biological response'>Co-Occurrence</span>")),
-			th(rowspan = 2, shiny::HTML("<span title='Sufficiency: degree to which the stressor is adequate to cause response'>Sufficiency</span>")),
-			th(rowspan = 2, shiny::HTML("<span title='Biological gradient within case group'>Biological Gradient</span>")),
-			th(rowspan = 2, shiny::HTML("<span title='Time sequence between stressor and biological response'>Time Sequence</span>")),
-			th(colspan = 3, shiny::HTML("<span title='Verified predictions across different scoring approaches'>Verified Prediction</span>")),
-			th(rowspan = 2, shiny::HTML("<span title='Biological gradient outside case group'>Biological Gradient'</span>"))
-		),
-		tr(
-			lapply(c('SSTolVals', 'SSI Co-Occurrence', 'SSI Sufficiency'), th)
-		)
+sketch <- htmltools::withTags(table(class = 'display', thead(
+	tr(
+		th(colspan = 3, ''),
+		th(colspan = 7, 'Inside-the-Case'),
+		th(colspan = 1, 'Outside the Case')
+	),
+	tr(
+		th(rowspan = 2, 'Stressor'),
+		th(rowspan = 2, 'Sample ID'),
+		th(rowspan = 2, 'Sample Date'),
+		th(rowspan = 2, shiny::HTML("<span title='Assesses whether a target sample value is elevated relative to stressor values from unimpaired, comparator samples, if stress increases with increasing values of the stressor. If stress decreases with increasing values of the stressor, the analysis evaluates whether a target sample value is low relative to stressor values from unimpaired, comparator samples.'>Co-Occurrence</span>")),
+		th(rowspan = 2, shiny::HTML("<span title='Assesses whether a target sample stressor value is associated with a higher probability of biological impairment, as determined using a logistic regression'>Sufficiency</span>")),
+		th(rowspan = 2, shiny::HTML("<span title='Assesses whether a stressor and biological response are linearly related for comparator sample observations'>Biological Gradient</span>")),
+		th(rowspan = 2, shiny::HTML("<span title='Assesses whether a candidate cause preceded a biological response.'>Time Sequence</span>")),
+		th(colspan = 3, 'Stressor-Specific'),
+		th(rowspan = 2, shiny::HTML("<span title='Assesses whether a stressor and biological response are linearly related for non-comparator sample observations'>Biological Gradient</span>"))
+	),
+	tr(
+		th(shiny::HTML("<span title='Assesses whether there are fewer number and percent of individuals and taxa sensitive to a particular stressor compared to unimpaired, comparator samples'>SSTolVals</span>")),
+		th(shiny::HTML("<span title='Co-occurrence analysis using a biological community metric (stressor-specific index) designed to assess impairment due to a particular stressor'>SSI Co-Occurrence</span>")),
+		 th(shiny::HTML("<span title='Sufficiency analysis using a biological community metric (stressor-specific index) designed to assess impairment due to a particular stressor'>SSI Sufficiency</span>"))
 	)
-))
+)))
 
 sketch_summ <- htmltools::withTags(table(
 	class = 'display',
@@ -3491,8 +3554,21 @@ sketch_summ <- htmltools::withTags(table(
 			}
 			
 			df <- df |> 
-				dplyr::mutate(Blank1 = NA) %>%
-				dplyr::select(Stressor, RespSampleID, RespSampleDate, CO, Suff, `Gradient..inside.`, TS, VP_SSTV, VP_SSIbox, VP_SSIlog, Blank1, `Gradient..outside.`)
+				#dplyr::mutate(Blank1 = NA) %>%
+				dplyr::select(
+					Stressor,
+					RespSampleID,
+					RespSampleDate,
+					CO,
+					Suff,
+					`Gradient..inside.`,
+					TS,
+					VP_SSTV,
+					VP_SSIbox,
+					VP_SSIlog,
+					#Blank1,
+					`Gradient..outside.`
+				)
 			
 		} else {
 			showNotification("WoE file not found.",
@@ -3531,7 +3607,9 @@ sketch_summ <- htmltools::withTags(table(
 						  									  bottomStart = 'info',
 						  									  bottomEnd = 'paging'),
 						  					pageLength = 10,
-						  					bSort = FALSE,
+						  					#bSort = FALSE,
+						  					ordering = TRUE,
+						  					orderCellsTop = FALSE,
 						  					scrollX = TRUE,
 						  					fixedColumns = list(leftColumns = 1),
 						  					autoWidth = FALSE,
@@ -3695,8 +3773,21 @@ sketch_summ <- htmltools::withTags(table(
 			}
 			
 			df <- df |> 
-				dplyr::mutate(Blank1 = NA) %>%
-				dplyr::select(Stressor, RespSampleID, RespSampleDate, CO, Suff, `Gradient..inside.`, TS, VP_SSTV, VP_SSIbox, VP_SSIlog, Blank1, `Gradient..outside.`)
+				#dplyr::mutate(Blank1 = NA) %>%
+				dplyr::select(
+					Stressor,
+					RespSampleID,
+					RespSampleDate,
+					CO,
+					Suff,
+					`Gradient..inside.`,
+					TS,
+					VP_SSTV,
+					VP_SSIbox,
+					VP_SSIlog,
+					#Blank1,
+					`Gradient..outside.`
+				)
 		} else {
 			showNotification("WoE file not found.",
 								  type = "warning",
@@ -3735,7 +3826,9 @@ sketch_summ <- htmltools::withTags(table(
 						  									  bottomStart = 'info',
 						  									  bottomEnd = 'paging'),
 						  					pageLength = 10,
-						  					bSort = FALSE,
+						  					#bSort = FALSE,
+						  					ordering = TRUE,
+						  					orderCellsTop = FALSE,
 						  					scrollX = TRUE,
 						  					fixedColumns = list(leftColumns = 1),
 						  					autoWidth = FALSE,
@@ -3899,8 +3992,21 @@ sketch_summ <- htmltools::withTags(table(
 			}
 			
 			df <- df |> 
-				dplyr::mutate(Blank1 = NA) %>%
-				dplyr::select(Stressor, RespSampleID, RespSampleDate, CO, Suff, `Gradient..inside.`, TS, VP_SSTV, VP_SSIbox, VP_SSIlog, Blank1, `Gradient..outside.`)
+				#dplyr::mutate(Blank1 = NA) %>%
+				dplyr::select(
+					Stressor,
+					RespSampleID,
+					RespSampleDate,
+					CO,
+					Suff,
+					`Gradient..inside.`,
+					TS,
+					VP_SSTV,
+					VP_SSIbox,
+					VP_SSIlog,
+					#Blank1,
+					`Gradient..outside.`
+				)
 		} else {
 			showNotification("WoE file not found.",
 								  type = "warning",
@@ -3938,7 +4044,9 @@ sketch_summ <- htmltools::withTags(table(
 						  									  bottomStart = 'info',
 						  									  bottomEnd = 'paging'),
 						  					pageLength = 10,
-						  					bSort = FALSE,
+						  					#bSort = FALSE,
+						  					ordering = TRUE,
+						  					orderCellsTop = FALSE,
 						  					scrollX = TRUE,
 						  					fixedColumns = list(leftColumns = 1),
 						  					autoWidth = FALSE,

@@ -15,8 +15,39 @@ knitr::opts_chunk$set(results='asis',
 							 fig.align="center")
 ```
 
-# Causal Assessment Screening Tool
-
 ## Disclaimer
 
-The Causal Assessment Screening Tool (CASTool) is designed to assess causes of biological impairment. CASTool is a data-driven tool that relies on the quality and completeness of the biological response and candidate stressor data provided by the user. It is most appropriately used to identify candidate causes which merit additional evaluation. The conceptual framework for the CASTool is the U.S. Environmental Protection Agency’s Causal Analysis/Diagnosis Decision Information System (CADDIS), which can be consulted for additional information on causal assessment.
+The Causal Assessment Screening Tool (CASTool) is designed to assess causes of biological impairment. CASTool is a data-driven tool that relies on the quality and completeness of the biological response and candidate stressor data provided by the user. It is most appropriately used to identify candidate causes which merit additional evaluation. The conceptual framework for the CASTool is the [U.S. Environmental Protection Agency’s Causal Analysis/Diagnosis Decision Information System (CADDIS)](https://www.epa.gov/caddis), which can be consulted for additional information on causal assessment.
+
+## CASTool Overview
+
+A comprehensive description of the CASTool is available in the User Guide linked above. In brief, the CASTool generates a report that applies a weight-of-evidence approach to evaluate stressors as causes of biological impairment. It processes user data inputs to generate a paired stressor-biological response dataset. This dataset is used for multiple analyses (lines of evidence), which are automatically scored according to whether they provide supporting, refuting, or indeterminate evidence of the stressor as the cause of impairment. These scores are then summarized in tables and figures for users to evaluate alongside figures for each line of evidence.
+
+Template files to assist users with formatting their data for the CASTool are linked above, along with a pre-formatted test dataset.
+
+```{r, out.width = "80%"}
+img1 <- here::here("apps", "CASTool_USEPA", "www", "CASTool_Schematic_long.png")
+knitr::include_graphics(img1)
+```
+
+The CASTool can be run in this Shiny web application or from an R console program. In the Shiny application, users can only run one site at a time, while the R console program allows users to generate reports for multiple target sites in sequence.  For a given target site, running the CASTool in the R console is generally faster than the Shiny application. To run the R console version of the tool, download or clone the [CASTfxn repository](https://github.com/leppott/CASTfxn.git) and follow the instructions in the User Guide. 
+
+## Shiny Application Overview
+
+In the Shiny application, the set up, generation, and display of results are divided across multiple tabs. Users first upload formatted data for automated checks to ensure the data are complete and correctly formatted. When users are satisfied with the data formatting, they download a zipped folder containing the checked files. Users then upload the checked files, select a target site, and generate a report. The report and supplemental files are available for download within the application and many of the report outputs are viewable in the application. 
+
+```{r, out.width = "80%"}
+img2 <- here::here("apps", "CASTool_USEPA", "www", "Shiny_schematic_long.png")
+knitr::include_graphics(img2)
+```
+
+## CASTool Built-In Comparator Assignment Method
+
+The CASTool relies on the comparison of data from a target site and data from sites called comparators that share similar characteristics but are unimpaired or differently impaired. Users can employ any comparator assignment method they wish. The CASTool provides a built-in comparator assignment method which clusters stream reaches within an analysis region based on the similarity of non-anthropogenic factors including streamflow, lithology, and climate. This method leverages data from [U.S. EPA’s StreamCat dataset](https://www.epa.gov/national-aquatic-resource-surveys/streamcat-dataset) and the NHDPlusV2. The resulting comparator assignments do not change with data inputs from users. This method generates comparator assignments with one through five clusters, and assigns a default number of clusters based on the maximum number of clusters that each contain at least 20% of total stream reaches within the analysis region. 
+
+Users analyzing an entire state within the continental United States can direct the CASTool to use the built-in comparator assignment method by setting the helperImport parameter in the _CASTool_metadata.xlsx to TRUE. Users can then select any number of clusters one through five, or the default number of clusters identified by the algorithm, using the clusterNumber parameter. Users analyzing a custom region can generate CASTool clustering algorithm outputs by working through the clustering module (to be built) in the application and including the outputs in the uploaded data input files. For any analysis region, users can provide comparator assignments using a different method by modifying _CASTool_metadata.xlsx parameters and including the required input files in the uploaded folder. See the User Guide for additional details and instructions.
+
+```{r, out.width = "80%"}
+img3 <- here::here("apps", "CASTool_USEPA", "www", "North Carolina_ClusterGraphics_20260224172543_3.png")
+knitr::include_graphics(img3)
+```

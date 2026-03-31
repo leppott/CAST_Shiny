@@ -18,19 +18,19 @@ function() {
 				
 				use_bs_popover(),
 					h2("Explore watershed stressor figures"),
-					p(em("All watershed stressor figures are available in the SiteInfo subfolder in the downloaded results zipped folder.")),
+					p(em("All watershed stressor figures are available in the SiteInfo subfolder in the downloaded results zipped folder. Watershed stressor analyses are not included in the weight of evidence tables.")),
 					fluidRow(
 						column(4,
 								 p(strong("Target site, report:")),
 								 div(class = "pill", textOutput("txt_rep_siteid_wshedstress")),
 								 br(),
 								p(tagList(
-									strong("Reaches to display: "),
+									strong("Reaches to display user selection: "),
 									icon("info-circle", 
 										  style = "color: #67c1f5", 
 										  id="reachesInfo") |>
 										bs_embed_popover(title = "Helpful Hints",
-															  content = "To modify, change the useAllCompReaches parameter in '_CASTool_Metadata.xlsx'.",
+															  content = "Describes the reaches included in the watershed stressor analysis. For 'All reaches in cluster', the analysis includes all stream reaches in the analysis region assigned to the same cluster as the target site. For 'All reaches in cluster with a sampled site', the analysis filters comparator reaches to those with a sampled site. To modify selection, change the useAllCompReaches parameter in '_CASTool_Metadata.xlsx'.",
 															  placement = "right",
 															  trigger = "hover"))),
 								# bsPopover(id="reachesInfo", 
