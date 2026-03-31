@@ -4,7 +4,27 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-03-24 16:12:15.983863
+    #> Last Update: 2026-03-30 17:08:12.931967
+
+# CAST_Shiny 1.0.0.9024 (2026-03-30)
+
+- refactor: Add potential problem filepath csv to check files
+
+# CAST_Shiny 1.0.0.9023 (2026-03-30)
+
+- refactor: Add metadata info to WS Stressor tab
+- recactor: Update report complete timing estimate
+- fix: Turn on ws stressor variable so tab will be visible
+
+# CAST_Shiny 1.0.0.9022 (2026-03-27)
+
+- docs: Revise package list in DESCRIPTION to match global after
+  revisions to skeleton code
+- refactor: Add extra steps to Report progress bar
+  - Add each biocomm, was assuming only 1
+- refactor: Report complete alert
+  - Update timing
+  - Add number of responses
 
 # CAST_Shiny 1.0.0.9021 (2026-03-24)
 

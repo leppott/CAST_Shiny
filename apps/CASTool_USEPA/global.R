@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "1.0.0.9021"
+pkg_version <- "1.0.0.9024"
 
 # Packages ----
 library(shiny)
@@ -24,6 +24,20 @@ library(sf)
 #library(CASToolBaseDataPckg)
 library(kableExtra)
 library(shinycssloaders) # withSpinner
+library(sfarrow)
+library(aws.s3)
+# other
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(htmltools)
+library(maps)
+library(readxl)
+library(rmarkdown)
+library(shinyalert)
+library(data.table)
+library(devtools)
+library(pak)
 
 # library(zip)	  # use `utils` as `zip` pkg doesn't work on ShinyApps.io
 
@@ -205,5 +219,7 @@ url_github_castshiny <- "https://raw.githubusercontent.com/leppott/CAST_Shiny/ma
 # df_wsstressors <- read.csv(fn_wsstressors)
 
 # Time Estimate ----
-time_est_m_base <- 1.79
-time_est_m_stressor <- 0.13
+time_est_base_int <- 15.4
+time_est_x_biocomm <- 0.244
+time_est_y_numstress <- -0.539
+time_est_z_wsstress <- 3.71
