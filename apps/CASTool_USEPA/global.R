@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "1.0.0.9027"
+pkg_version <- "1.0.0.9028"
 
 # Packages ----
 library(shiny)

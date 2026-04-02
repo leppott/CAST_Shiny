@@ -4,7 +4,15 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-03-31 12:32:26.198321
+    #> Last Update: 2026-04-02 11:05:48.981393
+
+# CAST_Shiny 1.0.0.9028 (2026-04-02)
+
+- fix: Add req(zip_contents_input) statements to import files extra and
+  missing files routine
+  - Fixes red text in those boxes (intermittent)
+  - Fixes application crash if metadata file not at root of zip file
+    (e.g., in a folder)
 
 # CAST_Shiny 1.0.0.9027 (2026-03-31)
 

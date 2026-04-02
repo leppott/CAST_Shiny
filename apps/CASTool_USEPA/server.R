@@ -89,7 +89,7 @@ function(input, output, session) {
 			message(paste0("\n", prog_detail))
 			# Number of increments
 			prog_n <- 7
-			prog_sleep <- 0.25
+			prog_sleep <- 0.25 #sec
 			
 			### 01, Import ----
 			prog_detail <- "Import Data, User"
@@ -132,7 +132,7 @@ function(input, output, session) {
 			# print(file.exists(fn_inFile))
 			# print(getwd())
 			# print(dir.exists(file.path(dn_data, dn_import)))
-			
+		
 			# Unzip (remove any zip file directories)
 			zip::unzip(fn_inFile,
 							 overwrite = TRUE,
@@ -609,6 +609,9 @@ function(input, output, session) {
 	## Import, Files, missing ----
 	output$txt_import_files_missing <- renderText({
 	
+		# require zip file before continue
+		req(zip_contents_input)
+		
 		inFile <- input$fn_input_check_uload
 		
 		# Blank if no data
@@ -679,13 +682,15 @@ function(input, output, session) {
 	## Import, Files, extra ----
 	output$txt_import_files_extra <- renderText({
 		
+		# require zip file before continue
+		req(zip_contents_input)
+		
 		inFile <- input$fn_input_check_uload
 		
 		# Blank if no data
 		if (is.null(inFile)) {
 			return(NULL)
 		} ## IF ~ is.null(inFile)
-		
 		
 		# List Files
 		fn_import <- sort(list.files(file.path(dn_data, dn_import),
@@ -696,9 +701,7 @@ function(input, output, session) {
 		path_metadata <- file.path(dn_data,
 											dn_import, 
 											fn_default_check_input_cast_metadata)
-		
-		#browser()
-		
+
 		req(path_metadata)
 		df_user_metadata <- readxl::read_excel(path_metadata)
 		# "_CASTool_Metadata.xlsx"

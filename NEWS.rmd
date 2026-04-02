@@ -20,6 +20,12 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 1.0.0.9028 (2026-04-02) 
+
+* fix: Add req(zip_contents_input) statements to import files extra and missing files routine
+    + Fixes red text in those boxes (intermittent)
+    + Fixes application crash if metadata file not at root of zip file (e.g., in a folder)
+
 # CAST_Shiny 1.0.0.9027 (2026-03-31) 
 
 * feature: Add pop up if have problem paths in CHECK FILES
