@@ -20,6 +20,11 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 1.0.0.9029 (2026-04-02) 
+
+* fix: Update typo from req(zip_contents_input) to req(zip_contents_input())
+    + Worked on Windows (local) but not Linux (server)
+
 # CAST_Shiny 1.0.0.9028 (2026-04-02) 
 
 * fix: Add req(zip_contents_input) statements to import files extra and missing files routine

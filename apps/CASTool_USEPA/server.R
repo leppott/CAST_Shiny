@@ -218,6 +218,10 @@ function(input, output, session) {
 			
 			# return list of files
 			zip_contents_input <- import_filenames
+			# req(zip_contents_input()) 
+			# fail if no files wiht shiny alert 
+			# future update?
+			# already accounts for missing metadata
 			
 			### 05, zip metadata ----
 			prog_detail <- "Metadata File"
@@ -610,7 +614,7 @@ function(input, output, session) {
 	output$txt_import_files_missing <- renderText({
 	
 		# require zip file before continue
-		req(zip_contents_input)
+		req(zip_contents_input())
 		
 		inFile <- input$fn_input_check_uload
 		
@@ -681,9 +685,9 @@ function(input, output, session) {
 	
 	## Import, Files, extra ----
 	output$txt_import_files_extra <- renderText({
-		
+	
 		# require zip file before continue
-		req(zip_contents_input)
+		req(zip_contents_input())
 		
 		inFile <- input$fn_input_check_uload
 		

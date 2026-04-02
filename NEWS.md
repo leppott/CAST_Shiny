@@ -4,7 +4,13 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-04-02 11:05:48.981393
+    #> Last Update: 2026-04-02 13:44:51.444507
+
+# CAST_Shiny 1.0.0.9029 (2026-04-02)
+
+- fix: Update typo from req(zip_contents_input) to
+  req(zip_contents_input())
+  - Worked on Windows (local) but not Linux (server)
 
 # CAST_Shiny 1.0.0.9028 (2026-04-02)
 
