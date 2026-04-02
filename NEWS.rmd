@@ -20,6 +20,11 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 1.0.0.9030 (2026-04-02) 
+
+* fix: Add QC check and ShinyAlert for zip files with directories with spaces in them
+    + Known issue with ShinyApps.io but is sporadic
+
 # CAST_Shiny 1.0.0.9029 (2026-04-02) 
 
 * fix: Update typo from req(zip_contents_input) to req(zip_contents_input())

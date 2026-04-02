@@ -4,7 +4,13 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-04-02 13:44:51.444507
+    #> Last Update: 2026-04-02 14:37:42.980388
+
+# CAST_Shiny 1.0.0.9030 (2026-04-02)
+
+- fix: Add QC check and ShinyAlert for zip files with directories with
+  spaces in them
+  - Known issue with ShinyApps.io but is sporadic
 
 # CAST_Shiny 1.0.0.9029 (2026-04-02)
 

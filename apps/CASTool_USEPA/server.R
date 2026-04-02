@@ -132,6 +132,33 @@ function(input, output, session) {
 			# print(file.exists(fn_inFile))
 			# print(getwd())
 			# print(dir.exists(file.path(dn_data, dn_import)))
+			
+			# Reject if zip file has a top level folder with a space
+			# no req() needed as already have file loaded
+			zip_list <- zip::zip_list(fn_inFile)
+			zip_paths <- zip_list$filename
+			# Only consider entries with directories
+			zip_dir_paths <- dirname(zip_paths)
+			zip_dir_paths <- zip_dir_paths[zip_dir_paths != "."]
+			# Split into individual directory components
+			zip_dir_components <- unlist(strsplit(zip_dir_paths,
+															  "/",														 
+															  fixed = TRUE))
+			# Detect spaces in directory names
+			zip_dir_has_space <- any(grepl(" ", zip_dir_components))
+			# Shiny Alert
+			if (zip_dir_has_space) {
+				msg <- paste("Import zip file has a directory with a space.",
+								 "This can cause files not to unzip and Shiny app to crash.",
+								 "Update file before continuing.",
+								 sep = "\n\n")
+				shinyalert::shinyalert(title = "Check File Inputs",
+											  text = msg,
+											  type = "error")
+				validate(msg)
+			}## zip_dir_has_space
+			
+			
 		
 			# Unzip (remove any zip file directories)
 			zip::unzip(fn_inFile,
