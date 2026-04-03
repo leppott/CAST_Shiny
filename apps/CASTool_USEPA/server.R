@@ -88,7 +88,7 @@ function(input, output, session) {
 			prog_detail <- "Import New Files..."
 			message(paste0("\n", prog_detail))
 			# Number of increments
-			prog_n <- 7
+			prog_n <- 8
 			prog_sleep <- 0.25 #sec
 			
 			### 01, Import ----
@@ -268,7 +268,77 @@ function(input, output, session) {
 				validate(msg)
 			}## boo_unzip_metadata_xlsx
 			
-			### 06, Info Pop Up ----
+			### 06, Files, Missing/Extra ----
+			prog_detail <- "Identify Files"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			# User, CASTool MetaData
+			path_metadata <- file.path(dn_data,
+												dn_import,
+												fn_default_check_input_cast_metadata)
+			
+			df_user_metadata <- readxl::read_excel(path_metadata)
+			# "_CASTool_Metadata.xlsx"
+			
+			# User, Region
+			df_user_region <- df_user_metadata |>
+				dplyr::filter(Variable == "region") |>
+				dplyr::pull(Value)
+			
+			# User, Files
+			df_user_files <- df_user_metadata |>
+				# filter for filename
+				dplyr::filter(Domain == "filename") |>
+				# select only some columns
+				dplyr::select(Variable,
+								  Definition,
+								  Required,
+								  Value) |>
+				# Populate if file present
+				dplyr::mutate(Present =
+								  	dplyr::case_when(is.na(Value) ~ NA,
+								  						  Value %in% fn_import ~ TRUE,
+								  						  .default = FALSE))
+			
+			df_user_files_present <- df_user_files |>
+				# only TRUE
+				dplyr::filter(Present == TRUE) |>
+				dplyr::pull(Value)
+			
+			#### Missing ----
+			
+			# user files missing from MetaData
+			df_user_files_missing <- df_user_files |>
+				# only TRUE
+				dplyr::filter(Present == FALSE) |>
+				dplyr::pull(Value) |>
+				paste(collapse = "\n")
+			
+			# QC trigger
+			if (df_user_files_missing == "") {
+				check_files_fails(FALSE)
+			} else {
+				check_files_fails(TRUE)
+			}# IF ~ df_user_files_missing
+
+			react_txt_import_files_missing(df_user_files_missing)
+			
+			#### Extra ----
+
+			# user files not listed in MetaData
+			df_user_files_extra <- paste(fn_import[!fn_import %in%
+																	c(fn_default_check_input_cast_metadata,
+																	  df_user_files_present)],
+												  collapse = "\n")
+
+
+			
+			react_txt_import_files_extra(df_user_files_extra)
+			
+			### 07, Info Pop Up ----
 			prog_detail <- "Info Pop Up"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
@@ -286,7 +356,7 @@ function(input, output, session) {
 										  closeOnEsc = TRUE,
 										  closeOnClickOutside = TRUE)
 			
-			### 07, Update UI ----
+			### 08, Update UI ----
 			prog_detail <- "Update UI"
 			message(paste0("\n", prog_detail))
 			# Increment the progress bar, and update the detail text.
@@ -294,6 +364,7 @@ function(input, output, session) {
 			Sys.sleep(prog_sleep)
 			
 			shinyjs::enable("but_check_check")
+			react_chk_rendertext <- TRUE
 			
 		},
 		message = "Load Files")## withProgress
@@ -305,6 +376,9 @@ function(input, output, session) {
 	react_chk_check_tol    <- reactiveVal("..No file uploaded..")
 	react_check_outliers   <- reactiveVal("..No file uploaded..")
 	react_setup_explore    <- reactiveVal("..No file uploaded..")
+	react_chk_rendertext  <- reactiveVal(FALSE)
+	react_txt_import_files_missing <- reactiveVal("..No file uploaded..")
+	react_txt_import_files_extra <- reactiveVal("..No file uploaded..")
 	
 	output$txt_chk_check_comm  <- renderText({
 		react_chk_check_comm()
@@ -463,7 +537,18 @@ function(input, output, session) {
 
 	})
 	
+	## Import, Files, missing ----
+	### renderText, missing (w/react)----
+	output$txt_import_files_missing <- renderText({
+		paste(react_txt_import_files_missing())
+	})
 	
+	## Import, Files, extra ----
+	### renderText, extra (w/react)----
+	output$txt_import_files_extra <- renderText({
+		paste(react_txt_import_files_extra())
+	})
+
 	# LCN 3/24/26: to add back in the matching files table, comment out the observeEvent above, uncomment renderDT below and uncomment dataTableOutput in tab_checkfiles.R
 	
 	## Import, Files, present ----
@@ -591,7 +676,7 @@ function(input, output, session) {
 	# 											  "chk_check_tol",
 	# 											  selected = choices_chk_check_tol_sel)
 	# 	
-	# 	### update Reactives----
+	# 	### update Reactives (comment out)----
 	# 	react_chk_check_comm(choices_chk_check_comm[c(user_files_alg,
 	# 																		user_files_bmi,
 	# 																		user_files_fish)])
@@ -636,141 +721,6 @@ function(input, output, session) {
 	# 
 	# )## df_data_DT
 	
-	
-	## Import, Files, missing ----
-	output$txt_import_files_missing <- renderText({
-	
-		# require zip file before continue
-		req(zip_contents_input())
-		
-		inFile <- input$fn_input_check_uload
-		
-		# Blank if no data
-		if (is.null(inFile)) {
-			return(NULL)
-		} ## IF ~ is.null(inFile)
-		
-		
-		# List Files
-		fn_import <- sort(list.files(file.path(dn_data, dn_import),
-											  recursive = TRUE,
-											  full.names = FALSE))
-		
-		# User, CASTool MetaData
-		path_metadata <- file.path(dn_data, 	
-											dn_import, 
-											fn_default_check_input_cast_metadata)
-		req(path_metadata)
-		df_user_metadata <- readxl::read_excel(path_metadata)
-		# "_CASTool_Metadata.xlsx"
-		
-		# User, Region
-		df_user_region <- df_user_metadata |>
-			dplyr::filter(Variable == "region") |>
-			dplyr::pull(Value)
-		
-		# User, Files
-		df_user_files <- df_user_metadata |>
-			# filter for filename
-			dplyr::filter(Domain == "filename") |>
-			# select only some columns
-			dplyr::select(Variable,
-							  Definition,
-							  Required,
-							  Value) |>
-			# Populate if file present
-			dplyr::mutate(Present = 
-							  	dplyr::case_when(is.na(Value) ~ NA,
-							  						  Value %in% fn_import ~ TRUE,
-							  						  .default = FALSE)) 
-		
-		df_user_files_present <- df_user_files |>
-			# only TRUE
-			dplyr::filter(Present == TRUE) |> 
-			dplyr::pull(Value)
-		
-		# user files not listed in MetaData
-		df_user_files_extra <- fn_import[!fn_import %in% 
-														c(fn_default_check_input_cast_metadata,
-														  df_user_files_present)]
-		
-		df_user_files_missing <- df_user_files |>
-			# only TRUE
-			dplyr::filter(Present == FALSE) |> 
-			dplyr::pull(Value) |>
-			paste(collapse = "\n")
-		
-		# QC trigger
-		if (df_user_files_missing == "") {
-			check_files_fails(FALSE)
-		} else {
-			check_files_fails(TRUE)
-		}# IF ~ df_user_files_missing
-		
-		return(df_user_files_missing)
-	})
-	
-	## Import, Files, extra ----
-	output$txt_import_files_extra <- renderText({
-	
-		# require zip file before continue
-		req(zip_contents_input())
-		
-		inFile <- input$fn_input_check_uload
-		
-		# Blank if no data
-		if (is.null(inFile)) {
-			return(NULL)
-		} ## IF ~ is.null(inFile)
-		
-		# List Files
-		fn_import <- sort(list.files(file.path(dn_data, dn_import),
-											  recursive = TRUE,
-											  full.names = FALSE))
-		
-		# User, CASTool MetaData
-		path_metadata <- file.path(dn_data,
-											dn_import, 
-											fn_default_check_input_cast_metadata)
-
-		req(path_metadata)
-		df_user_metadata <- readxl::read_excel(path_metadata)
-		# "_CASTool_Metadata.xlsx"
-		
-		# User, Region
-		df_user_region <- df_user_metadata |>
-			dplyr::filter(Variable == "region") |>
-			dplyr::pull(Value)
-		
-		# User, Files
-		df_user_files <- df_user_metadata |>
-			# filter for filename
-			dplyr::filter(Domain == "filename") |>
-			# select only some columns
-			dplyr::select(Variable,
-							  Definition,
-							  Required,
-							  Value) |>
-			# Populate if file present
-			dplyr::mutate(Present = 
-							  	dplyr::case_when(is.na(Value) ~ NA,
-							  						  Value %in% fn_import ~ TRUE,
-							  						  .default = FALSE)) 
-
-		df_user_files_present <- df_user_files |>
-			# only TRUE
-			dplyr::filter(Present == TRUE) |> 
-			dplyr::pull(Value)
-		
-		# user files not listed in MetaData
-		df_user_files_extra <- paste(fn_import[!fn_import %in% 
-														c(fn_default_check_input_cast_metadata,
-														  df_user_files_present)],
-											  collapse = "\n")
-		
-		return(df_user_files_extra)
-	})
-	
 	## Check Files ----
 	# Reactive values / flags
 	## zip file contents
@@ -781,6 +731,7 @@ function(input, output, session) {
 	check_problem_paths <- reactiveVal(0)
 	
 	observeEvent(input$but_check_check, {
+		
 		shiny::withProgress({
 
 			### 00, Intialize, QC ----
@@ -792,7 +743,6 @@ function(input, output, session) {
 			
 			# QC, missing files
 			# trigger created when save table
-			# req(check_files_fails())
 			
 			if(check_files_fails()) {
 				msg <- paste("Some files set as required in metadata are missing.",

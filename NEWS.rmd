@@ -20,6 +20,13 @@ knitr::opts_chunk$set(
 cat(paste0("Last Update: ",Sys.time()))
 ```
 
+# CAST_Shiny 1.0.0.9031 (2026-04-03)
+
+* fix: Upload files missing and extra files fix prevented check files from working
+    + Update timing and sequence
+    + Create missing and extra files as reactives inside upload button
+    + renderText for missing and extra from reactives
+
 # CAST_Shiny 1.0.0.9030 (2026-04-02) 
 
 * fix: Add QC check and ShinyAlert for zip files with directories with spaces in them

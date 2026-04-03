@@ -4,7 +4,15 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-04-02 14:37:42.980388
+    #> Last Update: 2026-04-03 14:19:06.579837
+
+# CAST_Shiny 1.0.0.9031 (2026-04-03)
+
+- fix: Upload files missing and extra files fix prevented check files
+  from working
+  - Update timing and sequence
+  - Create missing and extra files as reactives inside upload button
+  - renderText for missing and extra from reactives
 
 # CAST_Shiny 1.0.0.9030 (2026-04-02)
 
