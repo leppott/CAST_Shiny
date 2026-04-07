@@ -19,6 +19,13 @@ function() {
 								class = "btn bnh-primary",
 								download = "CASTool_Templates.zip",
 								"Download Templates (zip)"),
+					shiny::a(href = paste0(url_github_castshiny,
+												  "/",
+												  "CASTool_TestData.zip"),
+								target = "_blank",
+								class = "btn bnh-primary",
+								download = "CASTool_TestData.zip",
+								"Download Test Data (zip)"),
 					shiny::hr(),
 					includeHTML("www/RMD_HTML/txt_about.html"),
 

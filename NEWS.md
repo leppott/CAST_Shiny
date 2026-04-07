@@ -4,7 +4,15 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-04-03 14:19:06.579837
+    #> Last Update: 2026-04-07 10:10:26.03721
+
+# CAST_Shiny 1.0.0.9032 (2026-04-07)
+
+- refactor: Update CASTfxn (skeleton code) install
+- refactor: Update files for download on Overview tab
+  - User Guide
+  - Templates
+- refactor: Add Test Data as download on Overview tab
 
 # CAST_Shiny 1.0.0.9031 (2026-04-03)
 
