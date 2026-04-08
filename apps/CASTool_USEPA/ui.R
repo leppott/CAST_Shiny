@@ -14,6 +14,7 @@ navbarPage("CASTool",
 			  use_bs_tooltip(), # activate bsplus tooltips
 		     # theme = shinytheme("spacelab"),
 			  tab_code_about(),
+			  tab_code_region(),
 			  tab_code_checkfiles(),
 			  tab_code_setup(),
 			  tab_code_report(),

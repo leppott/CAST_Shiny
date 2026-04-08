@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Version ----
-pkg_version <- "1.1.0"
+pkg_version <- "1.1.0.9001"
 
 # Packages ----
 library(shiny)
@@ -109,6 +109,8 @@ not_all_na <- function(x) {!all(is.na(x))}
 
 # Tabs ----
 tab_code_about       <- source("external/tab_about.R",
+										 local = TRUE)$value
+tab_code_region      <- source("external/tab_customregion.R",
 										 local = TRUE)$value
 tab_code_checkfiles  <- source("external/tab_checkfiles.R", 
 										 local = TRUE)$value
@@ -240,3 +242,14 @@ time_est_base_int <- 15.4
 time_est_x_biocomm <- 0.244
 time_est_y_numstress <- -0.539
 time_est_z_wsstress <- 3.71
+
+# Regions ----
+## CONUS states (no DC) (n = 48)
+df_states <- read.csv(file.path("external",
+										  "data",
+										  "states.csv"))
+conus_names <- df_states |>
+	# sort
+	dplyr::arrange(NAME) |>
+	# vector
+	dplyr::pull(NAME)

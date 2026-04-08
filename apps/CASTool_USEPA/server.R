@@ -66,6 +66,172 @@ function(input, output, session) {
 
 # ABOUT ----
 	
+# REGION ----
+# custom boundary region 
+	
+	## startup, disable ----
+	shinyjs::disable("txt_region_name")
+	shinyjs::disable("sel_region_states")
+	shinyjs::disable("rad_region_clustering")
+	shinyjs::disable("rad_region_wsstress")
+	# buttons disabled in UI
+	## startup, hide ----
+	shinyjs::hide("rad_region_clust_default")
+	shinyjs::hide("num_region_clust_num")
+	shinyjs::hide("num_region_clust_mincomid")
+	shinyjs::hide("num_region_clust_pctvar")
+	
+	## button, upload -----
+	observeEvent(input$fn_region_uload, {
+		shiny::withProgress({
+			
+			### 00, Initialize----
+			prog_detail <- "Import Region Files..."
+			message(paste0("\n", prog_detail))
+			# Number of increments
+			prog_n <- 3
+			prog_sleep <- 0.25
+			
+			## 01, Import ----
+			prog_detail <- "Import Region"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			## 02, Update UI ----
+			prog_detail <- "Update User Interface"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			# Enable Buttons
+			shinyjs::enable("txt_region_name")
+			shinyjs::enable("sel_region_states")
+			shinyjs::enable("rad_region_clustering")
+			shinyjs::enable("rad_region_wsstress")
+			shinyjs::enable("but_region_run")
+			
+			## 03, Info Pop Up ----
+			prog_detail <- "Info Pop Up"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			msg <- paste("Region files uploaded.",
+							 "Select other options then 'Generate Boundary Region' button.",
+							 sep = "\n\n")
+			shinyalert::shinyalert(title = "Set Up",
+										  text = msg,
+										  type = "info",
+										  closeOnEsc = TRUE,
+										  closeOnClickOutside = TRUE)
+			
+		})## withProgress
+	})## upload, region files
+	
+	# oE, disable, enable
+	observeEvent(input$rad_region_clustering, {
+		if (input$rad_region_clustering == "Yes") {
+			shinyjs::show("rad_region_clust_default")
+		} else {
+			shinyjs::hide("rad_region_clust_default")
+		}## IF
+	})## oE ~ rad_region_clustering
+	
+	observeEvent(input$rad_region_clust_default, {
+		if (input$rad_region_clustering == "Yes") {
+			shinyjs::show("num_region_clust_num")
+			shinyjs::show("num_region_clust_mincomid")
+			shinyjs::show("num_region_clust_pctvar")
+		} else {	
+			shinyjs::hide("num_region_clust_num")
+			shinyjs::hide("num_region_clust_mincomid")
+			shinyjs::hide("num_region_clust_pctvar")
+		}## IF
+	})## oE ~ rad_region_clust_default
+	
+	## but_region_run----
+	observeEvent(input$but_region_run, {
+		
+		shiny::withProgress({
+			### 00, Initialize----
+			prog_detail <- "Custom Boundary Region..."
+			message(paste0("\n", prog_detail))
+			# Number of increments
+			prog_n <- 8
+			prog_sleep <- 0.25 #sec
+			
+			### 01, QC Inputs ----
+			prog_detail <- "QC Inputs"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			# check inputs for function
+			
+			### 02, Run Function ----
+			prog_detail <- "Run Function"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			# Run function
+			
+			### 03, Create Zip ----
+			prog_detail <- "Zip Results"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			# Run function
+			
+			
+			### 04, Clean Up ----
+			prog_detail <- "Clean Up"
+			message(paste0("\n", prog_detail))
+			# Increment the progress bar, and update the detail text.
+			incProgress(1/prog_n, detail = prog_detail)
+			Sys.sleep(prog_sleep)
+			
+			# UI update
+			shinyjs::enable("but_region_dload")
+				
+			# user pop up
+			msg <- paste("Custom boundary region generation is complete.",
+							 "Download file",
+							 sep = "\n\n")
+			shinyalert::shinyalert(title = "Boundary Region",
+										  text = msg,
+										  type = "info",
+										  closeOnEsc = TRUE,
+										  closeOnClickOutside = TRUE)
+			
+			
+		})## Progress	
+		
+		
+	})## oE ~ but_region_run
+	
+	## b_dload_region ----
+	# output$but_region_dload <- shiny::downloadHandler(
+	# 	filename = function() {
+	#     # maybe use "region name" (reactive or input$txt_region_name)
+	# 		paste0("CASTool_region_",
+	# 				 format(Sys.time(), "%Y%m%d_%H%M%S"),
+	# 				 ".zip")
+	# 	} ,
+	# 	content = function(fname) {
+	# 		file.copy(file.path(dn_data, "check_qctables.zip"), fname)
+	# 	}##content~END
+	# 	#, contentType = "application/zip"
+	# )##download ~ check files
+	
 # CHECK ----
 	
 	# file_watch <- reactive({
@@ -1180,6 +1346,8 @@ function(input, output, session) {
 		}##content~END
 		#, contentType = "application/zip"
 	)##download ~ check files
+	
+
 	
 	
 # SET UP ----

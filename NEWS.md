@@ -4,7 +4,13 @@ NEWS
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2026-04-07 10:20:11.052145
+    #> Last Update: 2026-04-08 12:49:26.539037
+
+# CAST_Shiny 1.1.0.9001 (2026-04-08)
+
+- refactor: Add new tab “Region” for custom boundary
+- data: Add states sf object and csv
+  - data-raw process script using Tigris data
 
 # CAST_Shiny 1.1.0 (2026-04-07)
 
